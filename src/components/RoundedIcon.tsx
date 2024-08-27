@@ -1,8 +1,10 @@
+'use client';
 import { cn } from '@/lib/utils';
-import React, { PropsWithChildren } from 'react';
-import { ButtonProps } from './ui/button';
+import React, { ComponentProps, PropsWithChildren } from 'react';
 
-const RoundedIcon: React.FC<PropsWithChildren & ButtonProps> = ({ children, className, ...props }) => {
+const RoundedIcon: React.FC<
+  { className?: string } & PropsWithChildren & ComponentProps<'span'>
+> = ({ children, className, ...props }) => {
   return (
     <span
       {...props}

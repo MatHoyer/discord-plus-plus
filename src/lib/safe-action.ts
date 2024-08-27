@@ -11,7 +11,11 @@ const handlePrismaError = (
     case 'P2002':
       const fields = (err.meta?.target as string[])
         .filter((field) => !field.toLowerCase().includes('id'))
-        .map((field) => (clientInput?.[field] ? `'${field}: ${clientInput[field]}'` : `'${field}'`))
+        .map((field) =>
+          clientInput?.[field]
+            ? `'${field}: ${clientInput[field]}'`
+            : `'${field}'`
+        )
         .join(', ');
 
       return `A record with ${fields} already exists.`;
@@ -20,7 +24,10 @@ const handlePrismaError = (
   }
 };
 
-export const errorHandler = (err: unknown, clientInput: Record<string | number, unknown>) => {
+export const errorHandler = (
+  err: unknown,
+  clientInput: Record<string | number, unknown>
+) => {
   if (isRedirectError(err)) {
     throw err;
   }
@@ -42,7 +49,8 @@ export const errorHandler = (err: unknown, clientInput: Record<string | number, 
 };
 
 export const baseClient = createSafeActionClient({
-  handleReturnedServerError: (err, utils) => errorHandler(err, utils.clientInput as Record<string | number, unknown>),
+  handleReturnedServerError: (err, utils) =>
+    errorHandler(err, utils.clientInput as Record<string | number, unknown>),
 });
 
 export const authClient = baseClient.use(async ({ next }) => {

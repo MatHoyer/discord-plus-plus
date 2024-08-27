@@ -1,7 +1,9 @@
 import Modal from '@/components/Modal';
 import { ThemeProvider } from '@/components/ThemeProvider';
+import { DiscordProvider } from '@/contexts/DiscordContext';
 import { cn } from '@/lib/utils';
 import type { Metadata } from 'next';
+import { SessionProvider } from 'next-auth/react';
 import { Inter } from 'next/font/google';
 import './globals.css';
 
@@ -20,12 +22,21 @@ export default function RootLayout({
   modal: React.ReactNode;
 }>) {
   return (
-    <html lang="fr">
-      <body className={cn('min-h-screen bg-background font-sans antialiased', inter.className)}>
+    <html lang="fr" suppressHydrationWarning>
+      <body
+        className={cn(
+          'min-h-screen bg-background font-sans antialiased',
+          inter.className
+        )}
+      >
         <ThemeProvider attribute="class" defaultTheme="dark">
-          <Modal />
-          {children}
-          {modal}
+          <SessionProvider>
+            <DiscordProvider>
+              <Modal />
+              {children}
+              {/* {modal} */}
+            </DiscordProvider>
+          </SessionProvider>
         </ThemeProvider>
       </body>
     </html>

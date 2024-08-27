@@ -18,7 +18,10 @@ export enum DateString {
   time = 'HH:mm',
 }
 
-export const getDateAsString = (date: Date, type: DateString = DateString.full) => {
+export const getDateAsString = (
+  date: Date,
+  type: DateString = DateString.full
+) => {
   return format(date, type, { locale: fr });
 };
 
@@ -35,3 +38,6 @@ export const getShortServerName = (serverName: string) => {
     .slice(0, 3)
     .join('');
 };
+
+export const wait = (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms));

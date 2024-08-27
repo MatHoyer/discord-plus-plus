@@ -83,10 +83,14 @@
   border-radius: 1rem;
 }
 
+.rounded-icon.selected {
+  border-radius: 1rem;
+}
+
 .discord-icon {
   @apply p-3;
-  background: url('https://cdn.logojoy.com/wp-content/uploads/20210422095037/discord-mascot.png') no-repeat center
-    center;
+  background: url('https://cdn.logojoy.com/wp-content/uploads/20210422095037/discord-mascot.png')
+    no-repeat center center;
   background-size: contain;
   background-color: #8292ea;
 }

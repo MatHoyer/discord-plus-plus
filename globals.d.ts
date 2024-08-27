@@ -25,3 +25,17 @@ interface IMessageModalProps extends IMessageParams {
   open?: boolean;
   messageType: TMessageType;
 }
+
+type TData<T> = T | { message: string };
+
+type TFormState<T = unknown> = {
+  data?: TData<T>;
+  serverError?: string;
+  fetchError?: string;
+  validationErrors?: Record<string, string[] | undefined> | undefined;
+};
+
+export type LayoutParams<T extends Record<string, string> = {}> = {
+  params: T;
+  children?: ReactNode | undefined;
+};
