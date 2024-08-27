@@ -1,0 +1,131 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int             @id @default(autoincrement())
+  name          String?
+  username      String?         @unique
+  email         String?         @unique
+  emailVerified DateTime?
+  image         String?
+  
+  sessions       Session[]
+  accounts      Account?
+  servers        Server[]
+  members      Member[]
+ 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+ 
+model Account {
+  id                       Int  @id @default(autoincrement())
+  userId                   Int  @unique
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String? @db.Text
+  access_token             String? @db.Text
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String? @db.Text
+  session_state            String?
+  refresh_token_expires_in Int?
+  user                     User?   @relation(fields: [userId], references: [id])
+ 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+ 
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id          Int  @id @default(autoincrement())
+  sessionToken String   @unique
+  expires      DateTime
+
+  userId       Int
+  user         User     @relation(fields: [userId], references: [id])
+ 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+ 
+  @@index([userId])
+}
+ 
+model VerificationToken {
+  identifier Int
+  token      String
+  expires    DateTime
+ 
+  @@unique([identifier, token])
+}
+
+model Server {
+  id Int @id @default(autoincrement())
+  name String
+  imageUrl String? @db.Text
+  inviteCode String @db.Text
+
+  userId Int
+  user User @relation(fields: [userId], references: [id])
+
+  members Member[]
+  channels Channel[]
+   
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@unique([inviteCode])
+}
+
+enum Channeltype {
+  TEXT
+  AUDIO
+}
+
+model Channel {
+  id Int @id @default(autoincrement())
+  name String
+  type Channeltype @default(TEXT)
+
+  serverId Int
+  server Server @relation(fields: [serverId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([serverId])
+}
+
+enum MemberRole {
+  ADMIN
+  MODERATOR
+  GUEST
+}
+
+model Member {
+  id Int @id @default(autoincrement())
+  role MemberRole @default(GUEST)
+
+  userId Int
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  serverId Int
+  server Server @relation(fields: [serverId], references: [id], onDelete: Cascade)
+    
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([serverId])
+}
