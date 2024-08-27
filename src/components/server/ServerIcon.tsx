@@ -9,13 +9,15 @@ const ServerIcon: React.FC<{ server: Server }> = ({ server }) => {
   const { selectedServer, selectServer, hoveredServer, setHoveredServer } =
     useDiscord();
 
+  const isSelected = selectedServer === server.id;
+  const isHovered = hoveredServer === server.id;
   return (
     <div className="flex items-center">
       <div
         className={cn(
-          'absolute left-0 w-1 bg-white h-10 rounded-tr-sm rounded-br-sm hidden',
-          selectedServer === server.id && 'block',
-          hoveredServer === server.id && 'block h-5'
+          'absolute left-0 w-2 bg-white h-10 rounded-tr-sm rounded-br-sm hidden',
+          isSelected && 'block',
+          isHovered && !isSelected && 'block h-5'
         )}
       />
       <RoundedIcon
