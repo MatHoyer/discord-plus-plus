@@ -12,7 +12,7 @@ const ServerLayout = async (props: LayoutParams) => {
     where: {
       members: {
         some: {
-          id: session?.user.id,
+          userId: session?.user.id,
         },
       },
     },
@@ -29,4 +29,5 @@ const ServerLayout = async (props: LayoutParams) => {
     </section>
   );
 };
+
 export default ServerLayout;

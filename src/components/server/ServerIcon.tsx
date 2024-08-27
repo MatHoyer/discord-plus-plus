@@ -11,11 +11,12 @@ const ServerIcon: React.FC<{ server: Server }> = ({ server }) => {
 
   const isSelected = selectedServer === server.id;
   const isHovered = hoveredServer === server.id;
+
   return (
     <div className="flex items-center">
       <div
         className={cn(
-          'absolute left-0 w-2 bg-white h-10 rounded-tr-sm rounded-br-sm hidden',
+          'absolute left-0 w-1 bg-white h-10 rounded-tr-sm rounded-br-sm hidden transition-all duration-300',
           isSelected && 'block',
           isHovered && !isSelected && 'block h-5'
         )}
