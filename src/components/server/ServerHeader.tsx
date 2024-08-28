@@ -1,3 +1,5 @@
+'use client';
+import { useModal } from '@/hooks/useModalStore';
 import { MemberRole } from '@prisma/client';
 import {
   ChevronDown,
@@ -23,6 +25,7 @@ type TServerHeaderProps = {
 };
 
 const ServerHeader: React.FC<TServerHeaderProps> = ({ server, role }) => {
+  const { openModal } = useModal();
   const isAdmin = role === MemberRole.ADMIN;
   const isModerator = isAdmin || role === MemberRole.MODERATOR;
 
@@ -36,7 +39,12 @@ const ServerHeader: React.FC<TServerHeaderProps> = ({ server, role }) => {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56 text-xs font-medium text-black dark:text-neutral-400 space-y-[2px]">
         {isModerator && (
-          <DropdownMenuItem className="text-indingo-600 dark:text-indigo-400 px-3 py-2 text-sm cursor-pointer">
+          <DropdownMenuItem
+            onClick={() => {
+              openModal('invite', { server });
+            }}
+            className="text-indingo-600 dark:text-indigo-400 px-3 py-2 text-sm cursor-pointer"
+          >
             Invite people
             <UserPlus className="h-4 w-4 ml-auto" />
           </DropdownMenuItem>
