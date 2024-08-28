@@ -10,7 +10,7 @@ const CreateServerItem: React.FC<TCreateServerIconProps> = () => {
     <div>
       <ActionTooltip label="Add a server" align="center" side="right">
         <button className="group flex items-center">
-          <RoundedIcon className="group-hover:bg-emerald-500">
+          <RoundedIcon className="bg-primary/10 group-hover:bg-emerald-500">
             <Plus
               className="group-hover:text-white transition text-emerald-500"
               size={25}

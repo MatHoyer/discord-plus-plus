@@ -7,13 +7,14 @@ import RoundedIcon from '../RoundedIcon';
 type TNavigationItemWithIndicatorProps = {
   isSelected: boolean;
   onClick: () => void;
+  className?: string;
 };
 
 const NavigationItemWithIndicator: React.FC<
   TNavigationItemWithIndicatorProps &
     PropsWithChildren &
     ComponentProps<typeof ActionTooltip>
-> = ({ isSelected, onClick, children, ...props }) => {
+> = ({ isSelected, onClick, className, children, ...props }) => {
   return (
     <ActionTooltip {...props}>
       <button onClick={onClick} className="group relative flex items-center">
@@ -26,7 +27,7 @@ const NavigationItemWithIndicator: React.FC<
         />
         <RoundedIcon
           className={cn(
-            'bg-red-500',
+            className,
             isSelected && 'bg-primary/10 text-primary rounded-[16px]'
           )}
         >

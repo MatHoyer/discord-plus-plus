@@ -18,6 +18,7 @@ const ServerNavigationItem: React.FC<{ server: Server }> = ({ server }) => {
       }}
       side="right"
       align="center"
+      className="bg-red-500"
     >
       {server.imageUrl ? (
         <Image
