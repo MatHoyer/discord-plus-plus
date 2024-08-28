@@ -19,6 +19,8 @@ model User {
   accounts      Account?
   servers        Server[]
   members      Member[]
+  privateMessagesSent PrivateMessage[] @relation("sender")
+  privateMessagesReceived PrivateMessage[] @relation("receiver")
  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -88,6 +90,39 @@ model Server {
   @@unique([inviteCode])
 }
 
+model PrivateMessage {
+  id Int @id @default(autoincrement())
+  content String
+  senderId Int
+  sender User @relation("sender", fields: [senderId], references: [id])
+
+  receiverId Int
+  receiver User @relation("receiver", fields: [receiverId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([senderId])
+  @@index([receiverId])
+}
+
+model ServerMessage {
+  id Int @id @default(autoincrement())
+  content String
+  type String
+  senderId Int?
+  sender Member? @relation(fields: [senderId], references: [id], onDelete: SetNull)
+
+  channelId Int
+  channel Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([senderId])
+  @@index([channelId])
+}
+
 enum Channeltype {
   TEXT
   AUDIO
@@ -100,6 +135,7 @@ model Channel {
 
   serverId Int
   server Server @relation(fields: [serverId], references: [id], onDelete: Cascade)
+  messages ServerMessage[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -122,6 +158,8 @@ model Member {
 
   serverId Int
   server Server @relation(fields: [serverId], references: [id], onDelete: Cascade)
+
+  messages ServerMessage[]
     
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
