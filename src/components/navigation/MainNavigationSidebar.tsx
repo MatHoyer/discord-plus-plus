@@ -1,6 +1,7 @@
 import CreateServerItem from '@/features/server/create-server/CreateServerItem';
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
+import { LoginButton, LogoutButton } from '../AuthButtons';
 import { ScrollArea } from '../ui/scroll-area';
 import { Separator } from '../ui/separator';
 import PrivateMessageNavigationItem from './PrivateMessageNavigationItem';
@@ -31,6 +32,7 @@ const MainNavigationSidebar = async () => {
         ))}
       </ScrollArea>
       <div className="pb-3 mt-auto flex items-center flex-col gap-y-4">
+        {session?.user ? <LogoutButton /> : <LoginButton />}
         <CreateServerItem />
       </div>
     </div>
