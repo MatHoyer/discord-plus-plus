@@ -1,14 +1,22 @@
-import MainNavigationSidebar from '@/components/navigation/MainNavigationSidebar';
+'use client';
 
-const MainLayout = (props: LayoutParams) => {
-  return (
-    <div className="h-full">
-      <div className="hidden md:flex h-full w-[72px] z-30 flex-col fixed inset-y-0">
-        <MainNavigationSidebar />
-      </div>
-      <main className="md:pl-[72px] h-full">{props.children}</main>
-    </div>
-  );
+import { SocketEvents } from '@/lib/socketUtils';
+import { socket } from '@/socket';
+import { useEffect } from 'react';
+
+const SocketLayout = (props: LayoutParams) => {
+  useEffect(() => {
+    socket.emit(SocketEvents.PING, 'home');
+    socket.on(SocketEvents.PONG, (data) => {
+      console.log('pong', data);
+    });
+
+    return () => {
+      socket.off('pong');
+    };
+  }, []);
+
+  return <div>{props.children}</div>;
 };
 
-export default MainLayout;
+export default SocketLayout;
