@@ -1,6 +1,7 @@
 import Modal from '@/components/Modal';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { DiscordProvider } from '@/contexts/DiscordContext';
+import ModalProvider from '@/contexts/ModalProvider';
 import { cn } from '@/lib/utils';
 import type { Metadata } from 'next';
 import { SessionProvider } from 'next-auth/react';
@@ -16,10 +17,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-  modal,
 }: Readonly<{
   children: React.ReactNode;
-  modal: React.ReactNode;
 }>) {
   return (
     <html lang="fr" suppressHydrationWarning>
@@ -33,8 +32,8 @@ export default function RootLayout({
           <SessionProvider>
             <DiscordProvider>
               <Modal />
+              <ModalProvider />
               {children}
-              {/* {modal} */}
             </DiscordProvider>
           </SessionProvider>
         </ThemeProvider>

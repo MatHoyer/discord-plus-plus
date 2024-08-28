@@ -5,10 +5,16 @@ import { Button, ButtonProps } from '../ui/button';
 
 export const SubmitButton: React.FC<{ loading: boolean } & ButtonProps> = ({
   loading,
+  disabled,
   ...props
 }) => {
   return (
-    <LoadingButton type="submit" loading={loading} {...props}>
+    <LoadingButton
+      type="submit"
+      loading={loading}
+      disabled={disabled || loading}
+      {...props}
+    >
       {props.children}
     </LoadingButton>
   );

@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { useSession } from 'next-auth/react';
 import { useAction } from 'next-safe-action/hooks';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import React from 'react';
 import { createServer } from './create-server.action';
 import { createServerSchema } from './create-server.schema';
@@ -21,12 +21,15 @@ import { createServerSchema } from './create-server.schema';
 type TCreateServerFormProps = {
   children: (isExecuting: boolean) => React.ReactNode;
   className?: string;
+  close?: () => void;
 };
 
 const CreateServerForm: React.FC<TCreateServerFormProps> = ({
   children,
   className,
+  close,
 }) => {
+  const router = useRouter();
   const session = useSession();
   const {
     execute,
@@ -34,14 +37,15 @@ const CreateServerForm: React.FC<TCreateServerFormProps> = ({
     result: state,
   } = useAction(createServer, {
     onSuccess: ({ data }) => {
-      redirect(`/servers/${data!.id}`);
+      close?.();
+      router.push(`/servers/${data!.id}`);
     },
   });
 
   const form = useZodForm({
     schema: createServerSchema,
     values: {
-      name: `Serveur de ${session?.data?.user?.name}`,
+      name: `Server of ${session?.data?.user?.name}`,
     },
     mode: 'onChange',
   });
@@ -55,7 +59,7 @@ const CreateServerForm: React.FC<TCreateServerFormProps> = ({
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>NOM DU SERVEUR</FormLabel>
+              <FormLabel>SERVER NAME</FormLabel>
               <FormControl>
                 <Input {...field} />
               </FormControl>
