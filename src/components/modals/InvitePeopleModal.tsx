@@ -1,8 +1,11 @@
 'use client';
 
+import { generateNewInviteCode } from '@/features/server/generate-new-invite-code/generate-new-invite-code.action';
 import { useModal } from '@/hooks/useModalStore';
 import { useOrigin } from '@/hooks/useOrigin';
+import { cn } from '@/lib/utils';
 import { Check, Copy, RefreshCw } from 'lucide-react';
+import { useAction } from 'next-safe-action/hooks';
 import { useState } from 'react';
 import SwitchingButton from '../SwitchingButton';
 import { Button } from '../ui/button';
@@ -13,11 +16,17 @@ import { Label } from '../ui/label';
 const InvitePeopleModal: React.FC = () => {
   const [isCopied, setIsCopied] = useState(false);
   const origin = useOrigin();
-  const { isOpen, type, closeModal, data } = useModal();
+  const { isOpen, type, closeModal, data, openModal } = useModal();
   const { server } = data;
   const open = isOpen && type === 'invite';
 
-  const url = `${origin}/invite/${server?.id}`;
+  const url = `${origin}/invite/${server?.inviteCode}`;
+
+  const { execute, isExecuting } = useAction(generateNewInviteCode, {
+    onSuccess: ({ data }) => {
+      openModal('invite', { server: data });
+    },
+  });
 
   const copyInviteLink = () => {
     navigator.clipboard.writeText(url);
@@ -52,15 +61,22 @@ const InvitePeopleModal: React.FC = () => {
               switchingContent={<Check className="w-4 h-4" />}
               size="icon"
               onClick={copyInviteLink}
+              disabled={isExecuting}
             />
           </div>
           <Button
+            disabled={isExecuting}
+            onClick={() => {
+              execute(server!.id);
+            }}
             variant="link"
             size="sm"
             className="text-xs text-zinc-500 mt-3 p-0"
           >
             Generate a new link
-            <RefreshCw className="w-4 h-4 ml-2" />
+            <RefreshCw
+              className={cn('w-4 h-4 ml-2', isExecuting && 'animate-spin')}
+            />
           </Button>
         </div>
       </DialogContent>
