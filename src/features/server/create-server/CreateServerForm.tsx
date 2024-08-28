@@ -34,7 +34,7 @@ const CreateServerForm: React.FC<TCreateServerFormProps> = ({
     result: state,
   } = useAction(createServer, {
     onSuccess: ({ data }) => {
-      redirect(`/server/${data!.id}`);
+      redirect(`/servers/${data!.id}`);
     },
   });
 

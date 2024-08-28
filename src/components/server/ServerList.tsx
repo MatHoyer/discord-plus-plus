@@ -1,8 +1,7 @@
-import CreateServerIcon from '@/features/server/create-server/CreateServerIcon';
 import { Server } from '@prisma/client';
 import React from 'react';
 import RoundedIcon from '../RoundedIcon';
-import ServerIcon from './ServerIcon';
+import ServerNavigationItem from '../navigation/ServerNavigationItem';
 
 type TServerListProps = {
   servers: Server[];
@@ -14,10 +13,10 @@ const ServerList: React.FC<TServerListProps> = ({ servers }) => {
       <RoundedIcon className="discord-icon self-center" />
       <div className="flex flex-col items-center space-y-4 relative">
         {servers.map((server) => (
-          <ServerIcon server={server} key={server.id} />
+          <ServerNavigationItem server={server} key={server.id} />
         ))}
       </div>
-      <CreateServerIcon />
+      {/* <CreateServerItem /> */}
     </div>
   );
 };

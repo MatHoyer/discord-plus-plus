@@ -3,7 +3,6 @@ import ChatInput from '@/components/ChatInput';
 import ServerList from '@/components/server/ServerList';
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
-import { LayoutParams } from '../../../globals';
 
 const ServerLayout = async (props: LayoutParams) => {
   const session = await auth();

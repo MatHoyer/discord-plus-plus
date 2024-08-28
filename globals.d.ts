@@ -35,7 +35,12 @@ type TFormState<T = unknown> = {
   validationErrors?: Record<string, string[] | undefined> | undefined;
 };
 
-export type LayoutParams<T extends Record<string, string> = {}> = {
+type LayoutParams<T extends Record<string, string> = {}> = {
   params: T;
   children?: ReactNode | undefined;
+};
+
+type PageParams<T extends Record<string, string> = {}> = {
+  params: T;
+  searchParams: { [key: string]: string | string[] | undefined };
 };
