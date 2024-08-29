@@ -1,3 +1,4 @@
+import ChatInput from '@/components/ChatInput';
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { notFound, redirect } from 'next/navigation';
@@ -36,7 +37,12 @@ const ChannelLayout = async (
     return redirect('/');
   }
 
-  return <div className="h-full">{props.children}</div>;
+  return (
+    <div className="h-full">
+      {props.children}
+      {channel.type === 'TEXT' && <ChatInput channel={channel.name} />}
+    </div>
+  );
 };
 
 export default ChannelLayout;
