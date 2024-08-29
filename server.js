@@ -17,16 +17,25 @@ app.prepare().then(() => {
 
   const io = new Server(httpServer);
 
+  const socketMiddleware = (socket, eventHandlers) => {
+    for (const [event, handler] of Object.entries(eventHandlers)) {
+      socket.on(event, (...args) => {
+        console.log(`${yellow}${event} event triggered${reset}`);
+        handler(...args);
+      });
+    }
+  };
+
   io.on('connection', (socket) => {
     console.log(`${yellow}user connected${reset}`);
 
-    socket.on('disconnect', () => {
-      console.log(`${yellow}user disconnected${reset}`);
-    });
-
-    socket.on('ping', (data) => {
-      console.log(`${yellow}ping ${data}${reset}`);
-      socket.emit('pong', data);
+    socketMiddleware(socket, {
+      disconnect: () => {
+        console.log(`${yellow}user disconnected${reset}`);
+      },
+      ping: (data) => {
+        socket.emit('pong', data);
+      },
     });
   });
 

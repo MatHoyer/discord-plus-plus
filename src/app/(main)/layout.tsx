@@ -8,11 +8,11 @@ const SocketLayout = (props: LayoutParams) => {
   useEffect(() => {
     socket.emit(SocketEvents.PING, 'home');
     socket.on(SocketEvents.PONG, (data) => {
-      console.log('pong', data);
+      console.log(SocketEvents.PONG, data);
     });
 
     return () => {
-      socket.off('pong');
+      socket.off(SocketEvents.PONG);
     };
   }, []);
 
