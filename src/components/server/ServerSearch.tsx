@@ -45,6 +45,7 @@ const ServerSearch: React.FC<TServerSearchProps> = ({ serverId, data }) => {
   }, []);
 
   const onSuggestionSelected = (id: number, type: 'channel' | 'member') => {
+    setIsOpen(false);
     if (type === 'channel') {
       return router.push(`/servers/${serverId}/channels/${id}`);
     }
