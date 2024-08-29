@@ -1,4 +1,6 @@
+import { useZodForm } from '@/components/ui/form';
 import { Member, Server, User } from '@prisma/client';
+import { ZodType } from 'zod';
 
 declare global {
   interface IModal {
@@ -51,4 +53,6 @@ declare global {
   type TServerWithMembersAndProfiles = Server & {
     members: (Member & { user: User })[];
   };
+
+  type TZodFormReturnType<T extends ZodType> = ReturnType<typeof useZodForm<T>>;
 }

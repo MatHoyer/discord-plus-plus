@@ -27,9 +27,14 @@ const CreateChannelModal: React.FC = () => {
           </DialogTitle>
         </DialogHeader>
         <CreateChannelForm serverId={data.server?.id} close={closeModal}>
-          {(pending) => (
-            <DialogFooter className="mt-4">
-              <SubmitButton loading={pending}>Create</SubmitButton>
+          {({ pending, form }) => (
+            <DialogFooter>
+              <SubmitButton
+                disabled={pending || !form.formState.isValid}
+                loading={pending}
+              >
+                Create
+              </SubmitButton>
             </DialogFooter>
           )}
         </CreateChannelForm>

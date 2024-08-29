@@ -72,6 +72,31 @@ CREATE TABLE "Server" (
 );
 
 -- CreateTable
+CREATE TABLE "PrivateMessage" (
+    "id" SERIAL NOT NULL,
+    "content" TEXT NOT NULL,
+    "senderId" INTEGER NOT NULL,
+    "receiverId" INTEGER NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "PrivateMessage_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "ServerMessage" (
+    "id" SERIAL NOT NULL,
+    "content" TEXT NOT NULL,
+    "type" TEXT NOT NULL,
+    "senderId" INTEGER,
+    "channelId" INTEGER NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "ServerMessage_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Channel" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
@@ -126,6 +151,18 @@ CREATE INDEX "Server_userId_idx" ON "Server"("userId");
 CREATE UNIQUE INDEX "Server_inviteCode_key" ON "Server"("inviteCode");
 
 -- CreateIndex
+CREATE INDEX "PrivateMessage_senderId_idx" ON "PrivateMessage"("senderId");
+
+-- CreateIndex
+CREATE INDEX "PrivateMessage_receiverId_idx" ON "PrivateMessage"("receiverId");
+
+-- CreateIndex
+CREATE INDEX "ServerMessage_senderId_idx" ON "ServerMessage"("senderId");
+
+-- CreateIndex
+CREATE INDEX "ServerMessage_channelId_idx" ON "ServerMessage"("channelId");
+
+-- CreateIndex
 CREATE INDEX "Channel_serverId_idx" ON "Channel"("serverId");
 
 -- CreateIndex
@@ -142,6 +179,18 @@ ALTER TABLE "Session" ADD CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId"
 
 -- AddForeignKey
 ALTER TABLE "Server" ADD CONSTRAINT "Server_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "PrivateMessage" ADD CONSTRAINT "PrivateMessage_senderId_fkey" FOREIGN KEY ("senderId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "PrivateMessage" ADD CONSTRAINT "PrivateMessage_receiverId_fkey" FOREIGN KEY ("receiverId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ServerMessage" ADD CONSTRAINT "ServerMessage_senderId_fkey" FOREIGN KEY ("senderId") REFERENCES "Member"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ServerMessage" ADD CONSTRAINT "ServerMessage_channelId_fkey" FOREIGN KEY ("channelId") REFERENCES "Channel"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Channel" ADD CONSTRAINT "Channel_serverId_fkey" FOREIGN KEY ("serverId") REFERENCES "Server"("id") ON DELETE CASCADE ON UPDATE CASCADE;
