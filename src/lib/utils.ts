@@ -25,6 +25,19 @@ export const getDateAsString = (
   return format(date, type, { locale: fr });
 };
 
+export const getCustomDate = (date: Date) => {
+  const today = new Date().getDay();
+  const messageDay = date.getDay();
+
+  if (today === messageDay) {
+    return 'Today ' + format(date, DateString.time);
+  } else if (today - messageDay === 1) {
+    return 'Yesterday ' + format(date, DateString.time);
+  } else {
+    return format(date, DateString.short) + ' ' + format(date, DateString.time);
+  }
+};
+
 export const capitalize = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
