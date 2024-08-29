@@ -6,8 +6,10 @@ import { redirect } from 'next/navigation';
 import React from 'react';
 import { ScrollArea } from '../ui/scroll-area';
 import { Separator } from '../ui/separator';
+import ServerChannel from './ServerChannel';
 import ServerHeader from './ServerHeader';
 import ServerSearch from './ServerSearch';
+import ServerSection from './ServerSection';
 
 type TServerSidebarProps = {
   serverId: number;
@@ -69,7 +71,10 @@ const ServerSidebar: React.FC<TServerSidebarProps> = async ({ serverId }) => {
 
   const members = server.members.filter((member) => member.userId !== userId);
 
-  const role = server.members.find((member) => member.userId === userId)?.role;
+  const currentMember = server.members.find(
+    (member) => member.userId === userId
+  );
+  const role = currentMember?.role;
 
   return (
     <div className="flex flex-col h-full text-primary w-full dark:bg-[#2B2D31] bg-[#F2F3F5]">
@@ -110,7 +115,34 @@ const ServerSidebar: React.FC<TServerSidebarProps> = async ({ serverId }) => {
           />
         </div>
         <Separator className="bg-zinc-200 dark:bg-zinc-700 rounded-md my-2" />
-        {!!textChannels?.length && <div className="mb-2"></div>}
+        {!!textChannels?.length && (
+          <div className="mb-2">
+            <ServerSection
+              label="Text Channels"
+              sectionType="channels"
+              channelType="TEXT"
+              role={role}
+              server={server}
+            />
+            {textChannels.map((channel) => (
+              <ServerChannel key={channel.id} {...{ channel, server, role }} />
+            ))}
+          </div>
+        )}
+        {!!audioChannels?.length && (
+          <div className="mb-2">
+            <ServerSection
+              label="Audio Channels"
+              sectionType="channels"
+              channelType="AUDIO"
+              role={role}
+              server={server}
+            />
+            {audioChannels.map((channel) => (
+              <ServerChannel key={channel.id} {...{ channel, server, role }} />
+            ))}
+          </div>
+        )}
       </ScrollArea>
     </div>
   );

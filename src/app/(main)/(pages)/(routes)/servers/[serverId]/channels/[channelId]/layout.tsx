@@ -61,6 +61,7 @@ const ChannelLayout = async (
           <div className="h-[85%] overflow-y-scroll flex flex-col justify-end">
             {channel.messages.map((message) => (
               <Message
+                key={message.id}
                 username={message.sender?.user.name || 'Deleted User'}
                 message={message.content}
                 time={getDateAsString(message.createdAt, DateString.time)}

@@ -2,6 +2,7 @@
 import prisma from '@/lib/prisma';
 import { authClient } from '@/lib/safe-action';
 import { flattenValidationErrors } from 'next-safe-action';
+import { revalidatePath } from 'next/cache';
 import { createChannelSchema } from './create-channel.schema';
 
 export const createChannel = authClient
@@ -15,6 +16,8 @@ export const createChannel = authClient
         ...parsedInput,
       },
     });
+
+    revalidatePath(`/servers/${parsedInput.serverId}`);
 
     return channel;
   });
