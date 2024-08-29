@@ -2,7 +2,6 @@
 
 import prisma from '@/lib/prisma';
 import { authClient } from '@/lib/safe-action';
-import { wait } from '@/lib/utils';
 import { MemberRole } from '@prisma/client';
 import { flattenValidationErrors } from 'next-safe-action';
 import { revalidatePath } from 'next/cache';
@@ -15,7 +14,6 @@ export const createServer = authClient
       flattenValidationErrors(ve).fieldErrors,
   })
   .action(async ({ parsedInput, ctx }) => {
-    await wait(2000);
     const server = await prisma.server.create({
       data: {
         ...parsedInput,
