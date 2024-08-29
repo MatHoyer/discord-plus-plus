@@ -31,7 +31,7 @@ const CreateServerModal: React.FC = () => {
         </DialogHeader>
         <CreateServerForm close={closeModal}>
           {(pending) => (
-            <DialogFooter className="mt-4">
+            <DialogFooter>
               <SubmitButton loading={pending}>Create</SubmitButton>
             </DialogFooter>
           )}

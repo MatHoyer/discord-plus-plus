@@ -1,7 +1,7 @@
 import { Server } from '@prisma/client';
 import { create } from 'zustand';
 
-export type TModalType = 'createServer' | 'invite';
+export type TModalType = 'createServer' | 'invite' | 'createChannel';
 
 type TModalData = {
   server?: Server;

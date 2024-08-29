@@ -53,7 +53,10 @@ const CreateServerForm: React.FC<TCreateServerFormProps> = ({
   return (
     <Form {...form} state={state}>
       <FormError state={state} />
-      <form onSubmit={form.handleSubmit(execute)} className={cn(className)}>
+      <form
+        onSubmit={form.handleSubmit(execute)}
+        className={cn('space-y-3', className)}
+      >
         <FormField
           control={form.control}
           name="name"
