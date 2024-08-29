@@ -109,7 +109,6 @@ model PrivateMessage {
 model ServerMessage {
   id Int @id @default(autoincrement())
   content String
-  type String
   senderId Int?
   sender Member? @relation(fields: [senderId], references: [id], onDelete: SetNull)
 

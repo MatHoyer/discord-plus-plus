@@ -2,6 +2,7 @@ import ChatInput from '@/components/ChatInput';
 import Message from '@/components/Message';
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
+import { DateString, getDateAsString } from '@/lib/utils';
 import { notFound, redirect } from 'next/navigation';
 import { z } from 'zod';
 
@@ -32,6 +33,20 @@ const ChannelLayout = async (
       id: channelId,
       serverId: result.data.serverId,
     },
+    include: {
+      messages: {
+        orderBy: {
+          createdAt: 'asc',
+        },
+        include: {
+          sender: {
+            include: {
+              user: true,
+            },
+          },
+        },
+      },
+    },
   });
 
   if (!channel) {
@@ -44,13 +59,15 @@ const ChannelLayout = async (
       {channel.type === 'TEXT' && (
         <>
           <div className="h-[85%] overflow-y-scroll flex flex-col justify-end">
-            <Message
-              username="MatMat"
-              message="Hello World!"
-              time={'Today 10:00'}
-            />
+            {channel.messages.map((message) => (
+              <Message
+                username={message.sender?.user.name || 'Deleted User'}
+                message={message.content}
+                time={getDateAsString(message.createdAt, DateString.time)}
+              />
+            ))}
           </div>
-          <ChatInput channel={{ ...channel }} />
+          <ChatInput channel={channel} senderId={session.user.id} />
         </>
       )}
     </div>

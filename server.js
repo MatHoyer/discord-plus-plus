@@ -10,7 +10,7 @@ const app = next({ dev, hostname, port });
 const handler = app.getRequestHandler();
 
 app.prepare().then(() => {
-  const yellow = '\x1b[33m SOCKET: ';
+  const yellow = '\x1b[33mSOCKET: ';
   const bold = '\x1b[1m';
   const reset = '\x1b[0m';
 
@@ -37,9 +37,6 @@ app.prepare().then(() => {
       },
       ping: (data) => {
         socket.emit('pong', data);
-      },
-      'send-message': (data) => {
-        console.log(data);
       },
     });
   });
