@@ -4,6 +4,7 @@ import ScrollableChat from '@/components/channel/ScrollableChat';
 import ChatInput from '@/components/ChatInput';
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
+import { iconMap } from '@/lib/utils';
 import { redirect } from 'next/navigation';
 
 const ServerPage = async (
@@ -18,6 +19,7 @@ const ServerPage = async (
     },
     include: {
       messages: {
+        take: 100,
         orderBy: {
           createdAt: 'asc',
         },
@@ -36,10 +38,13 @@ const ServerPage = async (
     return redirect('/');
   }
 
+  const Icon = iconMap[channel.type];
+
   return (
     <>
-      <div className="h-[5%] flex items-center pl-5">
-        Server: {props.params.serverId}, Channel: {props.params.channelId}
+      <div className="h-[48px] flex items-center pl-5 border-neutral-200 dark:border-neutral-800 border-b-2">
+        <Icon className="flex-shrink-0 w-5 h-5 text-zinc-500 dark:text-zinc-400 mr-2" />
+        <h1 className="text-md font-semibold">{channel.name}</h1>
       </div>
       {channel.type === 'TEXT' && (
         <>

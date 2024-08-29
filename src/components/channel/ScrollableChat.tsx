@@ -8,20 +8,16 @@ import { ScrollArea } from '../ui/scroll-area';
 const ScrollableChat: React.FC<{ channel: ChannelWithMessages }> = ({
   channel,
 }) => {
-  const scrollRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (bottomRef.current) {
-      bottomRef.current.scrollIntoView({ behavior: 'smooth' });
+      bottomRef.current.scrollIntoView({ behavior: 'instant' });
     }
   }, [channel.messages]);
 
   return (
-    <ScrollArea
-      ref={scrollRef}
-      className="h-[85%] flex flex-col justify-end mr-5"
-    >
+    <ScrollArea className="h-[85%] flex flex-col-reverse justify-end mr-5">
       {channel.messages.map((message) => (
         <Message
           key={message.id}

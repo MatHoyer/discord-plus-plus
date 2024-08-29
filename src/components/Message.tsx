@@ -8,7 +8,7 @@ type MessageProps = {
 
 const Message: React.FC<MessageProps> = ({ username, time, message }) => {
   return (
-    <div className="px-5 py-1 hover:bg-gray-800 mr-3">
+    <div className="px-5 py-1 hover:dark:bg-[#2e3035] hover:bg-[#F2F3F5] mr-3">
       <div className="flex items-start">
         <Circle size={30} fill="gray" />
         <div className="flex flex-col px-5 h-fit">

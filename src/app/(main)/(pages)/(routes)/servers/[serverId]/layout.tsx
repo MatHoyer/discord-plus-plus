@@ -43,7 +43,9 @@ const ServerLayout = async (props: LayoutParams<{ serverId: string }>) => {
       <div className="hidden md:flex h-full w-60 z-20 flex-col fixed inset-y-0">
         <ServerSidebar serverId={serverId} />
       </div>
-      <main className="h-full md:pl-60">{props.children}</main>
+      <main className="h-full md:pl-60 dark:bg-[#313338]">
+        {props.children}
+      </main>
     </div>
   );
 };

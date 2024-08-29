@@ -1,7 +1,7 @@
 'use client';
-import { cn } from '@/lib/utils';
-import { Channel, Channeltype, MemberRole, Server } from '@prisma/client';
-import { Edit, Hash, Lock, Trash, Volume2 } from 'lucide-react';
+import { cn, iconMap } from '@/lib/utils';
+import { Channel, MemberRole, Server } from '@prisma/client';
+import { Edit, Lock, Trash } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import React from 'react';
 import ActionTooltip from '../ActionTooltip';
@@ -10,11 +10,6 @@ type TServerChannelProps = {
   channel: Channel;
   server: Server;
   role?: MemberRole;
-};
-
-const iconMap = {
-  [Channeltype.TEXT]: Hash,
-  [Channeltype.AUDIO]: Volume2,
 };
 
 const ServerChannel: React.FC<TServerChannelProps> = ({
