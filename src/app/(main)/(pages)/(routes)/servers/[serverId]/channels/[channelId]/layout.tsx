@@ -1,4 +1,5 @@
 import ChatInput from '@/components/ChatInput';
+import Message from '@/components/Message';
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { notFound, redirect } from 'next/navigation';
@@ -39,8 +40,19 @@ const ChannelLayout = async (
 
   return (
     <div className="h-full">
-      {props.children}
-      {channel.type === 'TEXT' && <ChatInput channel={channel.name} />}
+      <div className="h-[5%] flex items-center pl-5">{props.children}</div>
+      {channel.type === 'TEXT' && (
+        <>
+          <div className="h-[85%] overflow-y-scroll flex flex-col justify-end">
+            <Message
+              username="MatMat"
+              message="Hello World!"
+              time={'Today 10:00'}
+            />
+          </div>
+          <ChatInput channel={{ ...channel }} />
+        </>
+      )}
     </div>
   );
 };

@@ -16,7 +16,7 @@ const SocketLayout = (props: LayoutParams) => {
     };
   }, []);
 
-  return <div>{props.children}</div>;
+  return <div className="h-screen">{props.children}</div>;
 };
 
 export default SocketLayout;

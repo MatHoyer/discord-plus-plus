@@ -38,6 +38,9 @@ app.prepare().then(() => {
       ping: (data) => {
         socket.emit('pong', data);
       },
+      'send-message': (data) => {
+        console.log(data);
+      },
     });
   });
 
