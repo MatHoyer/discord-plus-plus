@@ -8,6 +8,9 @@ export const createChannelSchema = z.object({
     .min(3, { message: 'Channel name must be at least 3 characters long' })
     .max(30, {
       message: 'Channel name must be at most 30 characters long',
+    })
+    .refine((name) => name !== 'general', {
+      message: "Name cannot be 'general'",
     }),
   serverId: z.number().positive(),
 });
