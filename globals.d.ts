@@ -1,8 +1,16 @@
 import { useZodForm } from '@/components/ui/form';
-import { Member, Server, User } from '@prisma/client';
+import { Channel, Member, Server, ServerMessage, User } from '@prisma/client';
 import { ZodType } from 'zod';
 
 declare global {
+  interface ServerMessageWithSender extends ServerMessage {
+    sender: Member & { user: User };
+  }
+
+  interface ChannelWithMessages extends Channel {
+    messages: ServerMessageWithSender[];
+  }
+
   interface IModal {
     error: (params: IMessageParams) => Promise<boolean>;
     info: (params: IMessageParams) => Promise<boolean>;

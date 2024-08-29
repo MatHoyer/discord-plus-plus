@@ -1,10 +1,9 @@
 'use server';
 
+import ScrollableChat from '@/components/channel/ScrollableChat';
 import ChatInput from '@/components/ChatInput';
-import Message from '@/components/Message';
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
-import { getCustomDate } from '@/lib/utils';
 import { redirect } from 'next/navigation';
 
 const ServerPage = async (
@@ -44,16 +43,7 @@ const ServerPage = async (
       </div>
       {channel.type === 'TEXT' && (
         <>
-          <div className="h-[85%] overflow-y-scroll flex flex-col justify-end">
-            {channel.messages.map((message) => (
-              <Message
-                key={message.id}
-                username={message.sender?.user.name || 'Deleted User'}
-                message={message.content}
-                time={getCustomDate(message.createdAt)}
-              />
-            ))}
-          </div>
+          <ScrollableChat channel={channel as ChannelWithMessages} />
           <ChatInput channel={channel} senderId={session.user.id} />
         </>
       )}
