@@ -10,23 +10,34 @@ const app = next({ dev, hostname, port });
 const handler = app.getRequestHandler();
 
 app.prepare().then(() => {
-  const yellow = '\x1b[33m SOCKET: ';
+  const yellow = '\x1b[33mSOCKET: ';
+  const bold = '\x1b[1m';
   const reset = '\x1b[0m';
 
   const httpServer = createServer(handler);
 
   const io = new Server(httpServer);
 
+  const socketMiddleware = (socket, eventHandlers) => {
+    for (const [event, handler] of Object.entries(eventHandlers)) {
+      socket.on(event, (...args) => {
+        if (event !== 'disconnect')
+          console.log(`${yellow}${event} event triggered${reset}`);
+        handler(...args);
+      });
+    }
+  };
+
   io.on('connection', (socket) => {
-    console.log(`${yellow}user connected${reset}`);
+    console.log(`${bold}${yellow}user connected${reset}`);
 
-    socket.on('disconnect', () => {
-      console.log(`${yellow}user disconnected${reset}`);
-    });
-
-    socket.on('ping', (data) => {
-      console.log(`${yellow}ping ${data}${reset}`);
-      socket.emit('pong', data);
+    socketMiddleware(socket, {
+      disconnect: () => {
+        console.log(`${bold}${yellow}user disconnected${reset}`);
+      },
+      ping: (data) => {
+        socket.emit('pong', data);
+      },
     });
   });
 
