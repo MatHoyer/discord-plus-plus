@@ -21,7 +21,7 @@ const ServerPage = async (
       messages: {
         take: 100,
         orderBy: {
-          createdAt: 'asc',
+          createdAt: 'desc',
         },
         include: {
           sender: {
