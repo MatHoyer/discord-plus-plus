@@ -20,5 +20,14 @@ export const loadMoreMessages = async (channelId: number, skip: number) => {
     },
   });
 
-  return messages as ServerMessageWithSender[];
+  const messagesCount = await prisma.serverMessage.count({
+    where: {
+      channelId,
+    },
+  });
+
+  return { messages, messagesCount } as {
+    messages: ServerMessageWithSender[];
+    messagesCount: number;
+  };
 };

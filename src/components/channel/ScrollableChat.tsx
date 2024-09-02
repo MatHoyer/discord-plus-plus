@@ -13,6 +13,7 @@ const ScrollableChat: React.FC<{ channel: ChannelWithMessages }> = ({
     channel.messages
   );
   const topRef = useRef<HTMLDivElement>(null);
+  const countRef = useRef<number>(0);
 
   useEffect(() => {
     socket.on(
@@ -29,11 +30,10 @@ const ScrollableChat: React.FC<{ channel: ChannelWithMessages }> = ({
   useEffect(() => {
     const observer = new IntersectionObserver(
       async ([entry]) => {
-        if (entry.isIntersecting) {
-          const newMessages = await loadMoreMessages(
-            channel.id,
-            messages.length
-          );
+        if (entry.isIntersecting && messages.length !== countRef.current) {
+          const { messages: newMessages, messagesCount } =
+            await loadMoreMessages(channel.id, messages.length);
+          countRef.current = messagesCount;
           setMessages((prev) => [...prev, ...newMessages]);
         }
       },
