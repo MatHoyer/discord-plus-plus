@@ -35,11 +35,14 @@ app.prepare().then(() => {
 			disconnect: () => {
 				console.log(`${bold}${yellow}user disconnected${reset}`);
 			},
-			'new-message': (data) => {
-				io.emit(`channel:${data.channelId}:new-message`, data.message);
+			'new-message': ({ channelId, message }) => {
+				io.emit(`channel:${channelId}:new-message`, message);
 			},
 			'edit-message': (data) => {
 				io.emit(`channel:${data.channelId}:edit-message`, data);
+			},
+			'delete-message': ({ channelId, messageId }) => {
+				io.emit(`channel:${channelId}:delete-message`, messageId);
 			}
 		});
 	});

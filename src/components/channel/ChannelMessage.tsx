@@ -1,5 +1,6 @@
 import { editMessage } from '@/features/server/channel/edit-message/edit-message.action';
 import { editMessageSchema } from '@/features/server/channel/edit-message/edit-message.schema';
+import { useModal } from '@/hooks/useModalStore';
 import { checkRole, cn } from '@/lib/utils';
 import { socket } from '@/socket';
 import { Member } from '@prisma/client';
@@ -7,19 +8,26 @@ import { isEqual } from 'date-fns';
 import { Edit, Trash } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
 import { useEffect, useRef, useState } from 'react';
-import ActionTooltip from './ActionTooltip';
-import { roleIconMap } from './server/ServerSidebar';
-import { Form, FormControl, FormField, FormItem, useZodForm } from './ui/form';
-import { Input } from './ui/input';
-import UserAvatar from './UserAvatar';
+import ActionTooltip from '../ActionTooltip';
+import { roleIconMap } from '../server/ServerSidebar';
+import { Form, FormControl, FormField, FormItem, useZodForm } from '../ui/form';
+import { Input } from '../ui/input';
+import UserAvatar from '../UserAvatar';
 
-type MessageProps = {
+type TChannelMessageProps = {
   time: string;
   message: ServerMessageWithSender;
   currentMember: Member;
+  preview?: boolean;
 };
 
-const Message: React.FC<MessageProps> = ({ time, message, currentMember }) => {
+const ChannelMessage: React.FC<TChannelMessageProps> = ({
+  time,
+  message,
+  currentMember,
+  preview = false,
+}) => {
+  const { openModal } = useModal();
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -71,13 +79,23 @@ const Message: React.FC<MessageProps> = ({ time, message, currentMember }) => {
   return (
     <div className="relative group flex items-center hover:bg-black/5 p-4 transition-colors w-full">
       <div className="group flex gap-x-2 items-start w-full">
-        <div className="cursor-pointer hover:drop-shadow-md transition">
+        <div
+          className={cn(
+            'hover:drop-shadow-md transition',
+            !preview && 'cursor-pointer '
+          )}
+        >
           <UserAvatar src={member.user.image} />
         </div>
         <div className="flex flex-col w-full">
           <div className="flex items-center gap-x-2">
             <div className="flex items-center gap-x-2">
-              <p className="font-semibold text-sm hover:underline cursor-pointer">
+              <p
+                className={cn(
+                  'font-semibold text-sm',
+                  !preview && 'hover:underline cursor-pointer'
+                )}
+              >
                 {member.user.name}
               </p>
               <ActionTooltip label={member.role}>
@@ -96,13 +114,13 @@ const Message: React.FC<MessageProps> = ({ time, message, currentMember }) => {
             >
               {message.content}
               {isUpdated && (
-                <span className="text-[10px] mx-2 text-zinc-500 dark:text-zinc-400">
+                <span className="text-[10px] mx-2 text-zinc-500 dark:text-zinc-400 select-none">
                   (edited)
                 </span>
               )}
             </p>
           )}
-          {isEditing && (
+          {!preview && isEditing && (
             <Form {...form} state={state}>
               <form
                 onSubmit={form.handleSubmit(execute)}
@@ -133,7 +151,7 @@ const Message: React.FC<MessageProps> = ({ time, message, currentMember }) => {
           )}
         </div>
       </div>
-      {canDeleteMessage && (
+      {!preview && canDeleteMessage && (
         <div className="hidden group-hover:flex items-center gap-x-2 absolute p-1 -top-2 right-5 bg-white dark:bg-zinc-800 border rounded-sm">
           {canEditMessage && (
             <ActionTooltip label="Edit">
@@ -149,7 +167,15 @@ const Message: React.FC<MessageProps> = ({ time, message, currentMember }) => {
             </ActionTooltip>
           )}
           <ActionTooltip label="Delete">
-            <Trash className="cursor-pointer ml-auto w-4 h-4 text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors" />
+            <Trash
+              className="cursor-pointer ml-auto w-4 h-4 text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors"
+              onClick={() => {
+                openModal('deleteChannelMessage', {
+                  serverMessage: message,
+                  currentMember,
+                });
+              }}
+            />
           </ActionTooltip>
         </div>
       )}
@@ -157,4 +183,4 @@ const Message: React.FC<MessageProps> = ({ time, message, currentMember }) => {
   );
 };
 
-export default Message;
+export default ChannelMessage;

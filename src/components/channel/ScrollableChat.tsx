@@ -5,7 +5,7 @@ import { getCustomDate } from '@/lib/utils';
 import { socket } from '@/socket';
 import { Member, User } from '@prisma/client';
 import { useEffect, useRef, useState } from 'react';
-import Message from '../Message';
+import ChannelMessage from './ChannelMessage';
 
 const ScrollableChat: React.FC<{
   channel: ChannelWithMessages;
@@ -36,9 +36,14 @@ const ScrollableChat: React.FC<{
       });
     });
 
+    socket.on(`${key}:delete-message`, (messageId: number) => {
+      setMessages((prev) => prev.filter((m) => m.id !== messageId));
+    });
+
     return () => {
       socket.off(`${key}:new-message`);
       socket.off(`${key}:edit-message`);
+      socket.off(`${key}:delete-message`);
     };
   }, [channel.id]);
 
@@ -70,7 +75,7 @@ const ScrollableChat: React.FC<{
   return (
     <div className="flex-1 overflow-y-scroll flex flex-col-reverse">
       {messages.map((message) => (
-        <Message
+        <ChannelMessage
           key={message.id}
           message={message}
           currentMember={currentMember}

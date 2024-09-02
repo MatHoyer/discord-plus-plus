@@ -1,11 +1,8 @@
-import { positiveNumber } from '@/lib/schema-utils';
 import { z } from 'zod';
+import { deleteMessageSchema } from '../delete-message/delete-message.schema';
 
-export const editMessageSchema = z.object({
+export const editMessageSchema = deleteMessageSchema.extend({
   content: z.string().min(1).max(2000),
-  messageId: positiveNumber,
-  serverId: positiveNumber,
-  channelId: positiveNumber,
 });
 
 export type TEditMessage = z.infer<typeof editMessageSchema>;

@@ -1,14 +1,17 @@
-import { Server } from '@prisma/client';
+import { Member, Server } from '@prisma/client';
 import { create } from 'zustand';
 
 export type TModalType =
   | 'createServer'
   | 'invite'
   | 'createChannel'
-  | 'members';
+  | 'members'
+  | 'deleteChannelMessage';
 
 type TModalData = {
   server?: Server;
+  serverMessage?: ServerMessageWithSender;
+  currentMember?: Member;
 };
 
 type TModalStore = {

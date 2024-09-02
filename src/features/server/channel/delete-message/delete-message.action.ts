@@ -4,15 +4,16 @@ import prisma from '@/lib/prisma';
 import { authClient } from '@/lib/safe-action';
 import { flattenValidationErrors } from 'next-safe-action';
 import { checkMessage } from '../check-message';
-import { editMessageSchema } from './edit-message.schema';
+import { deleteMessageSchema } from './delete-message.schema';
 
-export const editMessage = authClient
-  .schema(editMessageSchema, {
+export const deleteMessage = authClient
+  .schema(deleteMessageSchema, {
     handleValidationErrorsShape: (ve) =>
       flattenValidationErrors(ve).fieldErrors,
   })
   .action(async ({ parsedInput, ctx }) => {
-    const { content, messageId, channelId, serverId } = parsedInput;
+    const { messageId, channelId, serverId } = parsedInput;
+
     let message = await checkMessage({
       channelId,
       serverId,
@@ -20,19 +21,9 @@ export const editMessage = authClient
       userId: ctx.userId,
     });
 
-    message = await prisma.serverMessage.update({
+    await prisma.serverMessage.delete({
       where: {
         id: messageId,
-      },
-      data: {
-        content,
-      },
-      include: {
-        sender: {
-          include: {
-            user: true,
-          },
-        },
       },
     });
 
