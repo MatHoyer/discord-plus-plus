@@ -35,6 +35,15 @@ const ServerChannels: React.FC<TServerChannelsProps> = ({
       }));
     });
 
+    socket.on('edit-channel', (channel: Channel) => {
+      setChannels((prev) => ({
+        ...prev,
+        [channel.type]: prev[channel.type].map((c) =>
+          c.id === channel.id ? channel : c
+        ),
+      }));
+    });
+
     socket.on('delete-channel', (channel: Channel) => {
       setChannels((prev) => ({
         ...prev,
@@ -44,6 +53,7 @@ const ServerChannels: React.FC<TServerChannelsProps> = ({
 
     return () => {
       socket.off('new-channel');
+      socket.off('edit-channel');
       socket.off('delete-channel');
     };
   }, []);

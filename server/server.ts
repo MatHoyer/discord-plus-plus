@@ -69,6 +69,9 @@ app.prepare().then(() => {
       'new-channel': (channel) => {
         io.emit('new-channel', channel);
       },
+      'edit-channel': (channel) => {
+        io.emit('edit-channel', channel);
+      },
       'delete-channel': (channel) => {
         io.emit('delete-channel', channel);
       },

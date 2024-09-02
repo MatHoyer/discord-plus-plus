@@ -7,7 +7,8 @@ export type TModalType =
   | 'createChannel'
   | 'members'
   | 'deleteChannelMessage'
-  | 'deleteChannel';
+  | 'deleteChannel'
+  | 'editChannel';
 
 type TModalData = {
   server?: Server;
