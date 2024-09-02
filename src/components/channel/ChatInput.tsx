@@ -3,7 +3,7 @@ import { sendMessage } from '@/features/server/channel/send-message/send-message
 import { SocketEvents } from '@/lib/socketUtils';
 import { socket } from '@/socket';
 import { Channel } from '@prisma/client';
-import { CirclePlus } from 'lucide-react';
+import { Plus, Smile } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useAction } from 'next-safe-action/hooks';
 import { useState } from 'react';
@@ -13,7 +13,7 @@ const ChatInput: React.FC<{ channel: Channel }> = ({ channel }) => {
   const session = useSession();
   const [message, setMessage] = useState('');
 
-  const { execute, isExecuting, result } = useAction(sendMessage, {
+  const { execute } = useAction(sendMessage, {
     onSuccess: (message) => {
       socket.emit(SocketEvents.NEW_MESSAGE, {
         message: message.data,
@@ -23,10 +23,12 @@ const ChatInput: React.FC<{ channel: Channel }> = ({ channel }) => {
   });
 
   return (
-    <div className="flex items-center gap-2 rounded-lg p-1 bg-[#383a40] mx-5 mt-5">
-      <CirclePlus size={30} className="ml-2 cursor-pointer" />
+    <div className="relative p-4 pb-6">
+      <button className="absolute top-7 left-8 h-[24px] w-[24px] bg-zinc-500 dark:bg-zinc-400 hover:bg-zinc-600 dark:hover:bg-zinc-300 transition-colors rounded-full p-1 flex items-center justify-center">
+        <Plus className="cursor-pointer text-white dark:text-[#313338]" />
+      </button>
       <Input
-        className="border-none bg-inherit focus-visible:ring-0 focus-visible:ring-offset-0 select-none "
+        className="px-14 py-6 bg-zinc-200/90 dark:bg-zinc-700/75 border-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-zinc-600 dark:text-zinc-200"
         placeholder={`Envoyer un message dans #${channel.name}`}
         value={message}
         onChange={(e) => setMessage(e.target.value)}
@@ -41,6 +43,9 @@ const ChatInput: React.FC<{ channel: Channel }> = ({ channel }) => {
           }
         }}
       />
+      <div className="absolute top-7 right-8">
+        <Smile className="cursor-pointer" />
+      </div>
     </div>
   );
 };

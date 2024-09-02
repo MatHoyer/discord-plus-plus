@@ -36,7 +36,11 @@ const ChannelLayout = async (
     return redirect('/');
   }
 
-  return <div className="h-full">{props.children}</div>;
+  return (
+    <div className="bg-white dark:bg-[#313338] flex flex-col h-full">
+      {props.children}
+    </div>
+  );
 };
 
 export default ChannelLayout;

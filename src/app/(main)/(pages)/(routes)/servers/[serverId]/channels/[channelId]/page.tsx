@@ -1,17 +1,30 @@
 'use server';
 
+import ChannelHeader from '@/components/channel/ChannelHeader';
 import ChatInput from '@/components/channel/ChatInput';
 import ScrollableChat from '@/components/channel/ScrollableChat';
 
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
-import { iconMap } from '@/lib/utils';
 import { redirect } from 'next/navigation';
 
 const ServerPage = async (
   props: PageParams<{ serverId: string; channelId: string }>
 ) => {
   const session = await auth();
+  if (!session) {
+    return redirect('/');
+  }
+
+  const currentMember = await prisma.member.findFirst({
+    where: {
+      serverId: +props.params.serverId,
+      userId: session.user.id,
+    },
+    include: {
+      user: true,
+    },
+  });
 
   const channel = await prisma.channel.findUnique({
     where: {
@@ -35,21 +48,19 @@ const ServerPage = async (
     },
   });
 
-  if (!channel || !session) {
+  if (!channel || !currentMember) {
     return redirect('/');
   }
 
-  const Icon = iconMap[channel.type];
-
   return (
     <>
-      <div className="h-[48px] flex items-center pl-5 border-neutral-200 dark:border-neutral-800 border-b-2">
-        <Icon className="flex-shrink-0 w-5 h-5 text-zinc-500 dark:text-zinc-400 mr-2" />
-        <h1 className="text-md font-semibold">{channel.name}</h1>
-      </div>
+      <ChannelHeader name={channel.name} channelType={channel.type} />
       {channel.type === 'TEXT' && (
         <>
-          <ScrollableChat channel={channel as ChannelWithMessages} />
+          <ScrollableChat
+            channel={channel as ChannelWithMessages}
+            currentMember={currentMember}
+          />
           <ChatInput channel={channel} />
         </>
       )}

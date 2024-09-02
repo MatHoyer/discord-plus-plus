@@ -1,5 +1,6 @@
 'use client';
 import { useModal } from '@/hooks/useModalStore';
+import { checkRole } from '@/lib/utils';
 import { MemberRole } from '@prisma/client';
 import {
   ChevronDown,
@@ -24,10 +25,12 @@ type TServerHeaderProps = {
   role?: MemberRole;
 };
 
-const ServerHeader: React.FC<TServerHeaderProps> = ({ server, role }) => {
+const ServerHeader: React.FC<TServerHeaderProps> = ({
+  server,
+  role = MemberRole.GUEST,
+}) => {
   const { openModal } = useModal();
-  const isAdmin = role === MemberRole.ADMIN;
-  const isModerator = isAdmin || role === MemberRole.MODERATOR;
+  const { isAdmin, isModerator } = checkRole(role);
 
   return (
     <DropdownMenu>

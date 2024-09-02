@@ -1,3 +1,4 @@
+import { positiveNumber } from '@/lib/schema-utils';
 import { Channeltype } from '@prisma/client';
 import { z } from 'zod';
 
@@ -12,7 +13,7 @@ export const createChannelSchema = z.object({
     .refine((name) => name !== 'general', {
       message: "Name cannot be 'general'",
     }),
-  serverId: z.number().positive(),
+  serverId: positiveNumber,
 });
 
 export type TCreateChannel = z.infer<typeof createChannelSchema>;

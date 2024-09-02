@@ -3,31 +3,47 @@
 import { loadMoreMessages } from '@/features/server/channel/loadMoreMessages';
 import { getCustomDate } from '@/lib/utils';
 import { socket } from '@/socket';
+import { Member, User } from '@prisma/client';
 import { useEffect, useRef, useState } from 'react';
 import Message from '../Message';
 
-const ScrollableChat: React.FC<{ channel: ChannelWithMessages }> = ({
-  channel,
-}) => {
+const ScrollableChat: React.FC<{
+  channel: ChannelWithMessages;
+  currentMember: Member & { user: User };
+}> = ({ channel, currentMember }) => {
   const [messages, setMessages] = useState<ServerMessageWithSender[]>(
     channel.messages
   );
+
   const topRef = useRef<HTMLDivElement>(null);
   const countRef = useRef<number>(0);
 
   useEffect(() => {
-    socket.on(
-      `channel:${channel.id}:new-message`,
-      (message: ServerMessageWithSender) => {
-        setMessages((prev) => [message, ...prev]);
-      }
-    );
+    const key = `channel:${channel.id}`;
+    socket.on(`${key}:new-message`, (message: ServerMessageWithSender) => {
+      setMessages((prev) => [message, ...prev]);
+    });
+
+    socket.on(`${key}:edit-message`, (message: ServerMessageWithSender) => {
+      setMessages((prev) => {
+        const index = prev.findIndex((m) => m.id === message.id);
+        if (index === -1) {
+          return prev;
+        }
+        const newMessages = [...prev];
+        newMessages[index] = message;
+        return newMessages;
+      });
+    });
+
     return () => {
-      socket.off(`channel:${channel.id}:new-message`);
+      socket.off(`${key}:new-message`);
+      socket.off(`${key}:edit-message`);
     };
-  }, []);
+  }, [channel.id]);
 
   useEffect(() => {
+    const ref = topRef.current;
     const observer = new IntersectionObserver(
       async ([entry]) => {
         if (entry.isIntersecting && messages.length !== countRef.current) {
@@ -45,19 +61,19 @@ const ScrollableChat: React.FC<{ channel: ChannelWithMessages }> = ({
     }
 
     return () => {
-      if (topRef.current) {
-        observer.unobserve(topRef.current);
+      if (ref) {
+        observer.unobserve(ref);
       }
     };
-  }, [messages]);
+  }, [channel.id, messages]);
 
   return (
-    <div className="h-[85%] flex flex-col-reverse mr-5 overflow-y-scroll">
+    <div className="flex-1 overflow-y-scroll flex flex-col-reverse">
       {messages.map((message) => (
         <Message
           key={message.id}
-          username={message.sender?.user.name || 'Deleted User'}
-          message={message.content}
+          message={message}
+          currentMember={currentMember}
           time={getCustomDate(new Date(message.createdAt))}
         />
       ))}
