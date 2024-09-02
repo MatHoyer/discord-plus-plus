@@ -35,8 +35,8 @@ app.prepare().then(() => {
       disconnect: () => {
         console.log(`${bold}${yellow}user disconnected${reset}`);
       },
-      ping: (data) => {
-        socket.emit('pong', data);
+      'new-message': (data) => {
+        io.emit(`channel:${data.channelId}:new-message`, data.message);
       },
     });
   });

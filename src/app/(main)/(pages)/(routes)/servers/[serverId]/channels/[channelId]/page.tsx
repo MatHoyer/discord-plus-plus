@@ -1,7 +1,8 @@
 'use server';
 
+import ChatInput from '@/components/channel/ChatInput';
 import ScrollableChat from '@/components/channel/ScrollableChat';
-import ChatInput from '@/components/ChatInput';
+
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { iconMap } from '@/lib/utils';
@@ -49,7 +50,7 @@ const ServerPage = async (
       {channel.type === 'TEXT' && (
         <>
           <ScrollableChat channel={channel as ChannelWithMessages} />
-          <ChatInput channel={channel} senderId={session.user.id} />
+          <ChatInput channel={channel} />
         </>
       )}
     </>
