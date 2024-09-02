@@ -1,5 +1,5 @@
 'use client';
-import { sendMessage } from '@/features/server/send-message/send-message.action';
+import { sendMessage } from '@/features/server/channel/send-message/send-message.action';
 import { SocketEvents } from '@/lib/socketUtils';
 import { socket } from '@/socket';
 import { Channel } from '@prisma/client';

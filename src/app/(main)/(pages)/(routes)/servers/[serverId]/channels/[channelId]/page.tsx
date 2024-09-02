@@ -20,7 +20,7 @@ const ServerPage = async (
     },
     include: {
       messages: {
-        take: 100,
+        take: 10,
         orderBy: {
           createdAt: 'desc',
         },

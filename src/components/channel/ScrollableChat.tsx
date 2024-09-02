@@ -1,8 +1,9 @@
 'use client';
 
+import { loadMoreMessages } from '@/features/server/channel/loadMoreMessages';
 import { getCustomDate } from '@/lib/utils';
 import { socket } from '@/socket';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Message from '../Message';
 
 const ScrollableChat: React.FC<{ channel: ChannelWithMessages }> = ({
@@ -11,6 +12,7 @@ const ScrollableChat: React.FC<{ channel: ChannelWithMessages }> = ({
   const [messages, setMessages] = useState<ServerMessageWithSender[]>(
     channel.messages
   );
+  const topRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     socket.on(
@@ -24,6 +26,31 @@ const ScrollableChat: React.FC<{ channel: ChannelWithMessages }> = ({
     };
   }, []);
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      async ([entry]) => {
+        if (entry.isIntersecting) {
+          const newMessages = await loadMoreMessages(
+            channel.id,
+            messages.length
+          );
+          setMessages((prev) => [...prev, ...newMessages]);
+        }
+      },
+      { threshold: 0.01 }
+    );
+
+    if (topRef.current) {
+      observer.observe(topRef.current);
+    }
+
+    return () => {
+      if (topRef.current) {
+        observer.unobserve(topRef.current);
+      }
+    };
+  }, [messages]);
+
   return (
     <div className="h-[85%] flex flex-col-reverse mr-5 overflow-y-scroll">
       {messages.map((message) => (
@@ -34,6 +61,7 @@ const ScrollableChat: React.FC<{ channel: ChannelWithMessages }> = ({
           time={getCustomDate(new Date(message.createdAt))}
         />
       ))}
+      <div ref={topRef} className="p-1" />
     </div>
   );
 };
