@@ -32,7 +32,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
   const [isDeleting, setIsDeleting] = useState(false);
 
   const member = message.sender;
-  const { isAdmin, isModerator } = checkRole(member.role);
+  const { isAdmin, isModerator } = checkRole(currentMember.role);
   const isUpdated = !isEqual(message.createdAt, message.updatedAt);
   const isDeleted = message.deleted;
   const isOwner = currentMember.id === member.id;

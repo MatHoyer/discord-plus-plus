@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { cn } from '@/lib/utils';
+import { socket } from '@/socket';
 import { Channeltype } from '@prisma/client';
 import { Hash, Volume2 } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
@@ -49,6 +50,7 @@ const CreateChannelForm: React.FC<TCreateServerFormProps> = ({
     onSuccess: ({ data }) => {
       close?.();
       router.push(`/servers/${serverId}/channels/${data!.id}`);
+      socket.emit('new-channel', data);
     },
   });
 

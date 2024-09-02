@@ -1,6 +1,7 @@
 'use client';
+import { useModal } from '@/hooks/useModalStore';
 import { cn, iconMap } from '@/lib/utils';
-import { Channel, MemberRole, Server } from '@prisma/client';
+import { Channel, MemberRole } from '@prisma/client';
 import { Edit, Lock, Trash } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import React from 'react';
@@ -8,7 +9,6 @@ import ActionTooltip from '../ActionTooltip';
 
 type TServerChannelProps = {
   channel: Channel;
-  server: Server;
   role?: MemberRole;
   isUnread?: boolean;
   setAsRead?: (channelId: number) => void;
@@ -16,11 +16,11 @@ type TServerChannelProps = {
 
 const ServerChannel: React.FC<TServerChannelProps> = ({
   channel,
-  server,
   role,
   isUnread,
   setAsRead,
 }) => {
+  const { openModal } = useModal();
   const params = useParams();
   const router = useRouter();
   const { channelId, serverId } = params;
@@ -64,6 +64,14 @@ const ServerChannel: React.FC<TServerChannelProps> = ({
             </ActionTooltip>
             <ActionTooltip label="Delete">
               <Trash
+                onClick={(e) => {
+                  e.stopPropagation();
+                  console.log('current', +channelId);
+                  openModal('deleteChannel', {
+                    channel,
+                    currentChannelId: +channelId,
+                  });
+                }}
                 className={cn(
                   'hidden group-hover:block w-4 h-4 text-zinc-500 hover:text-zinc-600 dark:text-zinc-400 dark:hover:text-zinc-300 transition-colors',
                   isSelected && 'block'

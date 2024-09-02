@@ -3,10 +3,10 @@
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { authClient } from '@/lib/safe-action';
-import { SendMessageSchema } from './send-message.schema';
+import { sendMessageSchema } from './send-message.schema';
 
 export const sendMessage = authClient
-  .schema(SendMessageSchema)
+  .schema(sendMessageSchema)
   .action(async ({ parsedInput, ctx }) => {
     const session = await auth();
 

@@ -1,6 +1,6 @@
 'use client';
 import { socket } from '@/socket';
-import { Channel, MemberRole } from '@prisma/client';
+import { Channel, Channeltype, MemberRole } from '@prisma/client';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import ServerChannel from './ServerChannel';
@@ -20,10 +20,37 @@ const ServerChannels: React.FC<TServerChannelsProps> = ({
   channels: { textChannels, audioChannels },
   role,
 }) => {
+  const [channels, setChannels] = useState({
+    [Channeltype.TEXT]: textChannels,
+    [Channeltype.AUDIO]: audioChannels,
+  });
   const [unreadChannels, setUnreadChannels] = useState<Set<number>>(new Set());
   const params = useParams();
 
   useEffect(() => {
+    socket.on('new-channel', (channel: Channel) => {
+      setChannels((prev) => ({
+        ...prev,
+        [channel.type]: [...prev[channel.type], channel],
+      }));
+    });
+
+    socket.on('delete-channel', (channel: Channel) => {
+      setChannels((prev) => ({
+        ...prev,
+        [channel.type]: prev[channel.type].filter((c) => c.id !== channel.id),
+      }));
+    });
+
+    return () => {
+      socket.off('new-channel');
+      socket.off('delete-channel');
+    };
+  }, []);
+
+  useEffect(() => {
+    const textChannels = channels.TEXT;
+
     for (const channel of textChannels) {
       if (channel.id !== +params.channelId) {
         socket.on(`channel:${channel.id}:new-message`, () => {
@@ -39,11 +66,11 @@ const ServerChannels: React.FC<TServerChannelsProps> = ({
         }
       }
     };
-  }, [server]);
+  }, [channels]);
 
   return (
     <>
-      {!!textChannels?.length && (
+      {!!channels.TEXT?.length && (
         <div className="mb-2">
           <ServerSection
             label="Text Channels"
@@ -52,10 +79,10 @@ const ServerChannels: React.FC<TServerChannelsProps> = ({
             role={role}
             server={server}
           />
-          {textChannels.map((channel) => (
+          {channels.TEXT.map((channel) => (
             <ServerChannel
               key={channel.id}
-              {...{ channel, server, role }}
+              {...{ channel, role }}
               isUnread={[...unreadChannels].includes(channel.id)}
               setAsRead={() => {
                 setUnreadChannels((prev) => {
@@ -67,7 +94,7 @@ const ServerChannels: React.FC<TServerChannelsProps> = ({
           ))}
         </div>
       )}
-      {!!audioChannels?.length && (
+      {!!channels.AUDIO?.length && (
         <div className="mb-2">
           <ServerSection
             label="Audio Channels"
@@ -76,8 +103,8 @@ const ServerChannels: React.FC<TServerChannelsProps> = ({
             role={role}
             server={server}
           />
-          {audioChannels.map((channel) => (
-            <ServerChannel key={channel.id} {...{ channel, server, role }} />
+          {channels.AUDIO.map((channel) => (
+            <ServerChannel key={channel.id} {...{ channel, role }} />
           ))}
         </div>
       )}
