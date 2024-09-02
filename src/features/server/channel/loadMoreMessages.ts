@@ -5,6 +5,7 @@ export const loadMoreMessages = async (channelId: number, skip: number) => {
   const messages = await prisma.serverMessage.findMany({
     where: {
       channelId,
+      deleted: false,
     },
     skip: skip,
     take: 10,

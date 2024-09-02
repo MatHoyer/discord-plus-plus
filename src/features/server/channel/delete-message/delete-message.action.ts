@@ -21,9 +21,12 @@ export const deleteMessage = authClient
       userId: ctx.userId,
     });
 
-    await prisma.serverMessage.delete({
+    await prisma.serverMessage.update({
       where: {
         id: messageId,
+      },
+      data: {
+        deleted: true,
       },
     });
 

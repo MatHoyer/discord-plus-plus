@@ -37,6 +37,9 @@ const ServerPage = async (
         orderBy: {
           createdAt: 'desc',
         },
+        where: {
+          deleted: false,
+        },
         include: {
           sender: {
             include: {
