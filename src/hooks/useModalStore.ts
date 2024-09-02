@@ -30,5 +30,5 @@ export const useModal = create<TModalStore>((set) => ({
   isOpen: false,
   data: {},
   openModal: (type, data = {}) => set({ isOpen: true, type, data }),
-  closeModal: () => set({ isOpen: false, type: null }),
+  closeModal: () => set({ isOpen: false, type: null, data: {} }),
 }));

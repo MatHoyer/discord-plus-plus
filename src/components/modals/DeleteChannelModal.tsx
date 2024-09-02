@@ -5,6 +5,7 @@ import { useModal } from '@/hooks/useModalStore';
 import { socket } from '@/socket';
 import { useAction } from 'next-safe-action/hooks';
 import { useRouter } from 'next/navigation';
+import { useRef } from 'react';
 import { Button } from '../ui/button';
 import {
   Dialog,
@@ -19,19 +20,21 @@ const DeleteChannelModal: React.FC = () => {
   const router = useRouter();
   const { isOpen, type, data: modalData, closeModal } = useModal();
 
+  const modalDataRef = useRef(modalData);
+  modalDataRef.current = modalData;
+
   const { execute } = useAction(deleteChannel, {
     onSuccess: ({ data }) => {
-      console.log(modalData?.currentChannelId, data?.channel?.id);
-
-      if (modalData?.currentChannelId === data?.channel?.id) {
+      if (modalDataRef.current?.currentChannelId === data?.channel?.id) {
         router.push(
-          `/servers/${data?.channel?.serverId}/channels/${data?.generalChannel?.id}`
+          `/servers/${modalDataRef.current.channel?.serverId}/channels/${data?.generalChannel?.id}`
         );
       }
       closeModal();
       socket.emit('delete-channel', data?.channel);
     },
   });
+
   const open = isOpen && type === 'deleteChannel';
 
   if (!modalData.channel) return null;

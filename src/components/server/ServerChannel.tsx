@@ -66,7 +66,6 @@ const ServerChannel: React.FC<TServerChannelProps> = ({
               <Trash
                 onClick={(e) => {
                   e.stopPropagation();
-                  console.log('current', +channelId);
                   openModal('deleteChannel', {
                     channel,
                     currentChannelId: +channelId,
