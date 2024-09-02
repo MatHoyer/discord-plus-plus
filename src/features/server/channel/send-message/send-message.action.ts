@@ -1,13 +1,19 @@
 'use server';
 
+import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { authClient } from '@/lib/safe-action';
-import { revalidatePath } from 'next/cache';
 import { SendMessageSchema } from './send-message.schema';
 
 export const sendMessage = authClient
   .schema(SendMessageSchema)
   .action(async ({ parsedInput, ctx }) => {
+    const session = await auth();
+
+    if (!session) {
+      throw new Error('Unauthorized');
+    }
+
     const message = await prisma.serverMessage.create({
       data: {
         content: parsedInput.message,
@@ -16,12 +22,13 @@ export const sendMessage = authClient
       },
       include: {
         channel: true,
+        sender: {
+          include: {
+            user: true,
+          },
+        },
       },
     });
-
-    revalidatePath(
-      `/servers/${message.channel.serverId}/channels/${message.channelId}`
-    );
 
     return message;
   });

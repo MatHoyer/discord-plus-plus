@@ -6,10 +6,9 @@ import { redirect } from 'next/navigation';
 import React from 'react';
 import { ScrollArea } from '../ui/scroll-area';
 import { Separator } from '../ui/separator';
-import ServerChannel from './ServerChannel';
+import ServerChannels from './ServerChannels';
 import ServerHeader from './ServerHeader';
 import ServerSearch from './ServerSearch';
-import ServerSection from './ServerSection';
 
 type TServerSidebarProps = {
   serverId: number;
@@ -115,34 +114,11 @@ const ServerSidebar: React.FC<TServerSidebarProps> = async ({ serverId }) => {
           />
         </div>
         <Separator className="bg-zinc-200 dark:bg-zinc-700 rounded-md my-2" />
-        {!!textChannels?.length && (
-          <div className="mb-2">
-            <ServerSection
-              label="Text Channels"
-              sectionType="channels"
-              channelType="TEXT"
-              role={role}
-              server={server}
-            />
-            {textChannels.map((channel) => (
-              <ServerChannel key={channel.id} {...{ channel, server, role }} />
-            ))}
-          </div>
-        )}
-        {!!audioChannels?.length && (
-          <div className="mb-2">
-            <ServerSection
-              label="Audio Channels"
-              sectionType="channels"
-              channelType="AUDIO"
-              role={role}
-              server={server}
-            />
-            {audioChannels.map((channel) => (
-              <ServerChannel key={channel.id} {...{ channel, server, role }} />
-            ))}
-          </div>
-        )}
+        <ServerChannels
+          server={server}
+          channels={{ textChannels, audioChannels }}
+          role={role}
+        />
       </ScrollArea>
     </div>
   );
