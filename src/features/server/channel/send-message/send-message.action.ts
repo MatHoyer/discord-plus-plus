@@ -1,24 +1,25 @@
 'use server';
 
-import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { authClient } from '@/lib/safe-action';
+import { flattenValidationErrors } from 'next-safe-action';
 import { sendMessageSchema } from './send-message.schema';
 
 export const sendMessage = authClient
-  .schema(sendMessageSchema)
+  .schema(sendMessageSchema, {
+    handleValidationErrorsShape: (ve) =>
+      flattenValidationErrors(ve).fieldErrors,
+  })
   .action(async ({ parsedInput, ctx }) => {
-    const session = await auth();
-
-    if (!session) {
+    const { userId } = ctx;
+    if (!userId) {
       throw new Error('Unauthorized');
     }
 
     const message = await prisma.serverMessage.create({
       data: {
-        content: parsedInput.message,
-        channelId: parsedInput.channelId,
-        senderId: ctx.userId,
+        ...parsedInput,
+        senderId: userId,
       },
       include: {
         channel: true,

@@ -1,5 +1,8 @@
 import { editMessage } from '@/features/server/channel/edit-message/edit-message.action';
-import { editMessageSchema } from '@/features/server/channel/edit-message/edit-message.schema';
+import {
+  editMessageSchema,
+  TEditMessage,
+} from '@/features/server/channel/edit-message/edit-message.schema';
 import { useModal } from '@/hooks/useModalStore';
 import { checkRole, cn } from '@/lib/utils';
 import { socket } from '@/socket';
@@ -8,7 +11,9 @@ import { isEqual } from 'date-fns';
 import { Edit, Trash } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
 import { useEffect, useRef, useState } from 'react';
+import { FieldErrors } from 'react-hook-form';
 import ActionTooltip from '../ActionTooltip';
+import { modal } from '../Modal';
 import { roleIconMap } from '../server/ServerSidebar';
 import { Form, FormControl, FormField, FormItem, useZodForm } from '../ui/form';
 import { Input } from '../ui/input';
@@ -41,11 +46,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const {
-    execute,
-    isExecuting,
-    result: state,
-  } = useAction(editMessage, {
+  const { execute, result: state } = useAction(editMessage, {
     onSuccess: ({ data }) => {
       setIsEditing(false);
       socket.emit('edit-message', data);
@@ -66,6 +67,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setIsEditing(false);
+        form.reset();
       }
     };
 
@@ -75,6 +77,15 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
+
+  const onError = (errors: FieldErrors<TEditMessage>) => {
+    if (errors.content) {
+      modal.error({
+        title: 'Your message is too long',
+        message: errors.content.message,
+      });
+    }
+  };
 
   return (
     <div className="relative group flex items-center hover:bg-black/5 p-4 transition-colors w-full">
@@ -123,7 +134,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
           {!preview && isEditing && (
             <Form {...form} state={state}>
               <form
-                onSubmit={form.handleSubmit(execute)}
+                onSubmit={form.handleSubmit(execute, onError)}
                 className="flex items-center w-full gap-x-2 pt-2"
               >
                 <FormField
