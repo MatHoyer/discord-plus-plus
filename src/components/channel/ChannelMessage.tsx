@@ -120,21 +120,23 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
             !preview && 'cursor-pointer '
           )}
         >
-          <ProfilePopover member={member}>
+          <ProfilePopover member={member} asChild={false}>
             <UserAvatar src={member.user.image} />
           </ProfilePopover>
         </div>
         <div className="flex flex-col w-full">
           <div className="flex items-center gap-x-2 mb-1">
             <div className="flex items-center gap-x-2">
-              <p
-                className={cn(
-                  'font-semibold text-sm',
-                  !preview && 'hover:underline cursor-pointer'
-                )}
-              >
-                {member.username}
-              </p>
+              <ProfilePopover member={member}>
+                <p
+                  className={cn(
+                    'font-semibold text-sm',
+                    !preview && 'hover:underline cursor-pointer'
+                  )}
+                >
+                  {member.username}
+                </p>
+              </ProfilePopover>
               <ActionTooltip label={member.role}>
                 {roleIconMap[member.role]}
               </ActionTooltip>

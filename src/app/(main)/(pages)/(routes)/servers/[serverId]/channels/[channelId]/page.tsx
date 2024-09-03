@@ -56,6 +56,15 @@ const ServerPage = async (
     },
   });
 
+  const members = await prisma.member.findMany({
+    where: {
+      serverId: channel?.serverId,
+    },
+    include: {
+      user: true,
+    },
+  });
+
   if (!channel || !currentMember) {
     return redirect('/');
   }
@@ -69,7 +78,11 @@ const ServerPage = async (
             channel={channel as ChannelWithMessages}
             currentMember={currentMember}
           />
-          <ChatInput channel={channel} currentMember={currentMember} />
+          <ChatInput
+            channel={channel}
+            currentMember={currentMember}
+            members={members}
+          />
         </>
       )}
     </>

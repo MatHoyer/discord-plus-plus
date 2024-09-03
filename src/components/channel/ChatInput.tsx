@@ -11,16 +11,21 @@ import { socket } from '@/socket';
 import { Channel, Member } from '@prisma/client';
 import { Plus, Smile } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { FieldErrors } from 'react-hook-form';
 import { modal } from '../Modal';
-import { Button } from '../ui/button';
 import { Form, FormControl, FormField, FormItem, useZodForm } from '../ui/form';
+import ChannelMentionSuggestions from './ChannelMentionSuggestions';
 
-const ChatInput: React.FC<{ channel: Channel; currentMember: Member }> = ({
-  channel,
-  currentMember,
-}) => {
+const ChatInput: React.FC<{
+  channel: Channel;
+  currentMember: Member;
+  members: MemberWithUser[];
+}> = ({ channel, currentMember, members }) => {
+  const [lastAtPosition, setLastAtPosition] = useState<number | null>(null);
+
+  const [isMentionPopoverOpen, setIsMentionPopoverOpen] = useState(false);
+  const wholeInputRef = useRef<HTMLDivElement>(null);
   const editableDivRef = useRef<HTMLDivElement>(null);
 
   const formRef = useRef<HTMLFormElement>(null);
@@ -43,6 +48,7 @@ const ChatInput: React.FC<{ channel: Channel; currentMember: Member }> = ({
       });
       form.reset();
       editableDivRef.current!.innerHTML = '';
+      setIsMentionPopoverOpen(false);
     },
   });
 
@@ -58,24 +64,27 @@ const ChatInput: React.FC<{ channel: Channel; currentMember: Member }> = ({
     }
   };
 
-  const handleMentionSelect = () => {
+  const handleMentionSelect = (member: MemberWithUser) => {
+    if (!editableDivRef.current) return;
     const selection = window.getSelection();
+    editableDivRef.current.focus();
 
-    if (!selection || !editableDivRef.current) return;
+    if (!selection) return;
 
     const range = selection.getRangeAt(0);
 
-    const isWithinEditableDiv = editableDivRef.current.contains(
-      range.commonAncestorContainer
-    );
+    if (!range || lastAtPosition === null) return;
 
-    if (!isWithinEditableDiv) return;
+    range.setStart(range.startContainer, lastAtPosition);
+    range.setEnd(range.startContainer, lastAtPosition + 1);
+    range.deleteContents();
+    setLastAtPosition(null);
 
     const mentionSpan = document.createElement('span');
-    mentionSpan.textContent = '@OtpExhaustv2';
+    mentionSpan.textContent = `@${member.username}`;
     mentionSpan.className =
       'text-white px-2 py-1 bg-[#32355c] bg-opacity-70 font-semibold rounded-md';
-    mentionSpan.dataset.userId = '1';
+    mentionSpan.dataset.userId = member.id.toString();
     mentionSpan.contentEditable = 'false';
 
     range.deleteContents();
@@ -88,12 +97,30 @@ const ChatInput: React.FC<{ channel: Channel; currentMember: Member }> = ({
     selection.addRange(range);
 
     handleInput();
+    setIsMentionPopoverOpen(false);
   };
 
   const handleInput = () => {
     if (editableDivRef.current) {
       const content = editableDivRef.current.innerHTML;
       form.setValue('content', content, { shouldValidate: true });
+      if (!content.includes('@')) {
+        setIsMentionPopoverOpen(false);
+      }
+
+      const selection = window.getSelection();
+      if (selection && selection.rangeCount > 0) {
+        const range = selection.getRangeAt(0);
+        const textBeforeCursor = range.startContainer.textContent?.substring(
+          0,
+          range.startOffset
+        );
+        if (textBeforeCursor && textBeforeCursor.endsWith('@')) {
+          setLastAtPosition(range.startOffset - 1);
+        } else {
+          setLastAtPosition(null);
+        }
+      }
     }
   };
 
@@ -109,15 +136,8 @@ const ChatInput: React.FC<{ channel: Channel; currentMember: Member }> = ({
 
   return (
     <Form {...form} state={state}>
-      <Button
-        onClick={() => {
-          handleMentionSelect();
-        }}
-      >
-        coucou
-      </Button>
       <form ref={formRef} onSubmit={form.handleSubmit(handleSubmit, onError)}>
-        <div className="relative p-4 pb-6">
+        <div className="relative p-4 pb-6" ref={wholeInputRef}>
           <button
             type="button"
             className="absolute top-7 left-8 h-[24px] w-[24px] bg-zinc-500 dark:bg-zinc-400 hover:bg-zinc-600 dark:hover:bg-zinc-300 transition-colors rounded-full p-1 flex items-center justify-center"
@@ -130,23 +150,45 @@ const ChatInput: React.FC<{ channel: Channel; currentMember: Member }> = ({
             render={() => (
               <FormItem>
                 <FormControl>
-                  <div
-                    ref={editableDivRef}
-                    contentEditable
-                    className="rounded-md border-input px-3 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 pl-14 pr-28 py-4 bg-zinc-200/90 dark:bg-zinc-700/75 border-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-zinc-600 dark:text-zinc-200 resize-none overflow-hidden"
-                    style={{
-                      whiteSpace: 'pre-wrap',
-                      overflowWrap: 'break-word',
-                      wordBreak: 'break-all',
-                    }}
-                    onInput={handleInput}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault();
-                        form.handleSubmit(handleSubmit, onError)();
-                      }
-                    }}
-                  />
+                  <div>
+                    <ChannelMentionSuggestions
+                      members={members}
+                      onSelect={handleMentionSelect}
+                      open={isMentionPopoverOpen}
+                      search=""
+                    />
+                    <div
+                      ref={editableDivRef}
+                      contentEditable
+                      className="rounded-md border-input px-3 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 pl-14 pr-28 py-4 bg-zinc-200/90 dark:bg-zinc-700/75 border-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-zinc-600 dark:text-zinc-200 resize-none overflow-hidden"
+                      style={{
+                        whiteSpace: 'pre-wrap',
+                        overflowWrap: 'break-word',
+                        wordBreak: 'break-all',
+                      }}
+                      onInput={handleInput}
+                      onKeyDown={(e) => {
+                        if (
+                          (e.key === 'ArrowDown' || e.key === 'ArrowUp') &&
+                          isMentionPopoverOpen
+                        ) {
+                          e.preventDefault();
+                        }
+                        if (e.key === '@') {
+                          setIsMentionPopoverOpen(true);
+                          setTimeout(() => {
+                            editableDivRef.current?.focus();
+                          }, 100);
+                        }
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          if (!isMentionPopoverOpen) {
+                            form.handleSubmit(handleSubmit, onError)();
+                          }
+                        }
+                      }}
+                    />
+                  </div>
                 </FormControl>
               </FormItem>
             )}
