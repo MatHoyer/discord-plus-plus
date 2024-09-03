@@ -1,4 +1,5 @@
 'use client';
+import { useNotificationSound } from '@/hooks/usePingSound';
 import { socket } from '@/socket';
 import { Channel, Channeltype, MemberRole } from '@prisma/client';
 import { useParams } from 'next/navigation';
@@ -27,6 +28,7 @@ const ServerChannels: React.FC<TServerChannelsProps> = ({
     [Channeltype.TEXT]: textChannels,
     [Channeltype.AUDIO]: audioChannels,
   });
+  const play = useNotificationSound();
   const [unreadChannels, setUnreadChannels] = useState<Set<number>>(new Set());
   const params = useParams();
 
@@ -68,20 +70,21 @@ const ServerChannels: React.FC<TServerChannelsProps> = ({
         socket.on(`channel:${channel.id}:new-message`, () => {
           setUnreadChannels((prev) => new Set([...prev, channel.id]));
         });
-        socket.on(
-          `channel:${channel.id}:mention`,
-          (mention: ServerMentionWithUser) => {
-            const mentions = [...(channelMentions[channel.id] ?? []), mention];
-            const uniqueMentionsById = mentions.filter(
-              (m, i) => mentions.findIndex((m2) => m2.id === m.id) === i
-            );
-            setChannelMentions((prev) => ({
-              ...prev,
-              [channel.id]: uniqueMentionsById,
-            }));
-          }
-        );
       }
+      socket.on(
+        `channel:${channel.id}:mention`,
+        (mention: ServerMentionWithUser) => {
+          const mentions = [...(channelMentions[channel.id] ?? []), mention];
+          const uniqueMentionsById = mentions.filter(
+            (m, i) => mentions.findIndex((m2) => m2.id === m.id) === i
+          );
+          setChannelMentions((prev) => ({
+            ...prev,
+            [channel.id]: uniqueMentionsById,
+          }));
+          play();
+        }
+      );
     }
 
     return () => {
