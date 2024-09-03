@@ -38,7 +38,7 @@ const DeleteChannelMessageModal: React.FC = () => {
 
   return (
     <Dialog open={open} onOpenChange={closeModal}>
-      <DialogContent className="overflow-hidden">
+      <DialogContent className="overflow-hidden" aria-describedby={undefined}>
         <DialogHeader className="space-y-3">
           <DialogTitle className="text-2xl font-bold">
             Delete message

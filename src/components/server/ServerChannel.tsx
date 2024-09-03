@@ -11,14 +11,17 @@ type TServerChannelProps = {
   channel: Channel;
   role?: MemberRole;
   isUnread?: boolean;
+  onClick?: (channelId: number) => void;
   setAsRead?: (channelId: number) => void;
+  mentions?: number;
 };
 
 const ServerChannel: React.FC<TServerChannelProps> = ({
   channel,
   role,
   isUnread,
-  setAsRead,
+  onClick,
+  mentions,
 }) => {
   const { openModal } = useModal();
   const params = useParams();
@@ -35,7 +38,7 @@ const ServerChannel: React.FC<TServerChannelProps> = ({
       <button
         onClick={() => {
           router.push(`/servers/${serverId}/channels/${channel.id}`);
-          setAsRead?.(channel.id);
+          onClick?.(channel.id);
         }}
         className={cn(
           'group p-2 rounded-md flex items-center gap-x-2 w-full hover:bg-zinc-700/10 dark:hover:bg-zinc-700/50 transition-colors mb-1',
@@ -54,6 +57,14 @@ const ServerChannel: React.FC<TServerChannelProps> = ({
         </p>
         {channel.name !== 'general' && role !== MemberRole.GUEST && (
           <div className="ml-auto flex items-center gap-x-2">
+            <div
+              className={cn(
+                'bg-[#f23f42] text-white group-hover:hidden w-4 h-4 flex items-center justify-center rounded-full text-xs font-bold',
+                (isSelected || mentions === 0) && 'hidden'
+              )}
+            >
+              {mentions}
+            </div>
             <ActionTooltip label="Edit">
               <Edit
                 onClick={(e) => {

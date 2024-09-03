@@ -40,7 +40,7 @@ app.prepare().then(() => {
     console.log(`${bold}${yellow}user connected${reset}`);
 
     socketMiddleware(socket, {
-      connect: ({ userId }) => {
+      init: ({ userId }) => {
         const user = new User(userId, socket);
         userManager.addUser(user);
       },
@@ -53,6 +53,15 @@ app.prepare().then(() => {
       },
       'edit-message': (data) => {
         io.emit(`channel:${data.channelId}:edit-message`, data);
+      },
+      mention: ({ channelId, mentions }) => {
+        for (const mention of mentions) {
+          const user = userManager.getUserById(mention.member.userId);
+          if (!user) continue;
+          if (user.socket) {
+            user.socket.emit(`channel:${channelId}:mention`, mention);
+          }
+        }
       },
       'delete-message': ({ channelId, messageId }) => {
         io.emit(`channel:${channelId}:delete-message`, messageId);

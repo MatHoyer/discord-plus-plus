@@ -50,6 +50,12 @@ const ChatInput: React.FC<{
         message: message.data,
         channelId: channel.id,
       });
+      if (message.data?.mentions?.length ?? 0 > 0) {
+        socket.emit('mention', {
+          channelId: channel.id,
+          mentions: message.data!.mentions,
+        });
+      }
       form.reset();
       editableDivRef.current!.innerHTML = '';
       setIsMentionPopoverOpen(false);

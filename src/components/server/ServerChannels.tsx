@@ -20,6 +20,9 @@ const ServerChannels: React.FC<TServerChannelsProps> = ({
   channels: { textChannels, audioChannels },
   role,
 }) => {
+  const [channelMentions, setChannelMentions] = useState<
+    Record<number, ServerMentionWithUser[]>
+  >({});
   const [channels, setChannels] = useState({
     [Channeltype.TEXT]: textChannels,
     [Channeltype.AUDIO]: audioChannels,
@@ -60,13 +63,25 @@ const ServerChannels: React.FC<TServerChannelsProps> = ({
 
   useEffect(() => {
     const textChannels = channels.TEXT;
-
     for (const channel of textChannels) {
       if (channel.id !== +params.channelId) {
         socket.on(`channel:${channel.id}:new-message`, () => {
           setUnreadChannels((prev) => new Set([...prev, channel.id]));
         });
       }
+      socket.on(
+        `channel:${channel.id}:mention`,
+        (mention: ServerMentionWithUser) => {
+          const mentions = [...(channelMentions[channel.id] ?? []), mention];
+          const uniqueMentionsById = mentions.filter(
+            (m, i) => mentions.findIndex((m2) => m2.id === m.id) === i
+          );
+          setChannelMentions((prev) => ({
+            ...prev,
+            [channel.id]: uniqueMentionsById,
+          }));
+        }
+      );
     }
 
     return () => {
@@ -94,12 +109,17 @@ const ServerChannels: React.FC<TServerChannelsProps> = ({
               key={channel.id}
               {...{ channel, role }}
               isUnread={[...unreadChannels].includes(channel.id)}
-              setAsRead={() => {
+              onClick={() => {
                 setUnreadChannels((prev) => {
                   prev.delete(channel.id);
                   return new Set(prev);
                 });
+                setChannelMentions((prev) => ({
+                  ...prev,
+                  [channel.id]: [],
+                }));
               }}
+              mentions={channelMentions[channel.id]?.length ?? 0}
             />
           ))}
         </div>
