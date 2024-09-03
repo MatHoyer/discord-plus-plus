@@ -1,8 +1,8 @@
 import { cn } from '@/lib/utils';
 import { cva, VariantProps } from 'class-variance-authority';
-import { CircleDot, CircleMinus, Moon } from 'lucide-react';
+import { Circle, CircleMinus, Moon } from 'lucide-react';
 import React from 'react';
-import { Activity } from '../../server/User';
+import { TActivity } from '../../server/User';
 import UserAvatar from './UserAvatar';
 
 type TUserAvatarWithActivityProps = {
@@ -38,27 +38,29 @@ const activityIndicatorVariants = cva(
   }
 );
 
-const activityIndicatorMap: Record<Activity, React.ReactNode> = {
-  '0': <div className="rounded-full bg-green-500 w-full h-full" />,
-  '1': (
+export const activityIndicatorMap: Record<TActivity, React.ReactNode> = {
+  Online: <Circle className="text-green-500 fill-green-500 w-full h-full" />,
+  Away: (
     <Moon className="-rotate-90 h-full w-full text-yellow-500 fill-yellow-500" />
   ),
-  '2': <CircleMinus className="h-full w-full fill-red-500 text-[#12202a]" />,
-  '3': <CircleDot className="h-full w-full text-[#80848e]" />,
+  DoNotDisturb: (
+    <CircleMinus className="h-full w-full fill-red-500 text-[#12202a]" />
+  ),
+  Offline: <Circle className="h-full w-full text-[#80848e]" />,
 };
 
 const UserAvatarWithActivity: React.FC<
   TUserAvatarWithActivityProps &
     VariantProps<typeof avatarVariants> & {
       activityIndicator?: VariantProps<typeof activityIndicatorVariants>;
-      activity?: Activity;
+      activity?: TActivity;
     }
 > = ({
   wrapperClassName,
   avatarClassName,
   src,
   size,
-  activity = Activity.Online,
+  activity = 'Online',
   activityIndicator,
 }) => {
   return (

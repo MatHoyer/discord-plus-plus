@@ -3,6 +3,7 @@ import {
   editMessageSchema,
   TEditMessage,
 } from '@/features/server/channel/edit-message/edit-message.schema';
+import { useActivity } from '@/hooks/useActivityStore';
 import { useModal } from '@/hooks/useModalStore';
 import { checkRole, cn } from '@/lib/utils';
 import { socket } from '@/socket';
@@ -12,7 +13,6 @@ import { Edit, Trash } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FieldErrors } from 'react-hook-form';
-import { Activity } from '../../../server/User';
 import ActionTooltip from '../ActionTooltip';
 import ProfileContextMenu from '../context-menus/ProfileContextMenu';
 import { modal } from '../Modal';
@@ -49,6 +49,8 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
   const canEditMessage = !isDeleted && isOwner;
 
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const users = useActivity((state) => state.users);
 
   const { execute, result: state } = useAction(editMessage, {
     onSuccess: ({ data }) => {
@@ -140,7 +142,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
             <UserAvatarWithActivity
               src={member.user.image}
               size="default"
-              activity={Activity.Away}
+              activity={users[member.user.id]}
             />
           </ProfilePopover>
         </div>

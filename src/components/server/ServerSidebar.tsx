@@ -4,6 +4,7 @@ import { Channeltype, MemberRole } from '@prisma/client';
 import { Hash, ShieldAlert, ShieldCheck, Volume2 } from 'lucide-react';
 import { redirect } from 'next/navigation';
 import React from 'react';
+import SideBarProfile from '../profile/SideBarProfile';
 import { ScrollArea } from '../ui/scroll-area';
 import { Separator } from '../ui/separator';
 import ServerChannels from './ServerChannels';
@@ -120,6 +121,7 @@ const ServerSidebar: React.FC<TServerSidebarProps> = async ({ serverId }) => {
           role={role}
         />
       </ScrollArea>
+      <SideBarProfile />
     </div>
   );
 };

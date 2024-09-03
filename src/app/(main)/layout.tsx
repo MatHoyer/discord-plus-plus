@@ -1,15 +1,25 @@
 'use client';
+import { useActivity } from '@/hooks/useActivityStore';
 import { socket } from '@/socket';
 import { useSession } from 'next-auth/react';
 import { useEffect } from 'react';
 
 const SocketLayout = (props: LayoutParams) => {
   const session = useSession();
+  const changeActivity = useActivity((state) => state.changeActivity);
 
   useEffect(() => {
     if (session.data?.user) {
       socket.emit('init', { userId: session.data.user.id });
     }
+
+    socket.on('activity-change', ({ userId, activity }) => {
+      changeActivity(userId, activity);
+    });
+
+    return () => {
+      socket.off('activity-change');
+    };
   }, [session]);
 
   return <div className="h-screen">{props.children}</div>;
