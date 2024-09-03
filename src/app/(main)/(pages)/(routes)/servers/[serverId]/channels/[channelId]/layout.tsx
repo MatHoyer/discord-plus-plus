@@ -1,3 +1,4 @@
+import ChannelMembersSidebar from '@/components/channel/ChannelMembersSidebar';
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { notFound, redirect } from 'next/navigation';
@@ -23,12 +24,12 @@ const ChannelLayout = async (
     return notFound();
   }
 
-  const { channelId } = result.data;
+  const { channelId, serverId } = result.data;
 
   const channel = await prisma.channel.findUnique({
     where: {
       id: channelId,
-      serverId: result.data.serverId,
+      serverId: serverId,
     },
   });
 
@@ -37,9 +38,14 @@ const ChannelLayout = async (
   }
 
   return (
-    <div className="bg-white dark:bg-[#313338] flex flex-col h-full">
-      {props.children}
-    </div>
+    <>
+      <div className="bg-white w-[calc(100%-15rem)] dark:bg-[#313338] flex flex-col h-full">
+        {props.children}
+      </div>
+      <div className="hidden md:flex h-full w-60 z-20 flex-col fixed right-0 inset-y-0">
+        <ChannelMembersSidebar serverId={serverId} channelId={channelId} />
+      </div>
+    </>
   );
 };
 

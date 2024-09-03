@@ -61,6 +61,8 @@ const ServerSidebar: React.FC<TServerSidebarProps> = async ({ serverId }) => {
     return redirect('/');
   }
 
+  console.log('test', server.members);
+
   const textChannels = server.channels.filter(
     (channel) => channel.type === Channeltype.TEXT
   );

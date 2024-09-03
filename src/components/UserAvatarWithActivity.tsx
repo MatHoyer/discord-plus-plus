@@ -25,7 +25,7 @@ const avatarVariants = cva('md:w-20 md:h-20', {
 });
 
 const activityIndicatorVariants = cva(
-  'absolute rounded-full bg-[#12202a] right-0',
+  'absolute rounded-full bg-[#2b2d31] right-0',
   {
     variants: {
       size: {
@@ -61,7 +61,7 @@ const UserAvatarWithActivity: React.FC<
   avatarClassName,
   src,
   size,
-  activity = 'Online',
+  activity = 'Offline',
   activityIndicator,
 }) => {
   return (
