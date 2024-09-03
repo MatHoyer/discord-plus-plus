@@ -73,10 +73,10 @@ const ServerChannels: React.FC<TServerChannelsProps> = ({
         socket.on(
           `channel:${channel.id}:mention`,
           (mention: ServerMentionWithUser) => {
-            const mentions = [...(channelMentions[channel.id] ?? []), mention];
+            console.log('here');
             setChannelMentions((prev) => ({
               ...prev,
-              [channel.id]: mentions,
+              [channel.id]: [...(prev[channel.id] ?? []), mention],
             }));
             play();
           }
@@ -88,6 +88,7 @@ const ServerChannels: React.FC<TServerChannelsProps> = ({
       for (const channel of textChannels) {
         if (channel.id !== +params.channelId) {
           socket.off(`channel:${channel.id}:new-message`);
+          socket.off(`channel:${channel.id}:mention`);
         }
       }
     };
