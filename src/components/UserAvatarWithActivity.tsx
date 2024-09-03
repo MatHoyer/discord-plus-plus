@@ -45,7 +45,7 @@ export const activityIndicatorMap: Record<TActivity, React.ReactNode> = {
     <Moon className="-rotate-90 h-full w-full text-yellow-500 fill-yellow-500" />
   ),
   DoNotDisturb: (
-    <CircleMinus className="h-full w-full fill-red-500 text-red-500" />
+    <CircleMinus className="h-full w-full fill-red-500 text-[#12202a]" />
   ),
   Offline: <Circle className="h-full w-full text-[#80848e]" />,
 };
