@@ -51,9 +51,9 @@ const MemberProfileModal: React.FC = () => {
                 <div>
                   <div className="text-xs">Member Since</div>
                   <div className="text-xs flex items-center gap-1">
-                    {getCustomDate(data.member.user.createdAt)}
+                    {getCustomDate(new Date(data.member.user.createdAt))}
                     <div className="w-1 h-1 bg-white rounded-full" />
-                    {getCustomDate(data.member.createdAt)}
+                    {getCustomDate(new Date(data.member.createdAt))}
                   </div>
                 </div>
               </div>

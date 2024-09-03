@@ -72,7 +72,11 @@ export const sendMessage = authClient
         },
         mentions: {
           include: {
-            member: true,
+            member: {
+              include: {
+                user: true,
+              },
+            },
           },
         },
       },
