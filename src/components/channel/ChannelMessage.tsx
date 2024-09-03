@@ -124,7 +124,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
       )}
     >
       {isMentionned && (
-        <div className="absolute left-0 w-1 h-4/5 bg-[#f0b132]" />
+        <div className="absolute left-0 w-1 h-full bg-[#f0b132]" />
       )}
       <div className="group flex gap-x-2 items-start w-full">
         <div
