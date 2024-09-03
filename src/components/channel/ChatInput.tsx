@@ -22,6 +22,9 @@ const ChatInput: React.FC<{
   currentMember: Member;
   members: MemberWithUser[];
 }> = ({ channel, currentMember, members }) => {
+  const [filteredMembers, setFilteredMembers] = useState<
+    MemberWithUser[] | null
+  >(members);
   const [lastAtPosition, setLastAtPosition] = useState<number | null>(null);
 
   const [isMentionPopoverOpen, setIsMentionPopoverOpen] = useState(false);
@@ -76,9 +79,8 @@ const ChatInput: React.FC<{
     if (!range || lastAtPosition === null) return;
 
     range.setStart(range.startContainer, lastAtPosition);
-    range.setEnd(range.startContainer, lastAtPosition + 1);
+    range.setEnd(range.startContainer, range.startOffset);
     range.deleteContents();
-    setLastAtPosition(null);
 
     const mentionSpan = document.createElement('span');
     mentionSpan.textContent = `@${member.username}`;
@@ -98,6 +100,8 @@ const ChatInput: React.FC<{
 
     handleInput();
     setIsMentionPopoverOpen(false);
+    setLastAtPosition(null);
+    setFilteredMembers([]);
   };
 
   const handleInput = () => {
@@ -117,10 +121,27 @@ const ChatInput: React.FC<{
         );
         if (textBeforeCursor && textBeforeCursor.endsWith('@')) {
           setLastAtPosition(range.startOffset - 1);
+          setFilteredMembers(members);
+        } else if (lastAtPosition !== null) {
+          const query = textBeforeCursor?.substring(lastAtPosition + 1);
+          filterMembers(query || '');
         } else {
           setLastAtPosition(null);
+          setFilteredMembers([]);
         }
       }
+    }
+  };
+
+  const filterMembers = (query: string) => {
+    const filtered = members.filter((member) =>
+      member.username.toLowerCase().startsWith(query.toLowerCase())
+    );
+    if (filtered.length === 0) {
+      setIsMentionPopoverOpen(false);
+      setFilteredMembers([]);
+    } else {
+      setFilteredMembers(filtered);
     }
   };
 
@@ -152,10 +173,9 @@ const ChatInput: React.FC<{
                 <FormControl>
                   <div>
                     <ChannelMentionSuggestions
-                      members={members}
+                      members={filteredMembers || []}
                       onSelect={handleMentionSelect}
                       open={isMentionPopoverOpen}
-                      search=""
                     />
                     <div
                       ref={editableDivRef}

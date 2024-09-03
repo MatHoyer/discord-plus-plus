@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import UserAvatar from '../UserAvatar';
 
 type TChannelMentionSuggestionsProps = {
-  search: string;
   members: MemberWithUser[];
   onSelect: (member: MemberWithUser) => void;
   className?: string;
@@ -14,16 +13,17 @@ type TChannelMentionSuggestionsProps = {
 const ChannelMentionSuggestions: React.FC<TChannelMentionSuggestionsProps> = ({
   members,
   onSelect,
-  search,
   className,
   open,
 }) => {
   const [selectedSuggestion, setSelectedSuggestion] = useState<number | null>(
-    members[0].id
+    members[0]?.id || null
   );
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (members.length === 0) return;
+
       const currentIndex = members.findIndex(
         (member) => member.id === selectedSuggestion
       );
@@ -51,7 +51,7 @@ const ChannelMentionSuggestions: React.FC<TChannelMentionSuggestionsProps> = ({
     <div
       className={cn(
         'absolute bottom-20 z-20 border-white border-opacity-10 border text-black bg-[#2b2d31] rounded-md hidden w-[calc(100%-2rem)] px-2 py-2',
-        open && 'block'
+        open && members.length > 0 && 'block'
       )}
     >
       <div className="text-white font-semibold text-xs mb-2 ">MEMBERS</div>

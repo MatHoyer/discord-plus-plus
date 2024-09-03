@@ -78,7 +78,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, []);
+  }, [form]);
 
   const onError = (errors: FieldErrors<TEditMessage>) => {
     if (errors.content) {
@@ -111,8 +111,21 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
     });
   }, [message.content, message.mentions]);
 
+  const isMentionned = message.mentions?.some(
+    (mention) => mention.member.id === currentMember.id
+  );
+
   return (
-    <div className="relative group flex items-center hover:bg-black/5 p-4 transition-colors w-full">
+    <div
+      className={cn(
+        'relative group flex items-center px-4 py-2 my-2 transition-colors w-full',
+        isMentionned && 'bg-[#444037] bg-opacity-70',
+        !isMentionned && 'hover:bg-black/5'
+      )}
+    >
+      {isMentionned && (
+        <div className="absolute left-0 w-1 h-4/5 bg-[#f0b132]" />
+      )}
       <div className="group flex gap-x-2 items-start w-full">
         <div
           className={cn(
