@@ -3,8 +3,9 @@
 import { useModal } from '@/hooks/useModalStore';
 import { getCustomDate } from '@/lib/utils';
 import Image from 'next/image';
+import { Activity } from '../../../server/User';
 import { Dialog, DialogContent, DialogTitle } from '../ui/dialog';
-import UserAvatar from '../UserAvatar';
+import UserAvatarWithActivity from '../UserAvatarWithActivity';
 
 const MemberProfileModal: React.FC = () => {
   const { isOpen, type, closeModal, data } = useModal();
@@ -14,7 +15,7 @@ const MemberProfileModal: React.FC = () => {
   return (
     <Dialog open={open} onOpenChange={closeModal}>
       <DialogContent
-        className="p-0 overflow-hidden pb-4"
+        className="p-0 overflow-hidden pb-4 bg-[#12202a]"
         showClose={false}
         aria-describedby={undefined}
       >
@@ -30,13 +31,16 @@ const MemberProfileModal: React.FC = () => {
                 className="w-full h-full object-cover filter absolute"
               />
               <div className="absolute flex items-end justify-between h-full p-4">
-                <div className="absolute -bottom-9 z-10">
-                  <UserAvatar
-                    src={data.member.user?.image}
-                    className="md:w-20 md:h-20"
-                  />
-                  <div className="absolute bottom-0 right-2 w-5 h-5 bg-green-500 border-2 border-white rounded-full" />
-                </div>
+                <UserAvatarWithActivity
+                  size="xl"
+                  wrapperClassName="absolute -bottom-9 z-10"
+                  avatarClassName='className="md:w-20 md:h-20'
+                  activity={Activity.Offline}
+                  src={data.member.user?.image}
+                  activityIndicator={{
+                    size: 'xl',
+                  }}
+                />
               </div>
             </div>
             <div className="min-h-[100px] pt-12 px-4">

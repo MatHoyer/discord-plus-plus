@@ -12,6 +12,7 @@ import { Edit, Trash } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FieldErrors } from 'react-hook-form';
+import { Activity } from '../../../server/User';
 import ActionTooltip from '../ActionTooltip';
 import ProfileContextMenu from '../context-menus/ProfileContextMenu';
 import { modal } from '../Modal';
@@ -19,7 +20,7 @@ import ProfilePopover from '../profile/ProfilePopover';
 import { roleIconMap } from '../server/ServerSidebar';
 import { Form, FormControl, FormField, FormItem, useZodForm } from '../ui/form';
 import { Input } from '../ui/input';
-import UserAvatar from '../UserAvatar';
+import UserAvatarWithActivity from '../UserAvatarWithActivity';
 
 type TChannelMessageProps = {
   time: string;
@@ -136,7 +137,11 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
           )}
         >
           <ProfilePopover member={member} asChild={false}>
-            <UserAvatar src={member.user.image} />
+            <UserAvatarWithActivity
+              src={member.user.image}
+              size="default"
+              activity={Activity.Away}
+            />
           </ProfilePopover>
         </div>
         <div className="flex flex-col w-full">
