@@ -2,7 +2,7 @@
 import { useModal } from '@/hooks/useModalStore';
 import { cn, iconMap } from '@/lib/utils';
 import { Channel, MemberRole } from '@prisma/client';
-import { Edit, Lock, Trash } from 'lucide-react';
+import { Edit, Trash } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import React from 'react';
 import ActionTooltip from '../ActionTooltip';
@@ -98,9 +98,6 @@ const ServerChannel: React.FC<TServerChannelProps> = ({
             </>
           )}
         </div>
-        {channel.name === 'general' && (
-          <Lock className="ml-auto w-4 h-4 text-zinc-500 dark:text-zinc-400" />
-        )}
       </button>
     </div>
   );

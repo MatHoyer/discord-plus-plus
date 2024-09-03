@@ -14,11 +14,12 @@ export const deleteMessage = authClient
   .action(async ({ parsedInput, ctx }) => {
     const { messageId, channelId, serverId } = parsedInput;
 
-    let message = await checkMessage({
+    const message = await checkMessage({
       channelId,
       serverId,
       messageId,
       userId: ctx.userId,
+      edit: false,
     });
 
     await prisma.serverMessage.update({

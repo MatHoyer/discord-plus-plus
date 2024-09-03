@@ -1,17 +1,20 @@
 'use server';
 
 import prisma from '@/lib/prisma';
+import { checkRole } from '@/lib/utils';
 
 export const checkMessage = async ({
   userId,
   channelId,
   serverId,
   messageId,
+  edit,
 }: {
   userId: number;
   serverId: number;
   channelId: number;
   messageId: number;
+  edit: boolean;
 }) => {
   const server = await prisma.server.findFirst({
     where: {
@@ -68,7 +71,13 @@ export const checkMessage = async ({
 
   const isOwner = message.senderId === member.id;
 
-  if (!isOwner) {
+  if (!isOwner && edit) {
+    throw new Error('Unauthorized');
+  }
+  const { isAdmin, isModerator } = checkRole(member.role);
+  const canDelete = isAdmin || isModerator || isOwner;
+
+  if (!edit && !canDelete) {
     throw new Error('Unauthorized');
   }
 

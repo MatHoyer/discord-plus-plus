@@ -13,14 +13,16 @@ export const editMessage = authClient
   })
   .action(async ({ parsedInput, ctx }) => {
     const { content, messageId, channelId, serverId } = parsedInput;
-    let message = await checkMessage({
+
+    await checkMessage({
       channelId,
       serverId,
       messageId,
       userId: ctx.userId,
+      edit: true,
     });
 
-    message = await prisma.serverMessage.update({
+    return await prisma.serverMessage.update({
       where: {
         id: messageId,
       },
@@ -40,6 +42,4 @@ export const editMessage = authClient
         },
       },
     });
-
-    return message;
   });

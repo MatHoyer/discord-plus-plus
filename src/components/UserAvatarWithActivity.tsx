@@ -2,7 +2,8 @@ import { cn } from '@/lib/utils';
 import { cva, VariantProps } from 'class-variance-authority';
 import { Circle, CircleMinus, Moon } from 'lucide-react';
 import React from 'react';
-import { TActivity } from '../../server/User';
+import { Activity, TActivity } from '../../server/User';
+import ActionTooltip from './ActionTooltip';
 import UserAvatar from './UserAvatar';
 
 type TUserAvatarWithActivityProps = {
@@ -44,7 +45,7 @@ export const activityIndicatorMap: Record<TActivity, React.ReactNode> = {
     <Moon className="-rotate-90 h-full w-full text-yellow-500 fill-yellow-500" />
   ),
   DoNotDisturb: (
-    <CircleMinus className="h-full w-full fill-red-500 text-[#12202a]" />
+    <CircleMinus className="h-full w-full fill-red-500 text-red-500" />
   ),
   Offline: <Circle className="h-full w-full text-[#80848e]" />,
 };
@@ -69,15 +70,17 @@ const UserAvatarWithActivity: React.FC<
         src={src}
         className={cn(avatarVariants({ className: avatarClassName, size }))}
       />
-      <div
-        className={cn(
-          activityIndicatorVariants({
-            size: activityIndicator?.size,
-          })
-        )}
-      >
-        {activityIndicatorMap[activity]}
-      </div>
+      <ActionTooltip label={Activity[activity]} side="top">
+        <div
+          className={cn(
+            activityIndicatorVariants({
+              size: activityIndicator?.size,
+            })
+          )}
+        >
+          {activityIndicatorMap[activity]}
+        </div>
+      </ActionTooltip>
     </div>
   );
 };
