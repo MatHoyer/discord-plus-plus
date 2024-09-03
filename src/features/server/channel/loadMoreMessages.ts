@@ -24,6 +24,7 @@ export const loadMoreMessages = async (channelId: number, skip: number) => {
   const messagesCount = await prisma.serverMessage.count({
     where: {
       channelId,
+      deleted: false,
     },
   });
 
