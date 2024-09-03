@@ -3,7 +3,6 @@
 import { useModal } from '@/hooks/useModalStore';
 import { getCustomDate } from '@/lib/utils';
 import Image from 'next/image';
-import { Activity } from '../../../server/User';
 import { Dialog, DialogContent, DialogTitle } from '../ui/dialog';
 import UserAvatarWithActivity from '../UserAvatarWithActivity';
 
@@ -35,7 +34,7 @@ const MemberProfileModal: React.FC = () => {
                   size="xl"
                   wrapperClassName="absolute -bottom-9 z-10"
                   avatarClassName='className="md:w-20 md:h-20'
-                  activity={Activity.Offline}
+                  activity={'Offline'}
                   src={data.member.user?.image}
                   activityIndicator={{
                     size: 'xl',

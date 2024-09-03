@@ -13,11 +13,19 @@ const SocketLayout = (props: LayoutParams) => {
       socket.emit('init', { userId: session.data.user.id });
     }
 
+    socket.on('init-activity', (usersActivity) => {
+      console.log(usersActivity);
+      for (const { userId, activity } of usersActivity) {
+        changeActivity(userId, activity);
+      }
+    });
+
     socket.on('activity-change', ({ userId, activity }) => {
       changeActivity(userId, activity);
     });
 
     return () => {
+      socket.off('init-activity');
       socket.off('activity-change');
     };
   }, [session]);

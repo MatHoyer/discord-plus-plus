@@ -1,8 +1,8 @@
 import { createServer } from 'http';
 import next from 'next';
 import { Server, Socket } from 'socket.io';
-import { User } from './User.ts';
-import { UserManager } from './UserManager.ts';
+import { User } from './User';
+import { UserManager } from './UserManager';
 
 const dev = process.env.NODE_ENV !== 'production';
 
@@ -41,12 +41,21 @@ app.prepare().then(() => {
 
     socketMiddleware(socket, {
       init: ({ userId }) => {
-        const user = new User(userId, socket);
-        userManager.addUser(user);
+        const user = userManager.getUserById(userId);
+        if (!user) {
+          console.log('new user');
+          userManager.addUser(new User(userId, socket, io));
+        } else {
+          console.log('existing user');
+          user!.socket = socket;
+          userManager.changeUserActivity(socket.id, user.activityMemory);
+        }
+        const usersActivity = userManager.getUsersActivity();
+        socket.emit('init-activity', usersActivity);
       },
       disconnect: () => {
         console.log(`${bold}${yellow}user disconnected${reset}`);
-        userManager.removeUserBySocketId(socket.id);
+        userManager.changeUserActivity(socket.id, 'Offline');
       },
       'new-message': ({ channelId, message }) => {
         io.emit(`channel:${channelId}:new-message`, message);

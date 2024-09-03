@@ -1,4 +1,4 @@
-import { Activity, User } from './User';
+import { TActivity, User } from './User';
 
 export class UserManager {
   private users: User[] = [];
@@ -23,10 +23,21 @@ export class UserManager {
     return this.users.find((user) => user.socket.id === socketId);
   }
 
-  public changeUserActivity(socketId: string, activity: Activity): void {
+  public changeUserActivity(socketId: string, activity: TActivity): void {
     const user = this.getUserBySocketId(socketId);
-    if (user) {
-      user.activity = activity;
-    }
+    if (!user) return;
+    user.activityMemory = user.activity;
+    user.activity = activity;
+    user.io.emit('activity-change', {
+      userId: user.id,
+      activity,
+    });
+  }
+
+  public getUsersActivity() {
+    return this.users.map((user) => ({
+      userId: user.id,
+      activity: user.activity,
+    }));
   }
 }
