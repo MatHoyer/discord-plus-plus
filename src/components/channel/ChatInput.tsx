@@ -159,6 +159,26 @@ const ChatInput: React.FC<{
     execute({ ...v, content: parsedContent });
   };
 
+  const insertTextAtCursor = (text: string) => {
+    const selection = window.getSelection();
+    if (!selection?.rangeCount) return;
+
+    selection.deleteFromDocument();
+
+    const range = selection.getRangeAt(0);
+    range.deleteContents();
+
+    const textNode = document.createTextNode(text);
+    range.insertNode(textNode);
+
+    range.setStartAfter(textNode);
+    range.setEndAfter(textNode);
+    selection.removeAllRanges();
+    selection.addRange(range);
+
+    handleInput();
+  };
+
   const content = form.watch('content');
 
   return (
@@ -185,6 +205,13 @@ const ChatInput: React.FC<{
                     />
                     <div
                       ref={editableDivRef}
+                      onPaste={(e) => {
+                        e.preventDefault();
+                        const clipboardData =
+                          e.clipboardData || (window as any).clipboardData;
+                        const text = clipboardData.getData('text/plain');
+                        insertTextAtCursor(text);
+                      }}
                       contentEditable
                       className="rounded-md border-input px-3 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 pl-14 pr-28 py-4 bg-zinc-200/90 dark:bg-zinc-700/75 border-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-zinc-600 dark:text-zinc-200 resize-none overflow-hidden"
                       style={{

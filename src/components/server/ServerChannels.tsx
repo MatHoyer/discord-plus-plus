@@ -74,12 +74,9 @@ const ServerChannels: React.FC<TServerChannelsProps> = ({
           `channel:${channel.id}:mention`,
           (mention: ServerMentionWithUser) => {
             const mentions = [...(channelMentions[channel.id] ?? []), mention];
-            const uniqueMentionsById = mentions.filter(
-              (m, i) => mentions.findIndex((m2) => m2.id === m.id) === i
-            );
             setChannelMentions((prev) => ({
               ...prev,
-              [channel.id]: uniqueMentionsById,
+              [channel.id]: mentions,
             }));
             play();
           }
@@ -111,7 +108,10 @@ const ServerChannels: React.FC<TServerChannelsProps> = ({
             <ServerChannel
               key={channel.id}
               {...{ channel, role }}
-              isUnread={[...unreadChannels].includes(channel.id)}
+              isUnread={
+                [...unreadChannels].includes(channel.id) ||
+                channelMentions[channel.id]?.length > 0
+              }
               onClick={() => {
                 setUnreadChannels((prev) => {
                   prev.delete(channel.id);
