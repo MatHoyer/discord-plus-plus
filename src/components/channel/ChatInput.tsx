@@ -11,16 +11,18 @@ import { socket } from '@/socket';
 import { Channel, Member } from '@prisma/client';
 import { Plus, Smile } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
-import { FormEvent, useRef, useState } from 'react';
+import { useRef } from 'react';
 import { FieldErrors } from 'react-hook-form';
 import { modal } from '../Modal';
+import { Button } from '../ui/button';
 import { Form, FormControl, FormField, FormItem, useZodForm } from '../ui/form';
 
 const ChatInput: React.FC<{ channel: Channel; currentMember: Member }> = ({
   channel,
   currentMember,
 }) => {
-  const [inputContent, setInputContent] = useState('');
+  const editableDivRef = useRef<HTMLDivElement>(null);
+
   const formRef = useRef<HTMLFormElement>(null);
 
   const form = useZodForm({
@@ -40,28 +42,81 @@ const ChatInput: React.FC<{ channel: Channel; currentMember: Member }> = ({
         channelId: channel.id,
       });
       form.reset();
+      editableDivRef.current!.innerHTML = '';
     },
   });
 
-  const onError = (errors: FieldErrors<TSendMessage>) => {
+  const onError = async (errors: FieldErrors<TSendMessage>) => {
     if (errors.content) {
-      modal.error({
+      await modal.error({
         title: 'Your message is too long',
         message: errors.content.message,
       });
+      setTimeout(() => {
+        editableDivRef.current?.focus();
+      }, 100);
     }
   };
 
-  const handleInput = (e: FormEvent<HTMLDivElement>) => {
-    const content = e.currentTarget.innerHTML;
-    form.setValue('content', content, { shouldValidate: true });
+  const handleMentionSelect = () => {
+    const selection = window.getSelection();
+
+    if (!selection || !editableDivRef.current) return;
+
+    const range = selection.getRangeAt(0);
+
+    const isWithinEditableDiv = editableDivRef.current.contains(
+      range.commonAncestorContainer
+    );
+
+    if (!isWithinEditableDiv) return;
+
+    const mentionSpan = document.createElement('span');
+    mentionSpan.textContent = '@OtpExhaustv2';
+    mentionSpan.className =
+      'text-white px-2 py-1 bg-[#32355c] bg-opacity-70 font-semibold rounded-md';
+    mentionSpan.dataset.userId = '1';
+    mentionSpan.contentEditable = 'false';
+
+    range.deleteContents();
+    range.insertNode(mentionSpan);
+
+    range.setStartAfter(mentionSpan);
+    range.setEndAfter(mentionSpan);
+
+    selection.removeAllRanges();
+    selection.addRange(range);
+
+    handleInput();
+  };
+
+  const handleInput = () => {
+    if (editableDivRef.current) {
+      const content = editableDivRef.current.innerHTML;
+      form.setValue('content', content, { shouldValidate: true });
+    }
+  };
+
+  const handleSubmit = (v: TSendMessage) => {
+    const parsedContent = v.content.replace(
+      /<span[^>]*data-user-id="(\w+)"[^>]*>@[^<]+<\/span>/g,
+      '<@$1>'
+    );
+    execute({ ...v, content: parsedContent });
   };
 
   const content = form.watch('content');
 
   return (
     <Form {...form} state={state}>
-      <form ref={formRef} onSubmit={form.handleSubmit(execute, onError)}>
+      <Button
+        onClick={() => {
+          handleMentionSelect();
+        }}
+      >
+        coucou
+      </Button>
+      <form ref={formRef} onSubmit={form.handleSubmit(handleSubmit, onError)}>
         <div className="relative p-4 pb-6">
           <button
             type="button"
@@ -76,6 +131,7 @@ const ChatInput: React.FC<{ channel: Channel; currentMember: Member }> = ({
               <FormItem>
                 <FormControl>
                   <div
+                    ref={editableDivRef}
                     contentEditable
                     className="rounded-md border-input px-3 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 pl-14 pr-28 py-4 bg-zinc-200/90 dark:bg-zinc-700/75 border-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-zinc-600 dark:text-zinc-200 resize-none overflow-hidden"
                     style={{
@@ -87,22 +143,10 @@ const ChatInput: React.FC<{ channel: Channel; currentMember: Member }> = ({
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && !e.shiftKey) {
                         e.preventDefault();
-                        form.handleSubmit(execute, onError)();
+                        form.handleSubmit(handleSubmit, onError)();
                       }
                     }}
-                  ></div>
-                  {/* <Textarea
-                    onInput={(e) => {
-                      e.currentTarget.style.height =
-                        e.currentTarget.scrollHeight + 'px';
-                    }}
-                    className="pl-14 pr-28 py-3 bg-zinc-200/90 dark:bg-zinc-700/75 border-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-zinc-600 dark:text-zinc-200 resize-none overflow-y-hidden"
-                    style={{
-                      height: '44px',
-                    }}
-                    placeholder={`Envoyer un message dans #${channel.name}`}
-                    {...field}
-                  /> */}
+                  />
                 </FormControl>
               </FormItem>
             )}

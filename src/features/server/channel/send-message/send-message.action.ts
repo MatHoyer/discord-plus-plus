@@ -15,11 +15,53 @@ export const sendMessage = authClient
     if (!userId) {
       throw new Error('Unauthorized');
     }
-    const { memberId, ...rest } = parsedInput;
+    const { memberId, content, channelId } = parsedInput;
+
     const message = await prisma.serverMessage.create({
       data: {
-        ...rest,
+        content,
+        channelId,
         senderId: memberId,
+      },
+    });
+
+    const mentionPattern = /<@(\w+)>/g;
+    const memberIds: Set<number> = new Set();
+    let match;
+
+    while ((match = mentionPattern.exec(content)) !== null) {
+      memberIds.add(parseInt(match[1]));
+    }
+
+    const mentionIdMap: Record<number, number> = {};
+
+    for (const memberId of memberIds) {
+      const mention = await prisma.serverMention.create({
+        data: {
+          messageId: message.id,
+          memberId,
+        },
+      });
+
+      mentionIdMap[userId] = mention.id;
+    }
+
+    let updatedContent = content;
+    for (const memberId in mentionIdMap) {
+      const mentionId = mentionIdMap[memberId];
+      updatedContent = updatedContent.replace(
+        new RegExp(`<@${memberId}>`, 'g'),
+        `<@${mentionId}>`
+      );
+    }
+
+    const updatedMessage = await prisma.serverMessage.update({
+      where: {
+        id: message.id,
+      },
+      data: {
+        content: updatedContent,
+        updatedAt: message.createdAt,
       },
       include: {
         channel: true,
@@ -28,8 +70,13 @@ export const sendMessage = authClient
             user: true,
           },
         },
+        mentions: {
+          include: {
+            member: true,
+          },
+        },
       },
     });
 
-    return message;
+    return updatedMessage;
   });

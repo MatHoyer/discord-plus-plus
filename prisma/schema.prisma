@@ -118,10 +118,26 @@ model ServerMessage {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    deleted Boolean @default(false)
+    deleted  Boolean         @default(false)
+    mentions ServerMention[]
 
     @@index([senderId])
     @@index([channelId])
+}
+
+model ServerMention {
+    id        Int           @id @default(autoincrement())
+    messageId Int
+    message   ServerMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+    memberId Int
+    member   Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([messageId])
+    @@index([memberId])
 }
 
 enum Channeltype {
@@ -154,6 +170,8 @@ model Member {
     id   Int        @id @default(autoincrement())
     role MemberRole @default(GUEST)
 
+    username String
+
     userId Int
     user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -161,6 +179,7 @@ model Member {
     server   Server @relation(fields: [serverId], references: [id], onDelete: Cascade)
 
     messages ServerMessage[]
+    mentions ServerMention[]
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt

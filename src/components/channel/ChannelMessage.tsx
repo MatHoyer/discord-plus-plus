@@ -10,7 +10,7 @@ import { Channel, Member } from '@prisma/client';
 import { isEqual } from 'date-fns';
 import { Edit, Trash } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { FieldErrors } from 'react-hook-form';
 import ActionTooltip from '../ActionTooltip';
 import { modal } from '../Modal';
@@ -36,7 +36,6 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
 }) => {
   const { openModal } = useModal();
   const [isEditing, setIsEditing] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
 
   const member = message.sender;
   const { isAdmin, isModerator } = checkRole(currentMember.role);
@@ -89,6 +88,32 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
     }
   };
 
+  const parsedMessage = useMemo(() => {
+    const parts = message.content.split(/(<@\w+>)/g);
+
+    return parts.map((part, index) => {
+      const match = part.match(/^<@(\w+)>$/);
+      if (match) {
+        const mentionId = +match[1];
+        const mention = message.mentions?.find((m) => m.id === mentionId);
+        if (mention) {
+          return (
+            <ActionTooltip
+              side="top"
+              label={mention.member.username}
+              key={index}
+            >
+              <span className="text-white p-1 bg-[#3c4270] bg-opacity-50 hover:bg-[#5864f3] hover:bg-opacity-100 font-semibold rounded-sm transition-colors hover:underline cursor-pointer">
+                @{mention.member.username}
+              </span>
+            </ActionTooltip>
+          );
+        }
+      }
+      return <span key={index}>{part}</span>;
+    });
+  }, [message.content, message.mentions]);
+
   return (
     <div className="relative group flex items-center hover:bg-black/5 p-4 transition-colors w-full">
       <div className="group flex gap-x-2 items-start w-full">
@@ -101,7 +126,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
           <UserAvatar src={member.user.image} />
         </div>
         <div className="flex flex-col w-full">
-          <div className="flex items-center gap-x-2">
+          <div className="flex items-center gap-x-2 mb-1">
             <div className="flex items-center gap-x-2">
               <p
                 className={cn(
@@ -109,7 +134,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
                   !preview && 'hover:underline cursor-pointer'
                 )}
               >
-                {member.user.name}
+                {member.username}
               </p>
               <ActionTooltip label={member.role}>
                 {roleIconMap[member.role]}
@@ -125,7 +150,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
                 'text-sm text-zinc-600 dark:text-zinc-300 break-all'
               )}
             >
-              {message.content}
+              {parsedMessage}
               {isUpdated && (
                 <span className="text-[10px] mx-2 text-zinc-500 dark:text-zinc-400 select-none">
                   (edited)

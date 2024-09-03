@@ -1,5 +1,6 @@
 'use server';
 
+import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { authClient } from '@/lib/safe-action';
 import { MemberRole } from '@prisma/client';
@@ -14,6 +15,7 @@ export const createServer = authClient
       flattenValidationErrors(ve).fieldErrors,
   })
   .action(async ({ parsedInput, ctx }) => {
+    const session = await auth();
     const server = await prisma.server.create({
       data: {
         ...parsedInput,
@@ -23,7 +25,13 @@ export const createServer = authClient
           create: [{ name: 'general' }],
         },
         members: {
-          create: [{ userId: ctx.userId, role: MemberRole.ADMIN }],
+          create: [
+            {
+              userId: ctx.userId,
+              username: session!.user.name!,
+              role: MemberRole.ADMIN,
+            },
+          ],
         },
       },
     });
