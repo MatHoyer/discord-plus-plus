@@ -10,12 +10,16 @@ import {
 import { ZodType } from 'zod';
 
 declare global {
+  interface MemberWithUser extends Member {
+    user: User;
+  }
+
   interface ServerMentionWithUser extends ServerMention {
-    member: Member;
+    member: MemberWithUser;
   }
 
   interface ServerMessageWithSender extends ServerMessage {
-    sender: Member & { user: User };
+    sender: MemberWithUser;
     mentions: ServerMentionWithUser[];
   }
 

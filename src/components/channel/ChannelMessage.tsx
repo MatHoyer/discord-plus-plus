@@ -14,6 +14,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { FieldErrors } from 'react-hook-form';
 import ActionTooltip from '../ActionTooltip';
 import { modal } from '../Modal';
+import ProfilePopover from '../profile/ProfilePopover';
 import { roleIconMap } from '../server/ServerSidebar';
 import { Form, FormControl, FormField, FormItem, useZodForm } from '../ui/form';
 import { Input } from '../ui/input';
@@ -98,15 +99,11 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
         const mention = message.mentions?.find((m) => m.id === mentionId);
         if (mention) {
           return (
-            <ActionTooltip
-              side="top"
-              label={mention.member.username}
-              key={index}
-            >
+            <ProfilePopover key={index} member={mention.member}>
               <span className="text-white p-1 bg-[#3c4270] bg-opacity-50 hover:bg-[#5864f3] hover:bg-opacity-100 font-semibold rounded-sm transition-colors hover:underline cursor-pointer">
                 @{mention.member.username}
               </span>
-            </ActionTooltip>
+            </ProfilePopover>
           );
         }
       }
@@ -123,7 +120,9 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
             !preview && 'cursor-pointer '
           )}
         >
-          <UserAvatar src={member.user.image} />
+          <ProfilePopover member={member}>
+            <UserAvatar src={member.user.image} />
+          </ProfilePopover>
         </div>
         <div className="flex flex-col w-full">
           <div className="flex items-center gap-x-2 mb-1">

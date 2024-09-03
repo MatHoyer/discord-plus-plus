@@ -1,6 +1,5 @@
 import Modal from '@/components/Modal';
 import { ThemeProvider } from '@/components/ThemeProvider';
-import { DiscordProvider } from '@/contexts/DiscordContext';
 import ModalProvider from '@/contexts/ModalProvider';
 import { cn } from '@/lib/utils';
 import type { Metadata } from 'next';
@@ -27,11 +26,9 @@ export default function RootLayout({
       >
         <ThemeProvider attribute="class" defaultTheme="dark">
           <SessionProvider>
-            <DiscordProvider>
-              <Modal />
-              <ModalProvider />
-              {children}
-            </DiscordProvider>
+            <Modal />
+            <ModalProvider />
+            {children}
           </SessionProvider>
         </ThemeProvider>
       </body>
