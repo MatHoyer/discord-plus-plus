@@ -28,6 +28,11 @@ export const editMessage = authClient
         content,
       },
       include: {
+        mentions: {
+          include: {
+            member: true,
+          },
+        },
         sender: {
           include: {
             user: true,
