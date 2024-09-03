@@ -1,3 +1,4 @@
+import { positiveNumber } from '@/lib/schema-utils';
 import { z } from 'zod';
 
 export const MAX_MESSAGE_LENGTH = 2000;
@@ -9,7 +10,8 @@ export const messageSchema = z.string().min(1).max(MAX_MESSAGE_LENGTH, {
 
 export const sendMessageSchema = z.object({
   content: messageSchema,
-  channelId: z.number(),
+  channelId: positiveNumber,
+  memberId: positiveNumber,
 });
 
 export type TSendMessage = z.infer<typeof sendMessageSchema>;

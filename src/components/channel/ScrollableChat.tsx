@@ -80,6 +80,7 @@ const ScrollableChat: React.FC<{
           message={message}
           currentMember={currentMember}
           time={getCustomDate(new Date(message.createdAt))}
+          channel={channel}
         />
       ))}
       <div ref={topRef} className="p-1" />

@@ -6,7 +6,7 @@ import {
 import { useModal } from '@/hooks/useModalStore';
 import { checkRole, cn } from '@/lib/utils';
 import { socket } from '@/socket';
-import { Member } from '@prisma/client';
+import { Channel, Member } from '@prisma/client';
 import { isEqual } from 'date-fns';
 import { Edit, Trash } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
@@ -23,6 +23,7 @@ type TChannelMessageProps = {
   time: string;
   message: ServerMessageWithSender;
   currentMember: Member;
+  channel?: Channel;
   preview?: boolean;
 };
 
@@ -30,6 +31,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
   time,
   message,
   currentMember,
+  channel,
   preview = false,
 }) => {
   const { openModal } = useModal();
@@ -184,6 +186,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
                 openModal('deleteChannelMessage', {
                   serverMessage: message,
                   currentMember,
+                  channel,
                 });
               }}
             />

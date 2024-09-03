@@ -32,7 +32,7 @@ const DeleteChannelMessageModal: React.FC = () => {
 
   const message = data.serverMessage!;
 
-  if (!message || !data.currentMember) {
+  if (!message || !data.currentMember || !data.channel) {
     return null;
   }
 
@@ -73,7 +73,7 @@ const DeleteChannelMessageModal: React.FC = () => {
               execute({
                 channelId: message.channelId,
                 messageId: message.id,
-                serverId: message.sender.serverId,
+                serverId: data.channel!.serverId,
               });
             }}
           >
