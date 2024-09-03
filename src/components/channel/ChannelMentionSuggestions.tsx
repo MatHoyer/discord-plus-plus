@@ -36,7 +36,9 @@ const ChannelMentionSuggestions: React.FC<TChannelMentionSuggestionsProps> = ({
         setSelectedSuggestion(members[prevIndex].id);
       } else if (e.key === 'Enter') {
         const member = members[currentIndex];
-        onSelect(member);
+        if (member) {
+          onSelect(member);
+        }
       }
     };
 

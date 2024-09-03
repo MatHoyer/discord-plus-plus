@@ -25,9 +25,10 @@ const ChatInput: React.FC<{
   const [filteredMembers, setFilteredMembers] = useState<
     MemberWithUser[] | null
   >(members);
-  const [lastAtPosition, setLastAtPosition] = useState<number | null>(null);
-
+  const [savedRange, setSavedRange] = useState<Range | null>(null);
+  const [atSymbolPosition, setAtSymbolPosition] = useState<number | null>(null);
   const [isMentionPopoverOpen, setIsMentionPopoverOpen] = useState(false);
+
   const wholeInputRef = useRef<HTMLDivElement>(null);
   const editableDivRef = useRef<HTMLDivElement>(null);
 
@@ -68,18 +69,22 @@ const ChatInput: React.FC<{
   };
 
   const handleMentionSelect = (member: MemberWithUser) => {
-    if (!editableDivRef.current) return;
-    const selection = window.getSelection();
+    if (!editableDivRef.current || !savedRange) return;
+
     editableDivRef.current.focus();
+    const selection = window.getSelection();
 
     if (!selection) return;
 
+    selection.removeAllRanges();
+    selection.addRange(savedRange);
+
     const range = selection.getRangeAt(0);
 
-    if (!range || lastAtPosition === null) return;
+    if (!range || atSymbolPosition === null) return;
 
-    range.setStart(range.startContainer, lastAtPosition);
-    range.setEnd(range.startContainer, range.startOffset);
+    range.setStart(range.startContainer, atSymbolPosition);
+    range.setEnd(range.startContainer, range.endOffset);
     range.deleteContents();
 
     const mentionSpan = document.createElement('span');
@@ -100,17 +105,13 @@ const ChatInput: React.FC<{
 
     handleInput();
     setIsMentionPopoverOpen(false);
-    setLastAtPosition(null);
-    setFilteredMembers([]);
+    setAtSymbolPosition(null);
   };
 
   const handleInput = () => {
     if (editableDivRef.current) {
       const content = editableDivRef.current.innerHTML;
       form.setValue('content', content, { shouldValidate: true });
-      if (!content.includes('@')) {
-        setIsMentionPopoverOpen(false);
-      }
 
       const selection = window.getSelection();
       if (selection && selection.rangeCount > 0) {
@@ -119,30 +120,29 @@ const ChatInput: React.FC<{
           0,
           range.startOffset
         );
-        if (textBeforeCursor && textBeforeCursor.endsWith('@')) {
-          setLastAtPosition(range.startOffset - 1);
+
+        const atIndex = textBeforeCursor?.lastIndexOf('@');
+        if (atIndex !== undefined && atIndex !== -1) {
+          setAtSymbolPosition(atIndex);
           setFilteredMembers(members);
-        } else if (lastAtPosition !== null) {
-          const query = textBeforeCursor?.substring(lastAtPosition + 1);
+          setSavedRange(range.cloneRange());
+          const query = textBeforeCursor?.substring(atIndex + 1);
+          setIsMentionPopoverOpen(true);
           filterMembers(query || '');
         } else {
-          setLastAtPosition(null);
-          setFilteredMembers([]);
+          setAtSymbolPosition(null);
+          setIsMentionPopoverOpen(false);
         }
       }
     }
   };
 
   const filterMembers = (query: string) => {
-    const filtered = members.filter((member) =>
-      member.username.toLowerCase().startsWith(query.toLowerCase())
+    setFilteredMembers(
+      members.filter((member) =>
+        member.username.toLowerCase().startsWith(query.toLowerCase())
+      )
     );
-    if (filtered.length === 0) {
-      setIsMentionPopoverOpen(false);
-      setFilteredMembers([]);
-    } else {
-      setFilteredMembers(filtered);
-    }
   };
 
   const handleSubmit = (v: TSendMessage) => {
@@ -202,7 +202,10 @@ const ChatInput: React.FC<{
                         }
                         if (e.key === 'Enter') {
                           e.preventDefault();
-                          if (!isMentionPopoverOpen) {
+                          if (
+                            !isMentionPopoverOpen ||
+                            !filteredMembers?.length
+                          ) {
                             form.handleSubmit(handleSubmit, onError)();
                           }
                         }
