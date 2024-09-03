@@ -43,7 +43,7 @@ export const sendMessage = authClient
         },
       });
 
-      mentionIdMap[userId] = mention.id;
+      mentionIdMap[memberId] = mention.id;
     }
 
     let updatedContent = content;

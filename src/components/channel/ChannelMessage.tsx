@@ -91,7 +91,6 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
 
   const parsedMessage = useMemo(() => {
     const parts = message.content.split(/(<@\w+>)/g);
-
     return parts.map((part, index) => {
       const match = part.match(/^<@(\w+)>$/);
       if (match) {
