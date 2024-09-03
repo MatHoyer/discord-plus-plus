@@ -37,35 +37,43 @@ const DeleteChannelModal: React.FC = () => {
 
   const open = isOpen && type === 'deleteChannel';
 
-  if (!modalData.channel) return null;
-  const channel = modalData.channel!;
-
   return (
     <Dialog open={open} onOpenChange={closeModal}>
-      <DialogContent className="overflow-hidden">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold">
-            Delete a channel
-          </DialogTitle>
-          <DialogDescription>
-            Are you sure you want to delete{' '}
-            <span className="font-bold">#{channel.name}</span>?
-          </DialogDescription>
-        </DialogHeader>
-        <DialogFooter>
-          <Button variant="link">Cancel</Button>
-          <Button
-            variant="destructive"
-            onClick={() => {
-              execute({
-                channelId: channel.id,
-                serverId: channel.serverId,
-              });
-            }}
-          >
-            Delete
-          </Button>
-        </DialogFooter>
+      <DialogContent className="overflow-hidden ">
+        {modalData.channel && (
+          <>
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-bold">
+                Delete a channel
+              </DialogTitle>
+              <DialogDescription>
+                Are you sure you want to delete{' '}
+                <span className="font-bold">#{modalData.channel.name}</span>?
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button
+                variant="link"
+                onClick={() => {
+                  closeModal();
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={() => {
+                  execute({
+                    channelId: modalData.channel!.id,
+                    serverId: modalData.channel!.serverId,
+                  });
+                }}
+              >
+                Delete
+              </Button>
+            </DialogFooter>
+          </>
+        )}
       </DialogContent>
     </Dialog>
   );
