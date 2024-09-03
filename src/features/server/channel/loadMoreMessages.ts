@@ -20,7 +20,11 @@ export const loadMoreMessages = async (channelId: number, skip: number) => {
       },
       mentions: {
         include: {
-          member: true,
+          member: {
+            include: {
+              user: true,
+            },
+          },
         },
       },
     },

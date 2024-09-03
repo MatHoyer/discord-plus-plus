@@ -13,6 +13,7 @@ import { useAction } from 'next-safe-action/hooks';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FieldErrors } from 'react-hook-form';
 import ActionTooltip from '../ActionTooltip';
+import ProfileContextMenu from '../context-menus/ProfileContextMenu';
 import { modal } from '../Modal';
 import ProfilePopover from '../profile/ProfilePopover';
 import { roleIconMap } from '../server/ServerSidebar';
@@ -98,11 +99,13 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
         const mention = message.mentions?.find((m) => m.id === mentionId);
         if (mention) {
           return (
-            <ProfilePopover key={index} member={mention.member}>
-              <span className="text-white p-1 bg-[#3c4270] bg-opacity-50 hover:bg-[#5864f3] hover:bg-opacity-100 font-semibold rounded-sm transition-colors hover:underline cursor-pointer">
-                @{mention.member.username}
-              </span>
-            </ProfilePopover>
+            <ProfileContextMenu key={index} member={mention.member}>
+              <ProfilePopover member={mention.member} asChild>
+                <span className="text-white p-1 bg-[#3c4270] bg-opacity-50 hover:bg-[#5864f3] hover:bg-opacity-100 font-semibold rounded-sm transition-colors hover:underline cursor-pointer select-none">
+                  @{mention.member.username}
+                </span>
+              </ProfilePopover>
+            </ProfileContextMenu>
           );
         }
       }

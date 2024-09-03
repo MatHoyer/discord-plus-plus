@@ -8,7 +8,8 @@ export type TModalType =
   | 'members'
   | 'deleteChannelMessage'
   | 'deleteChannel'
-  | 'editChannel';
+  | 'editChannel'
+  | 'memberProfile';
 
 type TModalData = {
   server?: Server;
@@ -16,6 +17,7 @@ type TModalData = {
   serverMessage?: ServerMessageWithSender;
   currentMember?: Member;
   currentChannelId?: number;
+  member?: MemberWithUser;
 };
 
 type TModalStore = {
