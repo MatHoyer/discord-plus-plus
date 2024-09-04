@@ -16,28 +16,34 @@ const CreateChannelModal: React.FC = () => {
 
   const open = isOpen && type === 'createChannel';
 
-  if (!data.server) return null;
-
   return (
     <Dialog open={open} onOpenChange={closeModal}>
       <DialogContent className="overflow-hidden">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold">
-            Create a channel
-          </DialogTitle>
-        </DialogHeader>
-        <CreateChannelForm serverId={data.server?.id} close={closeModal}>
-          {({ pending, form }) => (
-            <DialogFooter>
-              <SubmitButton
-                disabled={pending || !form.formState.isValid}
-                loading={pending}
-              >
-                Create
-              </SubmitButton>
-            </DialogFooter>
-          )}
-        </CreateChannelForm>
+        {!data.server ? null : (
+          <>
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-bold">
+                Create a channel
+              </DialogTitle>
+            </DialogHeader>
+            <CreateChannelForm
+              serverId={data.server?.id}
+              close={closeModal}
+              className="px-4"
+            >
+              {({ pending, form }) => (
+                <DialogFooter>
+                  <SubmitButton
+                    disabled={pending || !form.formState.isValid}
+                    loading={pending}
+                  >
+                    Create
+                  </SubmitButton>
+                </DialogFooter>
+              )}
+            </CreateChannelForm>
+          </>
+        )}
       </DialogContent>
     </Dialog>
   );

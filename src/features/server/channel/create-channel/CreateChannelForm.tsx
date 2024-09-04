@@ -68,54 +68,53 @@ const CreateChannelForm: React.FC<TCreateServerFormProps> = ({
   return (
     <Form {...form} state={state}>
       <FormError state={state} />
-      <form
-        onSubmit={form.handleSubmit(execute)}
-        className={cn('space-y-3', className)}
-      >
-        <FormField
-          control={form.control}
-          name="type"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>CHANNEL TYPE</FormLabel>
-              <FormControl>
-                <RadioGroup
-                  defaultValue={field.value}
-                  onValueChange={field.onChange}
-                >
-                  <ChannelTypeRadio
-                    fieldValue={field.value}
-                    value="TEXT"
-                    label="Text"
-                    description="Share images, GIFs, emjois, opinions, and more"
-                    icon={<Hash className="w-5 h-5" />}
-                  />
-                  <ChannelTypeRadio
-                    fieldValue={field.value}
-                    value="AUDIO"
-                    label="Audio"
-                    description="Join voice channels to chat with your friends"
-                    icon={<Volume2 className="w-5 h-5" />}
-                  />
-                </RadioGroup>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>CHANNEL NAME</FormLabel>
-              <FormControl>
-                <Input {...field} placeholder="new-channel" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+      <form onSubmit={form.handleSubmit(execute)}>
+        <div className={cn('space-y-3', className)}>
+          <FormField
+            control={form.control}
+            name="type"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>CHANNEL TYPE</FormLabel>
+                <FormControl>
+                  <RadioGroup
+                    defaultValue={field.value}
+                    onValueChange={field.onChange}
+                  >
+                    <ChannelTypeRadio
+                      fieldValue={field.value}
+                      value="TEXT"
+                      label="Text"
+                      description="Share images, GIFs, emjois, opinions, and more"
+                      icon={<Hash className="w-5 h-5" />}
+                    />
+                    <ChannelTypeRadio
+                      fieldValue={field.value}
+                      value="AUDIO"
+                      label="Audio"
+                      description="Join voice channels to chat with your friends"
+                      icon={<Volume2 className="w-5 h-5" />}
+                    />
+                  </RadioGroup>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>CHANNEL NAME</FormLabel>
+                <FormControl>
+                  <Input {...field} placeholder="new-channel" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
         {children({ pending: isExecuting, form })}
       </form>
     </Form>

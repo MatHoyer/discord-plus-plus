@@ -1,4 +1,5 @@
 'use client';
+import { useDeleteMessage } from '@/features/server/channel/message/delete-message/delete-message.hook';
 import { reactToMessage } from '@/features/server/channel/message/react-to-message/react-to-message.action';
 import { useModal } from '@/hooks/useModalStore';
 import { checkMessage } from '@/lib/utils/message.utils';
@@ -36,8 +37,9 @@ const ChannelMessageContextMenu: React.FC<
   const { canDeleteMessage } = checkMessage(member, currentMember, message);
 
   const { openModal } = useModal();
+  const { execute: deleteMessage } = useDeleteMessage();
 
-  const { execute } = useAction(reactToMessage, {
+  const { execute: react } = useAction(reactToMessage, {
     onSuccess: ({ data }) => {
       if (typeof data === 'number') {
         socket.emit(ServerSocketEvents.deleteReaction, {
@@ -70,7 +72,7 @@ const ChannelMessageContextMenu: React.FC<
                   </>
                 ),
               onClick: () => {
-                execute({
+                react({
                   messageId: message.id,
                   memberId: currentMember.id,
                   content: emoji.content,
@@ -97,12 +99,20 @@ const ChannelMessageContextMenu: React.FC<
           label: 'Delete Message',
           icon: Trash,
           variant: 'destructive',
-          onClick: () => {
-            openModal('deleteChannelMessage', {
-              serverMessage: message,
-              currentMember,
-              channel,
-            });
+          onClick: ({ e }) => {
+            if (e.shiftKey) {
+              deleteMessage({
+                channelId: message.channelId,
+                messageId: message.id,
+                serverId: channel!.serverId,
+              });
+            } else {
+              openModal('deleteChannelMessage', {
+                serverMessage: message,
+                currentMember,
+                channel,
+              });
+            }
           },
           when: canDeleteMessage,
         },

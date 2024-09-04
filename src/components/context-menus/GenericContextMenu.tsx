@@ -70,8 +70,8 @@ const GenericContextMenuItem = <T extends TItem>({
             variant: item.variant,
           })
         )}
-        onClick={() => {
-          item.onClick?.(item, index);
+        onClick={(e) => {
+          item.onClick?.({ item, index, e });
         }}
       >
         {item.customRender ? (
@@ -105,7 +105,15 @@ type TItem =
       label?: string;
       icon?: React.ComponentType<LucideProps>;
       customRender?: (item: TItem, index: number) => React.ReactNode;
-      onClick?: (item: TItem, index: number) => void;
+      onClick?: ({
+        item,
+        index,
+        e,
+      }: {
+        item: TItem;
+        index: number;
+        e: React.MouseEvent;
+      }) => void;
       when?: boolean | ((item: TItem, index: number) => boolean);
       subItems?: TItem[];
       subItemTriggerOnClick?: (item: TItem, index: number) => void;

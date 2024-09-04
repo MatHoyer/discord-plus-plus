@@ -12,18 +12,21 @@ type TUserAvatarWithActivityProps = {
   src?: string | null;
 };
 
-export const avatarVariants = cva('', {
-  variants: {
-    size: {
-      default: 'h-7 w-7 md:h-10 md:w-10',
-      xs: 'md:w-6 md:h-6',
-      xl: 'h-12 w-12 md:w-20 md:h-20',
+export const avatarVariants = cva(
+  'border-0 focus-visible:ring-0 focus-visible:ring-offset-0',
+  {
+    variants: {
+      size: {
+        default: 'h-7 w-7 md:h-10 md:w-10',
+        xs: 'md:w-6 md:h-6',
+        xl: 'h-12 w-12 md:w-20 md:h-20',
+      },
     },
-  },
-  defaultVariants: {
-    size: 'default',
-  },
-});
+    defaultVariants: {
+      size: 'default',
+    },
+  }
+);
 
 const activityIndicatorVariants = cva(
   'absolute rounded-full bg-[#2b2d31] right-0',

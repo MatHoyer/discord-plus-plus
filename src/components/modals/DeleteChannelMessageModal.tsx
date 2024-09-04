@@ -1,16 +1,14 @@
 'use client';
 
-import { deleteMessage } from '@/features/server/channel/message/delete-message/delete-message.action';
+import { useDeleteMessage } from '@/features/server/channel/message/delete-message/delete-message.hook';
 import { useModal } from '@/hooks/useModalStore';
 import { getCustomDate } from '@/lib/utils';
-import { socket } from '@/socket';
-import { useAction } from 'next-safe-action/hooks';
-import { ServerSocketEvents } from '../../../server/socket/server';
 import ChannelMessage from '../channel/ChannelMessage';
 import { Button } from '../ui/button';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -19,68 +17,61 @@ import {
 const DeleteChannelMessageModal: React.FC = () => {
   const { isOpen, type, closeModal, data } = useModal();
 
-  const { execute } = useAction(deleteMessage, {
-    onSuccess: ({ data }) => {
-      closeModal();
-      socket.emit(ServerSocketEvents.deleteMessage, {
-        messageId: data!.id,
-        channelId: data!.channelId,
-      });
-    },
-  });
+  const { execute } = useDeleteMessage(closeModal);
 
   const open = isOpen && type === 'deleteChannelMessage';
 
   const message = data.serverMessage!;
 
-  if (!message || !data.currentMember || !data.channel) {
-    return null;
-  }
-
   return (
     <Dialog open={open} onOpenChange={closeModal}>
       <DialogContent className="overflow-hidden" aria-describedby={undefined}>
-        <DialogHeader className="space-y-3">
-          <DialogTitle className="text-2xl font-bold">
-            Delete message
-          </DialogTitle>
-          <p>Are you sure you want to delete this message?</p>
-          <div
-            className="p-3"
-            style={{
-              boxShadow: '0 0 3px #3133388b',
-            }}
-          >
-            <ChannelMessage
-              message={message}
-              time={getCustomDate(new Date(message.createdAt))}
-              currentMember={data.currentMember!}
-              preview
-            />
-          </div>
-        </DialogHeader>
-        <DialogFooter>
-          <Button
-            variant="link"
-            onClick={() => {
-              closeModal();
-            }}
-          >
-            Cancel
-          </Button>
-          <Button
-            variant="destructive"
-            onClick={() => {
-              execute({
-                channelId: message.channelId,
-                messageId: message.id,
-                serverId: data.channel!.serverId,
-              });
-            }}
-          >
-            Delete
-          </Button>
-        </DialogFooter>
+        {!message || !data.currentMember || !data.channel ? null : (
+          <>
+            <DialogHeader className="space-y-2">
+              <DialogTitle className="text-xl font-bold">
+                Delete message
+              </DialogTitle>
+              <DialogDescription>
+                Are you sure you want to delete this message?
+              </DialogDescription>
+              <div
+                style={{
+                  boxShadow: '0 0 3px #3133388b',
+                }}
+              >
+                <ChannelMessage
+                  message={message}
+                  time={getCustomDate(new Date(message.createdAt))}
+                  currentMember={data.currentMember!}
+                  preview
+                />
+              </div>
+            </DialogHeader>
+            <DialogFooter>
+              <Button
+                variant="link"
+                onClick={() => {
+                  closeModal();
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={() => {
+                  execute({
+                    channelId: message.channelId,
+                    messageId: message.id,
+                    serverId: data.channel!.serverId,
+                  });
+                }}
+              >
+                Delete
+              </Button>
+            </DialogFooter>
+          </>
+        )}
       </DialogContent>
     </Dialog>
   );
