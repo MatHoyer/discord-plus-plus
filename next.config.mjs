@@ -1,8 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  images: {
-    remotePatterns: [{ protocol: 'https', hostname: 'cdn.logojoy.com' }],
-  },
+	images: {
+		remotePatterns: [{ protocol: 'https', hostname: '**' }],
+	},
 };
 
 export default nextConfig;

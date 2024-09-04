@@ -1,5 +1,10 @@
 'use client';
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { useEffect, useState } from 'react';
 import { Button } from './ui/button';
 import { Checkbox } from './ui/checkbox';
@@ -17,8 +22,10 @@ const Modal: React.FC = () => {
     question: false,
     message: false,
   });
-  const [modalMessageParams, setModalMessageParams] = useState<IMessageModalProps>();
-  const [modalQuestionParams, setModalQuestionParams] = useState<IQuestionModalProps>();
+  const [modalMessageParams, setModalMessageParams] =
+    useState<IMessageModalProps>();
+  const [modalQuestionParams, setModalQuestionParams] =
+    useState<IQuestionModalProps>();
 
   useEffect(() => {
     modal.question = (params: IQuestionParams) => {
@@ -73,13 +80,17 @@ const Modal: React.FC = () => {
     };
   }, []);
 
-  const elements = [];
+  const elements: JSX.Element[] = [];
   if (modalQuestionParams) {
-    elements.push(<ModalQuestion key={1} {...modalQuestionParams} open={open.question} />);
+    elements.push(
+      <ModalQuestion key={1} {...modalQuestionParams} open={open.question} />
+    );
   }
 
   if (modalMessageParams) {
-    elements.push(<ModalMessage key={2} {...modalMessageParams} open={open.message} />);
+    elements.push(
+      <ModalMessage key={2} {...modalMessageParams} open={open.message} />
+    );
   }
 
   if (elements.length) {
@@ -88,7 +99,13 @@ const Modal: React.FC = () => {
   return null;
 };
 
-const ModalQuestion: React.FC<IQuestionModalProps> = ({ closeModal, doubleConfirm, message, title, open }) => {
+const ModalQuestion: React.FC<IQuestionModalProps> = ({
+  closeModal,
+  doubleConfirm,
+  message,
+  title,
+  open,
+}) => {
   const [confirm, setConfirm] = useState(false);
   const okDisabled = !!doubleConfirm && !confirm;
 
@@ -111,11 +128,17 @@ const ModalQuestion: React.FC<IQuestionModalProps> = ({ closeModal, doubleConfir
       >
         <DialogHeader className="space-y-2">
           <DialogTitle>{title}</DialogTitle>
-          <DialogDescription className="whitespace-pre-wrap">{message}</DialogDescription>
+          <DialogDescription className="whitespace-pre-wrap">
+            {message}
+          </DialogDescription>
         </DialogHeader>
         {doubleConfirm && (
           <div className="flex gap-1.5">
-            <Checkbox id="confirm" checked={confirm} onCheckedChange={() => setConfirm((prev) => !prev)} />
+            <Checkbox
+              id="confirm"
+              checked={confirm}
+              onCheckedChange={() => setConfirm((prev) => !prev)}
+            />
             <Label htmlFor="confirm">Confirmer</Label>
           </div>
         )}
@@ -123,7 +146,12 @@ const ModalQuestion: React.FC<IQuestionModalProps> = ({ closeModal, doubleConfir
           <Button variant="outline" size="sm" onClick={() => closeModal(false)}>
             Non
           </Button>
-          <Button type="submit" size="sm" onClick={() => closeModal(true)} disabled={okDisabled}>
+          <Button
+            type="submit"
+            size="sm"
+            onClick={() => closeModal(true)}
+            disabled={okDisabled}
+          >
             Oui
           </Button>
         </DialogFooter>
@@ -132,7 +160,12 @@ const ModalQuestion: React.FC<IQuestionModalProps> = ({ closeModal, doubleConfir
   );
 };
 
-const ModalMessage: React.FC<IMessageModalProps> = ({ closeModal, message, title, open }) => {
+const ModalMessage: React.FC<IMessageModalProps> = ({
+  closeModal,
+  message,
+  title,
+  open,
+}) => {
   return (
     <Dialog
       open={open}

@@ -1,6 +1,6 @@
 import Modal from '@/components/Modal';
 import { ThemeProvider } from '@/components/ThemeProvider';
-import { DiscordProvider } from '@/contexts/DiscordContext';
+import { Toaster } from '@/components/ui/toaster';
 import ModalProvider from '@/contexts/ModalProvider';
 import { cn } from '@/lib/utils';
 import type { Metadata } from 'next';
@@ -23,18 +23,14 @@ export default function RootLayout({
   return (
     <html lang="fr" suppressHydrationWarning>
       <body
-        className={cn(
-          'min-h-screen dark:bg-[#313338] font-sans antialiased',
-          inter.className
-        )}
+        className={cn('min-h-screen font-sans antialiased', inter.className)}
       >
         <ThemeProvider attribute="class" defaultTheme="dark">
           <SessionProvider>
-            <DiscordProvider>
-              <Modal />
-              <ModalProvider />
-              {children}
-            </DiscordProvider>
+            <Toaster />
+            <Modal />
+            <ModalProvider />
+            {children}
           </SessionProvider>
         </ThemeProvider>
       </body>

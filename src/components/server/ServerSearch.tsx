@@ -11,6 +11,7 @@ import {
   CommandList,
   CommandShortcut,
 } from '../ui/command';
+import { DialogTitle } from '../ui/dialog';
 
 type TServerSearchProps = {
   serverId: number;
@@ -68,6 +69,9 @@ const ServerSearch: React.FC<TServerSearchProps> = ({ serverId, data }) => {
         <CommandShortcut>ctrl k</CommandShortcut>
       </button>
       <CommandDialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogTitle className="sr-only">
+          Search within the whole server
+        </DialogTitle>
         <CommandInput placeholder="Search all channels and members" />
         <CommandList>
           <CommandEmpty>No results found</CommandEmpty>

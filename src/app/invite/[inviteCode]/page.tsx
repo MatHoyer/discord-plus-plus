@@ -43,6 +43,7 @@ const InvitePage = async (props: PageParams<{ inviteCode: string }>) => {
       members: {
         create: [
           {
+            username: session.user.name!,
             userId: session.user.id,
           },
         ],

@@ -1,10 +1,33 @@
 import { useZodForm } from '@/components/ui/form';
-import { Channel, Member, Server, ServerMessage, User } from '@prisma/client';
+import {
+  Channel,
+  Member,
+  Server,
+  ServerMention,
+  ServerMessage,
+  ServerMessageReaction,
+  ServerMessageReactionMember,
+  User,
+} from '@prisma/client';
 import { ZodType } from 'zod';
 
 declare global {
+  interface MemberWithUser extends Member {
+    user: User;
+  }
+
+  interface ServerMentionWithUser extends ServerMention {
+    member: MemberWithUser;
+  }
+
+  interface ServerMessageReactionWithMembers extends ServerMessageReaction {
+    members: (ServerMessageReactionMember & { member: MemberWithUser })[];
+  }
+
   interface ServerMessageWithSender extends ServerMessage {
-    sender: Member & { user: User };
+    sender: MemberWithUser;
+    mentions: ServerMentionWithUser[];
+    reactions: ServerMessageReactionWithMembers[];
   }
 
   interface ChannelWithMessages extends Channel {

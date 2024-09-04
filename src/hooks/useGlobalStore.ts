@@ -1,0 +1,53 @@
+import { create } from 'zustand';
+
+type TGlobalStore = {
+  unreadChannels: Set<number>;
+  setUnreadChannels: (channelId: number) => void;
+  setAsRead: (channelId: number) => void;
+  channelMentions: Record<number, ServerMentionWithUser[]>;
+  addChannelMention: (
+    channelId: number,
+    mention: ServerMentionWithUser
+  ) => void;
+  deleteChannelMention: (channelId: number, mentionId: number) => void;
+};
+
+export const useGlobalStore = create<TGlobalStore>((set) => ({
+  unreadChannels: new Set(),
+  setUnreadChannels: (channelId) =>
+    set((state) => {
+      state.unreadChannels.add(channelId);
+      return {
+        unreadChannels: state.unreadChannels,
+      };
+    }),
+  setAsRead: (channelId) =>
+    set((state) => {
+      state.unreadChannels.delete(channelId);
+      if (state.channelMentions[channelId]) {
+        state.channelMentions[channelId] = [];
+      }
+      return {
+        unreadChannels: state.unreadChannels,
+        channelMentions: state.channelMentions,
+      };
+    }),
+  channelMentions: {},
+  addChannelMention: (channelId, mention) =>
+    set((state) => {
+      state.channelMentions[channelId] = state.channelMentions[channelId] || [];
+      state.channelMentions[channelId].push(mention);
+      return { channelMentions: state.channelMentions };
+    }),
+  deleteChannelMention: (channelId, mentionId) =>
+    set((state) => {
+      if (!state.channelMentions[channelId])
+        return { channelMentions: state.channelMentions };
+
+      state.channelMentions[channelId] = state.channelMentions[
+        channelId
+      ].filter((m) => m.id !== mentionId);
+
+      return { channelMentions: state.channelMentions };
+    }),
+}));
