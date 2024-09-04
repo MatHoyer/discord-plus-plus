@@ -15,7 +15,7 @@ const MemberProfileModal: React.FC = () => {
   return (
     <Dialog open={open} onOpenChange={closeModal}>
       <DialogContent
-        className="p-0 overflow-hidden pb-4 bg-[#12202a]"
+        className="p-0 overflow-hidden pb-4 bg-[#111214]"
         showClose={false}
         aria-describedby={undefined}
       >
@@ -48,7 +48,7 @@ const MemberProfileModal: React.FC = () => {
                 <div className="font-bold">{data.member.username}</div>
                 <span className="text-xs">{data.member.user.name}</span>
               </div>
-              <div className="p-2 mt-4 border border-[#353c47] rounded-md">
+              <div className="py-2 px-2 mt-4 border border-[#353c47] rounded-md bg-[#232528]">
                 <div>
                   <div className="text-xs">Member Since</div>
                   <div className="text-xs flex items-center gap-1">

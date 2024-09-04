@@ -28,7 +28,7 @@ const DeleteChannelMessageModal: React.FC = () => {
       <DialogContent className="overflow-hidden" aria-describedby={undefined}>
         {!message || !data.currentMember || !data.channel ? null : (
           <>
-            <DialogHeader className="space-y-2">
+            <DialogHeader className="space-y-3">
               <DialogTitle className="text-xl font-bold">
                 Delete message
               </DialogTitle>
@@ -47,8 +47,17 @@ const DeleteChannelMessageModal: React.FC = () => {
                   preview
                 />
               </div>
+              <div className="flex flex-col">
+                <span className="text-[#2dc770] font-bold text-sm">
+                  PROTIP:
+                </span>
+                <span className="text-xs text-zinc-500">
+                  You can hold down shift when clicking delete message to bypass
+                  this confirmation entirely.
+                </span>
+              </div>
             </DialogHeader>
-            <DialogFooter>
+            <DialogFooter className="mt-2">
               <Button
                 variant="link"
                 onClick={() => {

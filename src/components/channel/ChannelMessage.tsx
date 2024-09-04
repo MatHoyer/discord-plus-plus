@@ -198,7 +198,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
               <>
                 <p
                   className={cn(
-                    'text-sm text-zinc-600 dark:text-zinc-300 break-all'
+                    'text-sm text-zinc-600 dark:text-zinc-300 break-all mb-1'
                   )}
                 >
                   {parsedMessage}
