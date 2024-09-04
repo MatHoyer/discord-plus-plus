@@ -36,5 +36,5 @@ export const editMessage = authClient
       throw new Error('Message not found');
     }
 
-    return await formatMessageMention(message);
+    return await formatMessageMention(message, false);
   });

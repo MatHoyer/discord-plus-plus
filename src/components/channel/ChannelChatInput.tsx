@@ -23,6 +23,7 @@ const ChannelChatInput: React.FC<{
   members: MemberWithUser[];
 }> = ({ channel, currentMember, members }) => {
   const formRef = useRef<HTMLFormElement>(null);
+  const inputRef = useRef<HTMLDivElement>(null);
 
   const form = useZodForm({
     schema: sendMessageSchema,
@@ -47,7 +48,7 @@ const ChannelChatInput: React.FC<{
         });
       }
       form.reset();
-      //   editableDivRef.current!.innerHTML = '';
+      inputRef.current!.innerHTML = '';
     },
   });
 
@@ -102,6 +103,7 @@ const ChannelChatInput: React.FC<{
               <FormItem>
                 <FormControl>
                   <ChatInput
+                    inputRef={inputRef}
                     inputClassName=" pl-14"
                     members={members}
                     onInput={(content) => {

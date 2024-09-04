@@ -3,7 +3,10 @@
 import prisma from '@/lib/prisma';
 import { ServerMessage } from '@prisma/client';
 
-export const formatMessageMention = async (message: ServerMessage) => {
+export const formatMessageMention = async (
+  message: ServerMessage,
+  isNewMessage: boolean
+) => {
   const { content, id } = message;
   const mentionPattern = /<@(\w+)>/g;
   const memberIds: Set<number> = new Set();
@@ -35,14 +38,17 @@ export const formatMessageMention = async (message: ServerMessage) => {
     );
   }
 
+  const data: Partial<ServerMessage> = {
+    content: updatedContent,
+  };
+  if (isNewMessage) {
+    data.updatedAt = message.createdAt;
+  }
   return await prisma.serverMessage.update({
     where: {
       id: message.id,
     },
-    data: {
-      content: updatedContent,
-      updatedAt: message.createdAt,
-    },
+    data,
     include: {
       channel: true,
       sender: {

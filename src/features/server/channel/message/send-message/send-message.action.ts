@@ -26,5 +26,5 @@ export const sendMessage = authClient
       },
     });
 
-    return await formatMessageMention(message);
+    return await formatMessageMention(message, true);
   });

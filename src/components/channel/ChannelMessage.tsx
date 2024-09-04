@@ -228,6 +228,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
                       <FormItem className="flex-1">
                         <FormControl>
                           <ChatInput
+                            inputRef={inputRef}
                             members={members!}
                             onSubmit={form.handleSubmit(handleSubmit)}
                             value={field.value}

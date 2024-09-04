@@ -1,13 +1,14 @@
 'use client';
 import { cn } from '@/lib/utils';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ChannelMentionSuggestions from '../channel/ChannelMentionSuggestions';
 
 type TChatInputProps = {
+  inputRef: React.RefObject<HTMLDivElement>;
+  members: MemberWithUser[];
   onInput?: (content: string) => void;
   onBlur?: (content: string) => void;
   onSubmit?: () => void;
-  members: MemberWithUser[];
   inputClassName?: string;
   value?: string;
 };
@@ -19,6 +20,7 @@ const ChatInput: React.FC<TChatInputProps> = ({
   members,
   inputClassName,
   value,
+  inputRef: editableDivRef,
 }) => {
   const [filteredMembers, setFilteredMembers] = useState<
     MemberWithUser[] | null
@@ -26,8 +28,6 @@ const ChatInput: React.FC<TChatInputProps> = ({
   const [savedRange, setSavedRange] = useState<Range | null>(null);
   const [atSymbolPosition, setAtSymbolPosition] = useState<number | null>(null);
   const [isMentionPopoverOpen, setIsMentionPopoverOpen] = useState(false);
-
-  const editableDivRef = useRef<HTMLDivElement>(null);
 
   const handleMentionSelect = (member: MemberWithUser) => {
     if (!editableDivRef.current || !savedRange) return;
@@ -159,6 +159,18 @@ const ChatInput: React.FC<TChatInputProps> = ({
           wordBreak: 'break-all',
         }}
         onInput={handleInput}
+        onFocus={() => {
+          if (editableDivRef.current) {
+            const range = document.createRange();
+            range.selectNodeContents(editableDivRef.current);
+            range.collapse(false);
+            const selection = window.getSelection();
+            if (selection) {
+              selection.removeAllRanges();
+              selection.addRange(range);
+            }
+          }
+        }}
         onBlur={
           onBlur
             ? () => onBlur(editableDivRef.current?.innerHTML || '')
