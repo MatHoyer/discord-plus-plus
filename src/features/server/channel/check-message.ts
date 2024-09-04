@@ -1,7 +1,7 @@
 'use server';
 
 import prisma from '@/lib/prisma';
-import { checkRole } from '@/lib/utils';
+import { checkRole } from '@/lib/utils/member.utils';
 
 export const checkMessage = async ({
   userId,

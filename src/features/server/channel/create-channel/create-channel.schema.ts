@@ -1,4 +1,4 @@
-import { positiveNumber } from '@/lib/schema-utils';
+import { positiveNumber } from '@/lib/utils/schema.utils';
 import { Channeltype } from '@prisma/client';
 import { z } from 'zod';
 

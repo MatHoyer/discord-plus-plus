@@ -3,9 +3,9 @@ import {
   editMessageSchema,
   TEditMessage,
 } from '@/features/server/channel/edit-message/edit-message.schema';
-import { useActivity } from '@/hooks/useActivityStore';
 import { useModal } from '@/hooks/useModalStore';
-import { checkRole, cn } from '@/lib/utils';
+import { cn } from '@/lib/utils';
+import { checkMessage } from '@/lib/utils/message.utils';
 import { socket } from '@/socket';
 import { Channel } from '@prisma/client';
 import { isEqual } from 'date-fns';
@@ -14,6 +14,7 @@ import { useAction } from 'next-safe-action/hooks';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FieldErrors } from 'react-hook-form';
 import ActionTooltip from '../ActionTooltip';
+import ChannelMessageContextMenu from '../context-menus/ChannelMessageContextMenu';
 import ProfileContextMenu from '../context-menus/ProfileContextMenu';
 import { modal } from '../Modal';
 import ProfilePopover from '../profile/ProfilePopover';
@@ -41,16 +42,15 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
   const [isEditing, setIsEditing] = useState(false);
 
   const member = message.sender;
-  const { isAdmin, isModerator } = checkRole(currentMember.role);
   const isUpdated = !isEqual(message.createdAt, message.updatedAt);
-  const isDeleted = message.deleted;
-  const isOwner = currentMember.id === member.id;
-  const canDeleteMessage = !isDeleted && (isAdmin || isModerator || isOwner);
-  const canEditMessage = !isDeleted && isOwner;
+
+  const { canDeleteMessage, canEditMessage } = checkMessage(
+    member,
+    currentMember,
+    message
+  );
 
   const inputRef = useRef<HTMLInputElement>(null);
-
-  const users = useActivity((state) => state.users);
 
   const { execute, result: state } = useAction(editMessage, {
     onSuccess: ({ data }) => {
@@ -121,127 +121,129 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
   );
 
   return (
-    <div
-      className={cn(
-        'relative group flex items-center px-4 py-2 mb-2 transition-colors w-full',
-        isMentionned && 'bg-[#444037] bg-opacity-70',
-        !isMentionned && 'hover:bg-black/5'
-      )}
-    >
-      {isMentionned && (
-        <div className="absolute left-0 w-1 h-full bg-[#f0b132]" />
-      )}
-      <div className="group flex gap-x-2 items-start w-full">
-        <div
-          className={cn(
-            'hover:drop-shadow-md transition',
-            !preview && 'cursor-pointer '
-          )}
-        >
-          <ProfileContextMenu member={member}>
-            <ProfilePopover member={member} asChild={false}>
-              <UserAvatar src={member.user.image} />
-            </ProfilePopover>
-          </ProfileContextMenu>
-        </div>
-        <div className="flex flex-col w-full">
-          <div className="flex items-center gap-x-2 mb-1">
-            <div className="flex items-center gap-x-2">
-              <ProfileContextMenu member={member}>
-                <ProfilePopover member={member}>
-                  <p
-                    className={cn(
-                      'font-semibold text-sm',
-                      !preview && 'hover:underline cursor-pointer'
-                    )}
-                  >
-                    {member.username}
-                  </p>
-                </ProfilePopover>
-              </ProfileContextMenu>
-              <ActionTooltip label={member.role}>
-                {roleIconMap[member.role]}
-              </ActionTooltip>
-            </div>
-            <span className="text-xs text-zinc-500 dark:text-zinc-400">
-              {time}
-            </span>
+    <ChannelMessageContextMenu member={currentMember} message={message}>
+      <div
+        className={cn(
+          'relative group flex items-center px-4 py-2 mb-2 transition-colors w-full',
+          isMentionned && 'bg-[#444037] bg-opacity-70',
+          !isMentionned && 'hover:bg-black/5'
+        )}
+      >
+        {isMentionned && (
+          <div className="absolute left-0 w-1 h-full bg-[#f0b132]" />
+        )}
+        <div className="group flex gap-x-2 items-start w-full">
+          <div
+            className={cn(
+              'hover:drop-shadow-md transition',
+              !preview && 'cursor-pointer '
+            )}
+          >
+            <ProfileContextMenu member={member}>
+              <ProfilePopover member={member} asChild={false}>
+                <UserAvatar src={member.user.image} />
+              </ProfilePopover>
+            </ProfileContextMenu>
           </div>
-          {!isEditing && (
-            <p
-              className={cn(
-                'text-sm text-zinc-600 dark:text-zinc-300 break-all'
-              )}
-            >
-              {parsedMessage}
-              {isUpdated && (
-                <span className="text-[10px] mx-2 text-zinc-500 dark:text-zinc-400 select-none">
-                  (edited)
-                </span>
-              )}
-            </p>
-          )}
-          {!preview && isEditing && (
-            <Form {...form} state={state}>
-              <form
-                onSubmit={form.handleSubmit(execute, onError)}
-                className="flex items-center w-full gap-x-2 pt-2"
-              >
-                <FormField
-                  control={form.control}
-                  name="content"
-                  render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormControl>
-                        <div className="relative w-full">
-                          <Input
-                            className="p-2 bg-zinc-200/90 dark:bg-zinc-700/75 border-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-zinc-600 dark:text-zinc-200"
-                            {...field}
-                            ref={inputRef}
-                          />
-                        </div>
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              </form>
-              <span className="text-[10px] mt-1 text-zinc-400 select-none">
-                Press escape to cancel, enter to save
+          <div className="flex flex-col w-full">
+            <div className="flex items-center gap-x-2 mb-1">
+              <div className="flex items-center gap-x-2">
+                <ProfileContextMenu member={member}>
+                  <ProfilePopover member={member}>
+                    <p
+                      className={cn(
+                        'font-semibold text-sm',
+                        !preview && 'hover:underline cursor-pointer'
+                      )}
+                    >
+                      {member.username}
+                    </p>
+                  </ProfilePopover>
+                </ProfileContextMenu>
+                <ActionTooltip label={member.role}>
+                  {roleIconMap[member.role]}
+                </ActionTooltip>
+              </div>
+              <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                {time}
               </span>
-            </Form>
-          )}
+            </div>
+            {!isEditing && (
+              <p
+                className={cn(
+                  'text-sm text-zinc-600 dark:text-zinc-300 break-all'
+                )}
+              >
+                {parsedMessage}
+                {isUpdated && (
+                  <span className="text-[10px] mx-2 text-zinc-500 dark:text-zinc-400 select-none">
+                    (edited)
+                  </span>
+                )}
+              </p>
+            )}
+            {!preview && isEditing && (
+              <Form {...form} state={state}>
+                <form
+                  onSubmit={form.handleSubmit(execute, onError)}
+                  className="flex items-center w-full gap-x-2 pt-2"
+                >
+                  <FormField
+                    control={form.control}
+                    name="content"
+                    render={({ field }) => (
+                      <FormItem className="flex-1">
+                        <FormControl>
+                          <div className="relative w-full">
+                            <Input
+                              className="p-2 bg-zinc-200/90 dark:bg-zinc-700/75 border-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-zinc-600 dark:text-zinc-200"
+                              {...field}
+                              ref={inputRef}
+                            />
+                          </div>
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </form>
+                <span className="text-[10px] mt-1 text-zinc-400 select-none">
+                  Press escape to cancel, enter to save
+                </span>
+              </Form>
+            )}
+          </div>
         </div>
-      </div>
-      {!preview && canDeleteMessage && (
-        <div className="hidden group-hover:flex items-center gap-x-2 absolute p-1 -top-2 right-5 bg-white dark:bg-zinc-800 border rounded-sm">
-          {canEditMessage && (
-            <ActionTooltip label="Edit">
-              <Edit
+        {!preview && canDeleteMessage && (
+          <div className="hidden group-hover:flex items-center gap-x-2 absolute p-1 -top-2 right-5 bg-white dark:bg-zinc-800 border rounded-sm">
+            {canEditMessage && (
+              <ActionTooltip label="Edit">
+                <Edit
+                  className="cursor-pointer ml-auto w-4 h-4 text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors"
+                  onClick={() => {
+                    setIsEditing(true);
+                    setTimeout(() => {
+                      inputRef.current?.focus();
+                    }, 100);
+                  }}
+                />
+              </ActionTooltip>
+            )}
+            <ActionTooltip label="Delete">
+              <Trash
                 className="cursor-pointer ml-auto w-4 h-4 text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors"
                 onClick={() => {
-                  setIsEditing(true);
-                  setTimeout(() => {
-                    inputRef.current?.focus();
-                  }, 100);
+                  openModal('deleteChannelMessage', {
+                    serverMessage: message,
+                    currentMember,
+                    channel,
+                  });
                 }}
               />
             </ActionTooltip>
-          )}
-          <ActionTooltip label="Delete">
-            <Trash
-              className="cursor-pointer ml-auto w-4 h-4 text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors"
-              onClick={() => {
-                openModal('deleteChannelMessage', {
-                  serverMessage: message,
-                  currentMember,
-                  channel,
-                });
-              }}
-            />
-          </ActionTooltip>
-        </div>
-      )}
-    </div>
+          </div>
+        )}
+      </div>
+    </ChannelMessageContextMenu>
   );
 };
 

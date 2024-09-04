@@ -1,4 +1,4 @@
-import { positiveNumber } from '@/lib/schema-utils';
+import { positiveNumber } from '@/lib/utils/schema.utils';
 import { z } from 'zod';
 
 export const MAX_MESSAGE_LENGTH = 2000;

@@ -1,4 +1,4 @@
-import { Channeltype, MemberRole } from '@prisma/client';
+import { Channeltype } from '@prisma/client';
 import { clsx, type ClassValue } from 'clsx';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -60,11 +60,4 @@ export const wait = (ms: number) =>
 export const iconMap = {
   [Channeltype.TEXT]: Hash,
   [Channeltype.AUDIO]: Volume2,
-};
-
-export const checkRole = (role: MemberRole) => {
-  const isAdmin = role === MemberRole.ADMIN;
-  const isModerator = isAdmin || role === MemberRole.MODERATOR;
-
-  return { isAdmin, isModerator };
 };

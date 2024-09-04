@@ -5,8 +5,8 @@ import {
   sendMessageSchema,
   TSendMessage,
 } from '@/features/server/channel/send-message/send-message.schema';
-import { SocketEvents } from '@/lib/socketUtils';
 import { cn } from '@/lib/utils';
+import { SocketEvents } from '@/lib/utils/socket.utils';
 import { socket } from '@/socket';
 import { Channel, Member } from '@prisma/client';
 import { Plus, Smile } from 'lucide-react';

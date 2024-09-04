@@ -1,6 +1,6 @@
 'use client';
 import { useModal } from '@/hooks/useModalStore';
-import { checkRole } from '@/lib/utils';
+import { checkRole } from '@/lib/utils/member.utils';
 import { MemberRole } from '@prisma/client';
 import {
   ChevronDown,
