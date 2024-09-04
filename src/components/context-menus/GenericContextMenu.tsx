@@ -1,4 +1,5 @@
-import { cn } from '@/lib/utils';
+import { cn, isFunction } from '@/lib/utils';
+import { cva, VariantProps } from 'class-variance-authority';
 import { LucideProps } from 'lucide-react';
 import { PropsWithChildren } from 'react';
 import {
@@ -13,13 +14,27 @@ const isSeparator = (item: TItem): item is { seperator: true } => {
   return (item as any).seperator === true;
 };
 
+const menuItemVariants = cva(
+  'cursor-pointer text-xs text-white font-semibold',
+  {
+    variants: {
+      variant: {
+        default: 'hover:bg-[#4752c4]',
+        destructive: 'text-[#f23f42] hover:bg-[#da373c] hover:text-white',
+      },
+    },
+    defaultVariants: { variant: 'default' },
+  }
+);
+
 type TItem =
-  | {
+  | ({
       label?: string;
       icon?: React.ComponentType<LucideProps>;
-      customRender?: () => React.ReactNode;
+      customRender?: (item: TItem, index: number) => React.ReactNode;
       onClick?: (item: TItem, index: number) => void;
-    }
+      when?: boolean | ((item: TItem, index: number) => boolean);
+    } & VariantProps<typeof menuItemVariants>)
   | {
       seperator: true;
     };
@@ -28,6 +43,7 @@ type TGenericContextMenuProps<T extends TItem> = {
   items: T[];
   contentClassName?: string;
   computeMenuItemClassName?: (item: T, index: number) => string;
+  disabled?: boolean;
 } & PropsWithChildren;
 
 const GenericContextMenu = <T extends TItem>({
@@ -35,6 +51,7 @@ const GenericContextMenu = <T extends TItem>({
   contentClassName,
   computeMenuItemClassName,
   children,
+  disabled,
 }: TGenericContextMenuProps<T>) => {
   return (
     <ContextMenu>
@@ -42,27 +59,38 @@ const GenericContextMenu = <T extends TItem>({
       <ContextMenuContent
         className={cn(
           'bg-[#111214] w-[200px] border-[#2e2f34]',
-          contentClassName
+          contentClassName,
+          disabled && 'hidden'
         )}
       >
         {items.map((item, index) =>
           isSeparator(item) ? (
             <ContextMenuSeparator key={index} className="bg-[#2e2f34]" />
-          ) : (
+          ) : item.when === undefined ||
+            (item.when &&
+              (isFunction(item.when) ? item.when(item, index) : item.when)) ? (
             <ContextMenuItem
               key={index}
               className={cn(
-                'hover:bg-[#4752c4] cursor-pointer text-xs',
-                computeMenuItemClassName?.(item, index)
+                menuItemVariants({
+                  className: computeMenuItemClassName?.(item, index),
+                  variant: item.variant,
+                })
               )}
               onClick={() => {
                 item.onClick?.(item, index);
               }}
             >
-              {item.label}
-              {item.icon && <item.icon className="w-4 h-4 ml-auto" />}
+              {item.customRender ? (
+                item.customRender(item, index)
+              ) : (
+                <>
+                  {item.label}
+                  {item.icon && <item.icon className="w-4 h-4 ml-auto" />}
+                </>
+              )}
             </ContextMenuItem>
-          )
+          ) : null
         )}
       </ContextMenuContent>
     </ContextMenu>

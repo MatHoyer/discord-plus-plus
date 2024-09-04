@@ -2,7 +2,7 @@
 import { useToast } from '@/hooks/use-toast';
 import { useModal } from '@/hooks/useModalStore';
 import { AtSign, CircleUserRound, Fingerprint } from 'lucide-react';
-import React, { PropsWithChildren } from 'react';
+import React, { ComponentProps, PropsWithChildren } from 'react';
 import GenericContextMenu from './GenericContextMenu';
 
 type TProfileContextMenuProps = {
@@ -10,13 +10,16 @@ type TProfileContextMenuProps = {
 };
 
 const ProfileContextMenu: React.FC<
-  TProfileContextMenuProps & PropsWithChildren
-> = ({ member, children }) => {
+  TProfileContextMenuProps &
+    PropsWithChildren &
+    Omit<ComponentProps<typeof GenericContextMenu>, 'items'>
+> = ({ member, children, ...props }) => {
   const { openModal } = useModal();
   const { toast } = useToast();
 
   return (
     <GenericContextMenu
+      {...props}
       items={[
         {
           label: 'Profile',

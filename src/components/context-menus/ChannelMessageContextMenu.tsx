@@ -1,23 +1,34 @@
 'use client';
+import { deleteMessage } from '@/features/server/channel/delete-message/delete-message.action';
 import { useToast } from '@/hooks/use-toast';
 import { useModal } from '@/hooks/useModalStore';
-import { AtSign, ClipboardCopy, Fingerprint } from 'lucide-react';
-import React, { PropsWithChildren } from 'react';
+import { checkMessage } from '@/lib/utils/message.utils';
+import { ClipboardCopy, Fingerprint, Trash } from 'lucide-react';
+import { useAction } from 'next-safe-action/hooks';
+import React, { ComponentProps, PropsWithChildren } from 'react';
 import GenericContextMenu from './GenericContextMenu';
 
 type TChannelMessageContextMenuProps = {
   member: MemberWithUser;
+  currentMember: MemberWithUser;
   message: ServerMessageWithSender;
 };
 
 const ChannelMessageContextMenu: React.FC<
-  TChannelMessageContextMenuProps & PropsWithChildren
-> = ({ member, message, children }) => {
+  TChannelMessageContextMenuProps &
+    PropsWithChildren &
+    Omit<ComponentProps<typeof GenericContextMenu>, 'items'>
+> = ({ member, currentMember, message, children, ...props }) => {
+  const { canDeleteMessage } = checkMessage(member, currentMember, message);
+
+  const { execute } = useAction(deleteMessage, {});
+
   const { openModal } = useModal();
   const { toast } = useToast();
 
   return (
     <GenericContextMenu
+      {...props}
       items={[
         {
           label: 'Copy Text',
@@ -27,8 +38,11 @@ const ChannelMessageContextMenu: React.FC<
           },
         },
         {
-          label: 'Mention',
-          icon: AtSign,
+          label: 'Delete Message',
+          icon: Trash,
+          variant: 'destructive',
+          onClick: () => {},
+          when: canDeleteMessage,
         },
         {
           seperator: true,

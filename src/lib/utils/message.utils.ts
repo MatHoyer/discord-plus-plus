@@ -6,8 +6,9 @@ export const checkMessage = (
   currentMember: Member,
   message: ServerMessage
 ) => {
-  const { isAdmin, isModerator } = checkRole(member.role);
+  const { isAdmin, isModerator } = checkRole(currentMember.role);
   const isOwner = currentMember.id === member.id;
+
   return {
     canDeleteMessage: !message.deleted && (isAdmin || isModerator || isOwner),
     canEditMessage: !message.deleted && isOwner,

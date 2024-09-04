@@ -61,3 +61,7 @@ export const iconMap = {
   [Channeltype.TEXT]: Hash,
   [Channeltype.AUDIO]: Volume2,
 };
+
+export const isFunction = (value: any): value is Function => {
+  return typeof value === 'function';
+};

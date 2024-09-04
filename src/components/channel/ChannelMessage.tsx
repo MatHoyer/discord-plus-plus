@@ -102,9 +102,23 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
         const mention = message.mentions?.find((m) => m.id === mentionId);
         if (mention) {
           return (
-            <ProfileContextMenu key={index} member={mention.member}>
-              <ProfilePopover member={mention.member} asChild>
-                <span className="text-white p-1 bg-[#3c4270] bg-opacity-50 hover:bg-[#5864f3] hover:bg-opacity-100 font-semibold rounded-sm transition-colors hover:underline cursor-pointer select-none">
+            <ProfileContextMenu
+              key={index}
+              member={mention.member}
+              disabled={preview}
+            >
+              <ProfilePopover
+                member={mention.member}
+                asChild
+                disabled={preview}
+              >
+                <span
+                  className={cn(
+                    'text-white p-1 bg-[#3c4270] bg-opacity-50 font-semibold rounded-sm select-none',
+                    !preview &&
+                      'hover:bg-[#5864f3] hover:bg-opacity-100 transition-colors hover:underline cursor-pointer'
+                  )}
+                >
                   @{mention.member.username}
                 </span>
               </ProfilePopover>
@@ -114,14 +128,19 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
       }
       return <span key={index}>{part}</span>;
     });
-  }, [message.content, message.mentions]);
+  }, [message.content, message.mentions, preview]);
 
   const isMentionned = message.mentions?.some(
     (mention) => mention.member.id === currentMember.id
   );
 
   return (
-    <ChannelMessageContextMenu member={currentMember} message={message}>
+    <ChannelMessageContextMenu
+      member={member}
+      currentMember={currentMember}
+      message={message}
+      disabled={preview}
+    >
       <div
         className={cn(
           'relative group flex items-center px-4 py-2 mb-2 transition-colors w-full',
@@ -139,17 +158,24 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
               !preview && 'cursor-pointer '
             )}
           >
-            <ProfileContextMenu member={member}>
-              <ProfilePopover member={member} asChild={false}>
-                <UserAvatar src={member.user.image} />
+            <ProfileContextMenu member={member} disabled={preview}>
+              <ProfilePopover
+                member={member}
+                asChild={false}
+                disabled={preview}
+              >
+                <UserAvatar
+                  src={member.user.image}
+                  className={preview ? 'cursor-auto' : undefined}
+                />
               </ProfilePopover>
             </ProfileContextMenu>
           </div>
           <div className="flex flex-col w-full">
             <div className="flex items-center gap-x-2 mb-1">
               <div className="flex items-center gap-x-2">
-                <ProfileContextMenu member={member}>
-                  <ProfilePopover member={member}>
+                <ProfileContextMenu member={member} disabled={preview}>
+                  <ProfilePopover member={member} disabled={preview}>
                     <p
                       className={cn(
                         'font-semibold text-sm',
