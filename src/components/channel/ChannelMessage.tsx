@@ -7,7 +7,7 @@ import { useActivity } from '@/hooks/useActivityStore';
 import { useModal } from '@/hooks/useModalStore';
 import { checkRole, cn } from '@/lib/utils';
 import { socket } from '@/socket';
-import { Channel, Member } from '@prisma/client';
+import { Channel } from '@prisma/client';
 import { isEqual } from 'date-fns';
 import { Edit, Trash } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
@@ -25,7 +25,7 @@ import UserAvatar from '../UserAvatar';
 type TChannelMessageProps = {
   time: string;
   message: ServerMessageWithSender;
-  currentMember: Member;
+  currentMember: MemberWithUser;
   channel?: Channel;
   preview?: boolean;
 };
@@ -138,23 +138,27 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
             !preview && 'cursor-pointer '
           )}
         >
-          <ProfilePopover member={member} asChild={false}>
-            <UserAvatar src={member.user.image} />
-          </ProfilePopover>
+          <ProfileContextMenu member={member}>
+            <ProfilePopover member={member} asChild={false}>
+              <UserAvatar src={member.user.image} />
+            </ProfilePopover>
+          </ProfileContextMenu>
         </div>
         <div className="flex flex-col w-full">
           <div className="flex items-center gap-x-2 mb-1">
             <div className="flex items-center gap-x-2">
-              <ProfilePopover member={member}>
-                <p
-                  className={cn(
-                    'font-semibold text-sm',
-                    !preview && 'hover:underline cursor-pointer'
-                  )}
-                >
-                  {member.username}
-                </p>
-              </ProfilePopover>
+              <ProfileContextMenu member={member}>
+                <ProfilePopover member={member}>
+                  <p
+                    className={cn(
+                      'font-semibold text-sm',
+                      !preview && 'hover:underline cursor-pointer'
+                    )}
+                  >
+                    {member.username}
+                  </p>
+                </ProfilePopover>
+              </ProfileContextMenu>
               <ActionTooltip label={member.role}>
                 {roleIconMap[member.role]}
               </ActionTooltip>

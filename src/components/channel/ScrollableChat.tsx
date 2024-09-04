@@ -3,13 +3,12 @@
 import { loadMoreMessages } from '@/features/server/channel/loadMoreMessages';
 import { getCustomDate } from '@/lib/utils';
 import { socket } from '@/socket';
-import { Member, User } from '@prisma/client';
 import { useEffect, useRef, useState } from 'react';
 import ChannelMessage from './ChannelMessage';
 
 const ScrollableChat: React.FC<{
   channel: ChannelWithMessages;
-  currentMember: Member & { user: User };
+  currentMember: MemberWithUser;
 }> = ({ channel, currentMember }) => {
   const [messages, setMessages] = useState<ServerMessageWithSender[]>(
     channel.messages

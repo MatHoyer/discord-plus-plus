@@ -1,5 +1,6 @@
 'use client';
 
+import { useActivity } from '@/hooks/useActivityStore';
 import { useModal } from '@/hooks/useModalStore';
 import { getCustomDate } from '@/lib/utils';
 import Image from 'next/image';
@@ -8,7 +9,7 @@ import UserAvatarWithActivity from '../UserAvatarWithActivity';
 
 const MemberProfileModal: React.FC = () => {
   const { isOpen, type, closeModal, data } = useModal();
-
+  const usersActivity = useActivity((state) => state.users);
   const open = isOpen && type === 'memberProfile';
 
   return (
@@ -34,7 +35,7 @@ const MemberProfileModal: React.FC = () => {
                   size="xl"
                   wrapperClassName="absolute -bottom-9 z-10"
                   avatarClassName='className="md:w-20 md:h-20'
-                  activity={'Offline'}
+                  activity={usersActivity[data.member.userId] ?? 'Offline'}
                   src={data.member.user?.image}
                   activityIndicator={{
                     size: 'xl',
