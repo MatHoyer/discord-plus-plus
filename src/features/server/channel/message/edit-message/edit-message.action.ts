@@ -4,6 +4,7 @@ import prisma from '@/lib/prisma';
 import { authClient } from '@/lib/safe-action';
 import { flattenValidationErrors } from 'next-safe-action';
 import { checkMessage } from '../check-message';
+import { formatMessageMention } from '../format-message-mention';
 import { editMessageSchema } from './edit-message.schema';
 
 export const editMessage = authClient
@@ -22,24 +23,18 @@ export const editMessage = authClient
       edit: true,
     });
 
-    return await prisma.serverMessage.update({
+    const message = await prisma.serverMessage.update({
       where: {
         id: messageId,
       },
       data: {
         content,
       },
-      include: {
-        mentions: {
-          include: {
-            member: true,
-          },
-        },
-        sender: {
-          include: {
-            user: true,
-          },
-        },
-      },
     });
+
+    if (!message) {
+      throw new Error('Message not found');
+    }
+
+    return await formatMessageMention(message);
   });

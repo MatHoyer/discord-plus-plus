@@ -10,7 +10,8 @@ import ChannelMessage from './ChannelMessage';
 const ScrollableChat: React.FC<{
   channel: ChannelWithMessages;
   currentMember: MemberWithUser;
-}> = ({ channel, currentMember }) => {
+  members: MemberWithUser[];
+}> = ({ channel, currentMember, members }) => {
   const [messages, setMessages] = useState<ServerMessageWithSender[]>(
     channel.messages
   );
@@ -132,6 +133,7 @@ const ScrollableChat: React.FC<{
           currentMember={currentMember}
           time={getCustomDate(new Date(message.createdAt))}
           channel={channel}
+          members={members}
         />
       ))}
       <div ref={topRef} className="p-1" />

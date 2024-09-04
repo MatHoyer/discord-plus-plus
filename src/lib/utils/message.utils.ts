@@ -17,3 +17,9 @@ export const checkMessage = (
     isModerator,
   };
 };
+
+export const parseMentionsMessage = (message: string) =>
+  message.replace(
+    /<span[^>]*data-user-id="(\w+)"[^>]*>@[^<]+<\/span>/g,
+    '<@$1>'
+  );

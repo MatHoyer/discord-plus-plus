@@ -1,7 +1,7 @@
 'use server';
 
+import ChannelChatInput from '@/components/channel/ChannelChatInput';
 import ChannelHeader from '@/components/channel/ChannelHeader';
-import ChatInput from '@/components/channel/ChatInput';
 import ScrollableChat from '@/components/channel/ScrollableChat';
 
 import { auth } from '@/lib/auth';
@@ -94,8 +94,9 @@ const ServerPage = async (
           <ScrollableChat
             channel={channel as ChannelWithMessages}
             currentMember={currentMember}
+            members={members}
           />
-          <ChatInput
+          <ChannelChatInput
             channel={channel}
             currentMember={currentMember}
             members={members}
