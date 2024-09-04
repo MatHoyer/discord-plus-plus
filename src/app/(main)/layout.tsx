@@ -27,7 +27,7 @@ const SocketLayout = (props: LayoutParams) => {
       socket.off('init-activity');
       socket.off('activity-change');
     };
-  }, [session]);
+  }, []);
 
   return <div className="h-screen">{props.children}</div>;
 };
