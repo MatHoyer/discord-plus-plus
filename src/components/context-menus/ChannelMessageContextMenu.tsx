@@ -1,5 +1,6 @@
 'use client';
 import { reactToMessage } from '@/features/server/channel/message/react-to-message/react-to-message.action';
+import { useModal } from '@/hooks/useModalStore';
 import { checkMessage } from '@/lib/utils/message.utils';
 import { socket } from '@/socket';
 import { Channel } from '@prisma/client';
@@ -33,6 +34,8 @@ const ChannelMessageContextMenu: React.FC<
     Omit<ComponentProps<typeof GenericContextMenu>, 'items'>
 > = ({ member, currentMember, message, channel, children, ...props }) => {
   const { canDeleteMessage } = checkMessage(member, currentMember, message);
+
+  const { openModal } = useModal();
 
   const { execute } = useAction(reactToMessage, {
     onSuccess: ({ data }) => {
@@ -94,7 +97,13 @@ const ChannelMessageContextMenu: React.FC<
           label: 'Delete Message',
           icon: Trash,
           variant: 'destructive',
-          onClick: () => {},
+          onClick: () => {
+            openModal('deleteChannelMessage', {
+              serverMessage: message,
+              currentMember,
+              channel,
+            });
+          },
           when: canDeleteMessage,
         },
         {
