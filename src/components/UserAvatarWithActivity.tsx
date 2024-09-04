@@ -16,6 +16,7 @@ export const avatarVariants = cva('', {
   variants: {
     size: {
       default: 'h-7 w-7 md:h-10 md:w-10',
+      xs: 'md:w-6 md:h-6',
       xl: 'h-12 w-12 md:w-20 md:h-20',
     },
   },
@@ -30,6 +31,7 @@ const activityIndicatorVariants = cva(
     variants: {
       size: {
         default: 'w-4 h-4 -bottom-1 p-[1.5px]',
+        xs: 'w-3 h-3 -bottom-1 -right-1 p-[1px]',
         xl: 'w-7 h-7 bottom-0 p-1',
       },
     },

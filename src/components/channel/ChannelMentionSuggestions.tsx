@@ -1,21 +1,21 @@
 'use client';
+import { useActivity } from '@/hooks/useActivityStore';
 import { cn } from '@/lib/utils';
 import React, { useEffect, useState } from 'react';
-import UserAvatar from '../UserAvatar';
+import UserAvatarWithActivity from '../UserAvatarWithActivity';
 
 type TChannelMentionSuggestionsProps = {
   members: MemberWithUser[];
   onSelect: (member: MemberWithUser) => void;
-  className?: string;
   open: boolean;
 };
 
 const ChannelMentionSuggestions: React.FC<TChannelMentionSuggestionsProps> = ({
   members,
   onSelect,
-  className,
   open,
 }) => {
+  const usersActivity = useActivity((state) => state.users);
   const [selectedSuggestion, setSelectedSuggestion] = useState<number | null>(
     members[0]?.id || null
   );
@@ -72,7 +72,14 @@ const ChannelMentionSuggestions: React.FC<TChannelMentionSuggestionsProps> = ({
               selectedSuggestion === member.id && 'bg-[#35373c]'
             )}
           >
-            <UserAvatar src={member.user.image} className="md:w-6 md:h-6" />
+            <UserAvatarWithActivity
+              src={member.user.image}
+              size="xs"
+              activityIndicator={{
+                size: 'xs',
+              }}
+              activity={usersActivity[member.user.id]}
+            />
             <span className="text-white text-sm">{member.username}</span>
           </div>
         ))}
