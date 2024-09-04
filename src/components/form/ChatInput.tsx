@@ -11,6 +11,7 @@ type TChatInputProps = {
   onSubmit?: () => void;
   inputClassName?: string;
   value?: string;
+  offset?: number;
 };
 
 const ChatInput: React.FC<TChatInputProps> = ({
@@ -21,6 +22,7 @@ const ChatInput: React.FC<TChatInputProps> = ({
   inputClassName,
   value,
   inputRef: editableDivRef,
+  offset,
 }) => {
   const [filteredMembers, setFilteredMembers] = useState<
     MemberWithUser[] | null
@@ -138,6 +140,7 @@ const ChatInput: React.FC<TChatInputProps> = ({
         members={filteredMembers || []}
         onSelect={handleMentionSelect}
         open={isMentionPopoverOpen}
+        offset={offset}
       />
       <div
         ref={editableDivRef}

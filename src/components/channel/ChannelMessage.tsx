@@ -233,6 +233,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
                             onSubmit={form.handleSubmit(handleSubmit)}
                             value={field.value}
                             onInput={field.onChange}
+                            offset={4.8}
                           />
                         </FormControl>
                       </FormItem>
