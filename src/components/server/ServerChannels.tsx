@@ -131,7 +131,11 @@ const ServerChannels: React.FC<TServerChannelsProps> = ({
             server={server}
           />
           {channels.AUDIO.map((channel) => (
-            <ServerChannel key={channel.id} {...{ channel, role }} />
+            <ServerChannel
+              key={channel.id}
+              {...{ channel, role }}
+              mentions={0}
+            />
           ))}
         </div>
       )}

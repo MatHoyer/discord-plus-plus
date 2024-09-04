@@ -1,7 +1,7 @@
 'use client';
-import { useToast } from '@/hooks/use-toast';
 import { useModal } from '@/hooks/useModalStore';
 import { Server } from '@prisma/client';
+import { PlusCircle, UserPlus } from 'lucide-react';
 import React, { ComponentProps, PropsWithChildren } from 'react';
 import GenericContextMenu from './GenericContextMenu';
 
@@ -15,7 +15,6 @@ const ChannelsContextMenu: React.FC<
     Omit<ComponentProps<typeof GenericContextMenu>, 'items'>
 > = ({ server, children, ...props }) => {
   const { openModal } = useModal();
-  const { toast } = useToast();
 
   return (
     <GenericContextMenu
@@ -23,6 +22,18 @@ const ChannelsContextMenu: React.FC<
       items={[
         {
           label: 'Create Channel',
+          icon: PlusCircle,
+          onClick: () => {
+            openModal('createChannel', { server });
+          },
+        },
+        {
+          label: 'Invite People',
+          icon: UserPlus,
+          variant: 'blue',
+          onClick: () => {
+            openModal('invite', { server });
+          },
         },
       ]}
     >

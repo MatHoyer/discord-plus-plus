@@ -78,54 +78,54 @@ const ServerSidebar: React.FC<TServerSidebarProps> = async ({ serverId }) => {
   const role = currentMember?.role;
 
   return (
-    <div className="flex flex-col h-full text-primary w-full dark:bg-[#2B2D31] bg-[#F2F3F5]">
-      <ServerHeader server={server} role={role} />
-      <ScrollArea className="flex-1 px-3">
-        <div className="mt-2">
-          <ServerSearch
-            serverId={serverId}
-            data={[
-              {
-                label: 'Text Channels',
-                type: 'channel',
-                rows: textChannels?.map((channel) => ({
-                  icon: channelTypeIconMap[channel.type],
-                  name: channel.name,
-                  id: channel.id,
-                })),
-              },
-              {
-                label: 'Voice Channels',
-                type: 'channel',
-                rows: audioChannels?.map((channel) => ({
-                  icon: channelTypeIconMap[channel.type],
-                  name: channel.name,
-                  id: channel.id,
-                })),
-              },
-              {
-                label: 'Members',
-                type: 'member',
-                rows: members?.map((member) => ({
-                  icon: roleIconMap[member.role],
-                  name: member.user.name!,
-                  id: member.user.id,
-                })),
-              },
-            ]}
-          />
-        </div>
-        <Separator className="bg-zinc-200 dark:bg-zinc-700 rounded-md my-2" />
-        <ChannelsContextMenu server={server}>
+    <ChannelsContextMenu server={server} triggerClassName="flex-1">
+      <div className="flex flex-col h-full text-primary w-full dark:bg-[#2B2D31] bg-[#F2F3F5]">
+        <ServerHeader server={server} role={role} />
+        <ScrollArea className="flex-1 px-3">
+          <div className="mt-2">
+            <ServerSearch
+              serverId={serverId}
+              data={[
+                {
+                  label: 'Text Channels',
+                  type: 'channel',
+                  rows: textChannels?.map((channel) => ({
+                    icon: channelTypeIconMap[channel.type],
+                    name: channel.name,
+                    id: channel.id,
+                  })),
+                },
+                {
+                  label: 'Voice Channels',
+                  type: 'channel',
+                  rows: audioChannels?.map((channel) => ({
+                    icon: channelTypeIconMap[channel.type],
+                    name: channel.name,
+                    id: channel.id,
+                  })),
+                },
+                {
+                  label: 'Members',
+                  type: 'member',
+                  rows: members?.map((member) => ({
+                    icon: roleIconMap[member.role],
+                    name: member.user.name!,
+                    id: member.user.id,
+                  })),
+                },
+              ]}
+            />
+          </div>
+          <Separator className="bg-zinc-200 dark:bg-zinc-700 rounded-md my-2" />
           <ServerChannels
             server={server}
             channels={{ textChannels, audioChannels }}
             role={role}
           />
-        </ChannelsContextMenu>
-      </ScrollArea>
-      <SideBarProfile />
-    </div>
+        </ScrollArea>
+        <SideBarProfile />
+      </div>
+    </ChannelsContextMenu>
   );
 };
 

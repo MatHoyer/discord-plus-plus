@@ -126,6 +126,7 @@ type TItem =
 type TGenericContextMenuProps<T extends TItem> = {
   items: T[];
   contentClassName?: string;
+  triggerClassName?: string;
   computeMenuItemClassName?: (item: T, index: number) => string;
   disabled?: boolean;
 } & PropsWithChildren;
@@ -133,16 +134,19 @@ type TGenericContextMenuProps<T extends TItem> = {
 const GenericContextMenu = <T extends TItem>({
   items,
   contentClassName,
+  triggerClassName,
   computeMenuItemClassName,
   children,
   disabled,
 }: TGenericContextMenuProps<T>) => {
   return (
     <ContextMenu>
-      <ContextMenuTrigger>{children}</ContextMenuTrigger>
+      <ContextMenuTrigger className={triggerClassName}>
+        {children}
+      </ContextMenuTrigger>
       <ContextMenuContent
         className={cn(
-          'min-w-[200px] border-[#2e2f34]',
+          'min-w-[180px] border-[#2e2f34]',
           contentClassName,
           disabled && 'hidden'
         )}

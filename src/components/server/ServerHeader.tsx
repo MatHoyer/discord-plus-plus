@@ -40,14 +40,14 @@ const ServerHeader: React.FC<TServerHeaderProps> = ({
           <ChevronDown className="h-5 w-5 ml-auto" />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56 text-xs font-medium text-black dark:text-neutral-400 space-y-[2px]">
+      <DropdownMenuContent className="w-56 font-medium text-black dark:text-neutral-400 space-y-[2px]">
         {isModerator && (
           <DropdownMenuItem
             onClick={() => {
               openModal('invite', { server });
             }}
             variant="blue"
-            className=" focus:text-white px-3 py-2 text-sm cursor-pointer"
+            className=" focus:text-white px-3 py-2 cursor-pointer"
           >
             Invite people
             <UserPlus className="h-4 w-4 ml-auto" />
@@ -55,11 +55,11 @@ const ServerHeader: React.FC<TServerHeaderProps> = ({
         )}
         {isAdmin && (
           <>
-            <DropdownMenuItem className="px-3 py-2 text-sm cursor-pointer">
+            <DropdownMenuItem className="px-3 py-2 cursor-pointer">
               Server Settings
               <Settings className="h-4 w-4 ml-auto" />
             </DropdownMenuItem>
-            <DropdownMenuItem className="px-3 py-2 text-sm cursor-pointer">
+            <DropdownMenuItem className="px-3 py-2 cursor-pointer">
               Manager Members
               <Users className="h-4 w-4 ml-auto" />
             </DropdownMenuItem>
@@ -70,7 +70,7 @@ const ServerHeader: React.FC<TServerHeaderProps> = ({
             onClick={() => {
               openModal('createChannel', { server });
             }}
-            className="px-3 py-2 text-sm cursor-pointer"
+            className="px-3 py-2 cursor-pointer"
           >
             Create Channel
             <PlusCircle className="h-4 w-4 ml-auto" />
@@ -79,7 +79,7 @@ const ServerHeader: React.FC<TServerHeaderProps> = ({
         {isModerator && <DropdownMenuSeparator />}
         {isAdmin && (
           <DropdownMenuItem
-            className="px-3 py-2 text-sm cursor-pointer"
+            className="px-3 py-2 cursor-pointer"
             variant="destructive"
           >
             Delete Server
@@ -88,7 +88,7 @@ const ServerHeader: React.FC<TServerHeaderProps> = ({
         )}
         {!isAdmin && (
           <DropdownMenuItem
-            className="px-3 py-2 text-sm cursor-pointer "
+            className="px-3 py-2 cursor-pointer "
             variant="destructive"
           >
             Leave Server
