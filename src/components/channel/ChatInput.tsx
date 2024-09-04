@@ -13,7 +13,7 @@ import { Plus, Smile } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
 import { useEffect, useRef, useState } from 'react';
 import { FieldErrors } from 'react-hook-form';
-import { getChannelSocketEvents } from '../../../server/socket/events';
+import { getChannelSocketEvents } from '../../../server/socket/channel';
 import { modal } from '../Modal';
 import { Form, FormControl, FormField, FormItem, useZodForm } from '../ui/form';
 import ChannelMentionSuggestions from './ChannelMentionSuggestions';

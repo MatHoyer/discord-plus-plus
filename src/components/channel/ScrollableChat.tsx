@@ -4,7 +4,7 @@ import { loadMoreMessages } from '@/features/server/channel/message/load-more-me
 import { getCustomDate } from '@/lib/utils';
 import { socket } from '@/socket';
 import { useEffect, useRef, useState } from 'react';
-import { getChannelSocketEvents } from '../../../server/socket/events';
+import { getChannelSocketEvents } from '../../../server/socket/channel';
 import ChannelMessage from './ChannelMessage';
 
 const ScrollableChat: React.FC<{

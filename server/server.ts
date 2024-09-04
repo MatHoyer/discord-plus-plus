@@ -3,7 +3,9 @@ import next from 'next';
 import { Server, Socket } from 'socket.io';
 import { User } from './User';
 import { UserManager } from './UserManager';
-import { ChannelSocketEvents, ClientSocketEvents } from './socket/events';
+import { ChannelSocketEvents } from './socket/channel';
+import { ClientSocketEvents } from './socket/client';
+
 
 const dev = process.env.NODE_ENV !== 'production';
 

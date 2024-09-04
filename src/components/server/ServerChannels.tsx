@@ -5,7 +5,8 @@ import { socket } from '@/socket';
 import { Channel, Channeltype, MemberRole } from '@prisma/client';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { ClientSocketEvents } from '../../../server/socket/events';
+
+import { ClientSocketEvents } from '../../../server/socket/client';
 import ServerChannel from './ServerChannel';
 import ServerSection from './ServerSection';
 
