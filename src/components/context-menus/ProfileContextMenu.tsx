@@ -1,4 +1,5 @@
 'use client';
+import { useToast } from '@/hooks/use-toast';
 import { useModal } from '@/hooks/useModalStore';
 import { AtSign, CircleUserRound, Fingerprint } from 'lucide-react';
 import React, { PropsWithChildren } from 'react';
@@ -12,6 +13,7 @@ const ProfileContextMenu: React.FC<
   TProfileContextMenuProps & PropsWithChildren
 > = ({ member, children }) => {
   const { openModal } = useModal();
+  const { toast } = useToast();
 
   return (
     <GenericContextMenu
@@ -35,6 +37,10 @@ const ProfileContextMenu: React.FC<
           icon: Fingerprint,
           onClick: async () => {
             await navigator.clipboard.writeText(member.id.toString());
+            toast({
+              title: 'User ID copied successfully',
+              duration: 2000,
+            });
           },
         },
       ]}

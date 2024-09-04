@@ -1,5 +1,6 @@
 import Modal from '@/components/Modal';
 import { ThemeProvider } from '@/components/ThemeProvider';
+import { Toaster } from '@/components/ui/toaster';
 import ModalProvider from '@/contexts/ModalProvider';
 import { cn } from '@/lib/utils';
 import type { Metadata } from 'next';
@@ -26,6 +27,7 @@ export default function RootLayout({
       >
         <ThemeProvider attribute="class" defaultTheme="dark">
           <SessionProvider>
+            <Toaster />
             <Modal />
             <ModalProvider />
             {children}
