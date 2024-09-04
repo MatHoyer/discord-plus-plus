@@ -14,7 +14,6 @@ const SocketLayout = (props: LayoutParams) => {
     }
 
     socket.on('init-activity', (usersActivity) => {
-      console.log(usersActivity);
       for (const { userId, activity } of usersActivity) {
         changeActivity(userId, activity);
       }

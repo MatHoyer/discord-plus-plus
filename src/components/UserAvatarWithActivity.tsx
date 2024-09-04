@@ -12,7 +12,7 @@ type TUserAvatarWithActivityProps = {
   src?: string | null;
 };
 
-const avatarVariants = cva('md:w-20 md:h-20', {
+export const avatarVariants = cva('', {
   variants: {
     size: {
       default: 'h-7 w-7 md:h-10 md:w-10',

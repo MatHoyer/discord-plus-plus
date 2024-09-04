@@ -20,7 +20,7 @@ import ProfilePopover from '../profile/ProfilePopover';
 import { roleIconMap } from '../server/ServerSidebar';
 import { Form, FormControl, FormField, FormItem, useZodForm } from '../ui/form';
 import { Input } from '../ui/input';
-import UserAvatarWithActivity from '../UserAvatarWithActivity';
+import UserAvatar from '../UserAvatar';
 
 type TChannelMessageProps = {
   time: string;
@@ -139,11 +139,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
           )}
         >
           <ProfilePopover member={member} asChild={false}>
-            <UserAvatarWithActivity
-              src={member.user.image}
-              size="default"
-              activity={users[member.user.id]}
-            />
+            <UserAvatar src={member.user.image} />
           </ProfilePopover>
         </div>
         <div className="flex flex-col w-full">

@@ -58,8 +58,11 @@ const ServerChannel: React.FC<TServerChannelProps> = ({
         <div className="ml-auto flex items-center gap-x-2">
           <div
             className={cn(
-              'bg-[#f23f42] text-white group-hover:hidden w-4 h-4 flex items-center justify-center rounded-full text-xs font-bold',
-              (isSelected || mentions === 0) && 'hidden'
+              'bg-[#f23f42] text-white w-4 h-4 flex items-center justify-center rounded-full text-xs font-bold',
+              (isSelected || mentions === 0) && 'hidden',
+              role !== MemberRole.GUEST &&
+                channel.name !== 'general' &&
+                'group-hover:hidden'
             )}
           >
             {mentions}

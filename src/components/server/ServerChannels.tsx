@@ -1,4 +1,5 @@
 'use client';
+import { useGlobalStore } from '@/hooks/useGlobalStore';
 import { useNotificationSound } from '@/hooks/usePingSound';
 import { socket } from '@/socket';
 import { Channel, Channeltype, MemberRole } from '@prisma/client';
@@ -21,15 +22,19 @@ const ServerChannels: React.FC<TServerChannelsProps> = ({
   channels: { textChannels, audioChannels },
   role,
 }) => {
-  const [channelMentions, setChannelMentions] = useState<
-    Record<number, ServerMentionWithUser[]>
-  >({});
+  const {
+    setAsRead,
+    unreadChannels,
+    setUnreadChannels,
+    channelMentions,
+    addChannelMention,
+  } = useGlobalStore();
+
   const [channels, setChannels] = useState({
     [Channeltype.TEXT]: textChannels,
     [Channeltype.AUDIO]: audioChannels,
   });
   const play = useNotificationSound();
-  const [unreadChannels, setUnreadChannels] = useState<Set<number>>(new Set());
   const params = useParams();
 
   useEffect(() => {
@@ -68,16 +73,13 @@ const ServerChannels: React.FC<TServerChannelsProps> = ({
     for (const channel of textChannels) {
       if (channel.id !== +params.channelId) {
         socket.on(`channel:${channel.id}:new-message`, () => {
-          setUnreadChannels((prev) => new Set([...prev, channel.id]));
+          setUnreadChannels(channel.id);
         });
         socket.on(
           `channel:${channel.id}:mention`,
           (mention: ServerMentionWithUser) => {
             console.log('here');
-            setChannelMentions((prev) => ({
-              ...prev,
-              [channel.id]: [...(prev[channel.id] ?? []), mention],
-            }));
+            addChannelMention(channel.id, mention);
             play();
           }
         );
@@ -108,22 +110,13 @@ const ServerChannels: React.FC<TServerChannelsProps> = ({
           {channels.TEXT.map((channel) => (
             <ServerChannel
               key={channel.id}
-              {...{ channel, role }}
               isUnread={
                 [...unreadChannels].includes(channel.id) ||
                 channelMentions[channel.id]?.length > 0
               }
-              onClick={() => {
-                setUnreadChannels((prev) => {
-                  prev.delete(channel.id);
-                  return new Set(prev);
-                });
-                setChannelMentions((prev) => ({
-                  ...prev,
-                  [channel.id]: [],
-                }));
-              }}
+              onClick={setAsRead}
               mentions={channelMentions[channel.id]?.length ?? 0}
+              {...{ channel, role }}
             />
           ))}
         </div>

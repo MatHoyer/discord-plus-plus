@@ -62,6 +62,15 @@ export const checkMessage = async ({
           user: true,
         },
       },
+      mentions: {
+        include: {
+          member: {
+            include: {
+              user: true,
+            },
+          },
+        },
+      },
     },
   });
 
@@ -81,5 +90,5 @@ export const checkMessage = async ({
     throw new Error('Unauthorized');
   }
 
-  return message;
+  return message as ServerMessageWithSender;
 };
