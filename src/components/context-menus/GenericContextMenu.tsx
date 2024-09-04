@@ -37,7 +37,7 @@ const GenericContextMenuItem = <T extends TItem>({
       <ContextMenuSub>
         <ContextMenuSubTrigger
           className={cn(
-            'focus:bg-[#4752c4] data-[state=open]:bg-[#4752c4] cursor-pointer',
+            'focus:bg-[#4752c4] data-[state=open]:bg-[#4752c4] cursor-pointer text-xs dark:text-neutral-400 dark:hover:text-white dark:data-[state=open]:text-white font-semibold',
             computeMenuItemClassName?.(item, index)
           )}
           onClick={() => {
@@ -87,13 +87,13 @@ const GenericContextMenuItem = <T extends TItem>({
   ) : null;
 };
 
-const menuItemVariants = cva(
-  'cursor-pointer text-xs text-white font-semibold',
+export const menuItemVariants = cva(
+  'cursor-pointer text-xs text-white font-semibold text-black dark:text-neutral-400 dark:hover:text-white',
   {
     variants: {
       variant: {
-        default: 'hover:bg-[#4752c4]',
-        destructive: 'text-[#f23f42] hover:bg-[#da373c] hover:text-white',
+        default: 'dark:hover:bg-[#4752c4]',
+        destructive: 'dark:text-[#f23f42] hover:dark:bg-[#da373c]',
       },
     },
     defaultVariants: { variant: 'default' },
@@ -141,7 +141,7 @@ const GenericContextMenu = <T extends TItem>({
       <ContextMenuTrigger>{children}</ContextMenuTrigger>
       <ContextMenuContent
         className={cn(
-          'bg-[#111214] min-w-[200px] border-[#2e2f34]',
+          'min-w-[200px] border-[#2e2f34]',
           contentClassName,
           disabled && 'hidden'
         )}

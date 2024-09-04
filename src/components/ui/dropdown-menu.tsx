@@ -2,8 +2,10 @@
 
 import { cn } from '@/lib/utils';
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
+import { VariantProps } from 'class-variance-authority';
 import { Check, ChevronRight, Circle } from 'lucide-react';
 import * as React from 'react';
+import { menuItemVariants } from '../context-menus/GenericContextMenu';
 
 const DropdownMenu = DropdownMenuPrimitive.Root;
 
@@ -77,12 +79,13 @@ const DropdownMenuItem = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item> & {
     inset?: boolean;
-  }
->(({ className, inset, ...props }, ref) => (
+  } & VariantProps<typeof menuItemVariants>
+>(({ className, inset, variant, ...props }, ref) => (
   <DropdownMenuPrimitive.Item
     ref={ref}
     className={cn(
-      'relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+      'relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+      menuItemVariants({ variant }),
       inset && 'pl-8',
       className
     )}
@@ -161,7 +164,7 @@ const DropdownMenuSeparator = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DropdownMenuPrimitive.Separator
     ref={ref}
-    className={cn('-mx-1 my-1 h-px bg-muted', className)}
+    className={cn('-mx-1 my-1 h-px bg-border', className)}
     {...props}
   />
 ));
