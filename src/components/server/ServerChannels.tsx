@@ -71,26 +71,24 @@ const ServerChannels: React.FC<TServerChannelsProps> = ({
   useEffect(() => {
     const textChannels = channels.TEXT;
     for (const channel of textChannels) {
+      const key = `channel:${channel.id}`;
       if (channel.id !== +params.channelId) {
-        socket.on(`channel:${channel.id}:new-message`, () => {
+        socket.on(`${key}:new-message`, () => {
           setUnreadChannels(channel.id);
         });
-        socket.on(
-          `channel:${channel.id}:mention`,
-          (mention: ServerMentionWithUser) => {
-            console.log('here');
-            addChannelMention(channel.id, mention);
-            play();
-          }
-        );
+        socket.on(`${key}:mention`, (mention: ServerMentionWithUser) => {
+          addChannelMention(channel.id, mention);
+          play();
+        });
       }
     }
 
     return () => {
       for (const channel of textChannels) {
+        const key = `channel:${channel.id}`;
         if (channel.id !== +params.channelId) {
-          socket.off(`channel:${channel.id}:new-message`);
-          socket.off(`channel:${channel.id}:mention`);
+          socket.off(`${key}:new-message`);
+          socket.off(`${key}:mention`);
         }
       }
     };

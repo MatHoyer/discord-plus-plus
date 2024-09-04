@@ -72,6 +72,12 @@ app.prepare().then(() => {
           }
         }
       },
+      'reacted-to-message': ({ channelId, reaction }) => {
+        io.emit(`channel:${channelId}:reacted-to-message`, reaction);
+      },
+      'delete-reaction': ({ channelId, reactionId }) => {
+        io.emit(`channel:${channelId}:delete-reaction`, reactionId);
+      },
       'delete-message': ({ channelId, messageId }) => {
         io.emit(`channel:${channelId}:delete-message`, messageId);
       },

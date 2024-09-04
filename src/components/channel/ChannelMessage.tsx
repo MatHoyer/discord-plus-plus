@@ -141,6 +141,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
       currentMember={currentMember}
       message={message}
       disabled={preview}
+      channel={channel}
     >
       <div
         className={cn(
@@ -212,6 +213,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
                 <MessageReactions
                   reactions={message.reactions}
                   currentMember={currentMember}
+                  channel={channel}
                 />
               </>
             )}

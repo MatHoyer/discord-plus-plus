@@ -19,6 +19,7 @@ const ScrollableChat: React.FC<{
 
   useEffect(() => {
     const key = `channel:${channel.id}`;
+
     socket.on(`${key}:new-message`, (message: ServerMessageWithSender) => {
       setMessages((prev) => [message, ...prev]);
     });
@@ -35,6 +36,42 @@ const ScrollableChat: React.FC<{
       });
     });
 
+    socket.on(
+      `${key}:reacted-to-message`,
+      (reaction: ServerMessageReactionWithMembers) => {
+        console.log('here');
+        setMessages((prev) => {
+          const index = prev.findIndex((m) => m.id === reaction.messageId);
+          console.log(index);
+          if (index === -1) {
+            return prev;
+          }
+          const newMessages = [...prev];
+          const message = newMessages[index];
+          //   if (message.reactions) {
+          //     message.reactions.push(reaction);
+          //   } else {
+          //     message.reactions = [reaction];
+          //   }
+          return newMessages;
+        });
+      }
+    );
+
+    socket.on(`${key}:delete-reaction`, (reactionId: number) => {
+      setMessages((prev) => {
+        const newMessages = [...prev];
+        for (const message of newMessages) {
+          if (message.reactions) {
+            message.reactions = message.reactions.filter(
+              (reaction) => reaction.id !== reactionId
+            );
+          }
+        }
+        return newMessages;
+      });
+    });
+
     socket.on(`${key}:delete-message`, (messageId: number) => {
       setMessages((prev) => prev.filter((m) => m.id !== messageId));
     });
@@ -42,6 +79,8 @@ const ScrollableChat: React.FC<{
     return () => {
       socket.off(`${key}:new-message`);
       socket.off(`${key}:edit-message`);
+      socket.off(`${key}:reacted-to-message`);
+      socket.off(`${key}:delete-reaction`);
       socket.off(`${key}:delete-message`);
     };
   }, [channel.id]);

@@ -10,10 +10,10 @@ export const reactToMessage = authClient
     handleValidationErrorsShape: (ve) =>
       flattenValidationErrors(ve).fieldErrors,
   })
-  .action(async ({ parsedInput, ctx }) => {
+  .action(async ({ parsedInput }) => {
     const { content, messageId, memberId } = parsedInput;
 
-    let reaction = await prisma.serverMessageReaction.findFirst({
+    const reaction = await prisma.serverMessageReaction.findFirst({
       where: {
         messageId,
         content,
@@ -22,6 +22,8 @@ export const reactToMessage = authClient
         members: true,
       },
     });
+
+    let reactionId = reaction?.id;
 
     if (reaction) {
       const hasAlreadyReacted = reaction.members.some(
@@ -33,6 +35,8 @@ export const reactToMessage = authClient
             id: reaction.id,
           },
         });
+
+        return reactionId;
       } else {
         await prisma.serverMessageReaction.update({
           where: {
@@ -46,7 +50,7 @@ export const reactToMessage = authClient
         });
       }
     } else {
-      reaction = await prisma.serverMessageReaction.create({
+      const newReaction = await prisma.serverMessageReaction.create({
         data: {
           number: 1,
           content,
@@ -58,19 +62,24 @@ export const reactToMessage = authClient
             },
           },
         },
-        include: {
-          members: {
-            include: {
-              member: {
-                include: {
-                  user: true,
-                },
+      });
+      reactionId = newReaction.id;
+    }
+
+    return await prisma.serverMessageReaction.findUnique({
+      where: {
+        id: reactionId,
+      },
+      include: {
+        members: {
+          include: {
+            member: {
+              include: {
+                user: true,
               },
             },
           },
         },
-      });
-    }
-
-    return reaction;
+      },
+    });
   });

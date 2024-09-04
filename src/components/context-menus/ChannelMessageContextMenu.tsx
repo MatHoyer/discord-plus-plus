@@ -1,6 +1,8 @@
 'use client';
 import { reactToMessage } from '@/features/server/channel/message/react-to-message/react-to-message.action';
 import { checkMessage } from '@/lib/utils/message.utils';
+import { socket } from '@/socket';
+import { Channel } from '@prisma/client';
 import {
   ClipboardCopy,
   Fingerprint,
@@ -16,16 +18,31 @@ type TChannelMessageContextMenuProps = {
   member: MemberWithUser;
   currentMember: MemberWithUser;
   message: ServerMessageWithSender;
+  channel?: Channel;
 };
 
 const ChannelMessageContextMenu: React.FC<
   TChannelMessageContextMenuProps &
     PropsWithChildren &
     Omit<ComponentProps<typeof GenericContextMenu>, 'items'>
-> = ({ member, currentMember, message, children, ...props }) => {
+> = ({ member, currentMember, message, channel, children, ...props }) => {
   const { canDeleteMessage } = checkMessage(member, currentMember, message);
 
-  const { execute } = useAction(reactToMessage, {});
+  const { execute } = useAction(reactToMessage, {
+    onSuccess: ({ data }) => {
+      if (typeof data === 'number') {
+        socket.emit('delete-reaction', {
+          reactionId: data,
+          channelId: channel!.id,
+        });
+      } else {
+        socket.emit('reacted-to-message', {
+          reaction: data,
+          channelId: channel!.id,
+        });
+      }
+    },
+  });
 
   return (
     <GenericContextMenu
