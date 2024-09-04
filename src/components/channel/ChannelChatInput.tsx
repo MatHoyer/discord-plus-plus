@@ -7,12 +7,12 @@ import {
 } from '@/features/server/channel/message/send-message/send-message.schema';
 import { cn } from '@/lib/utils';
 import { parseMentionsMessage } from '@/lib/utils/message.utils';
-import { SocketEvents } from '@/lib/utils/socket.utils';
 import { socket } from '@/socket';
 import { Channel, Member } from '@prisma/client';
 import { Plus, Smile } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
 import { useEffect, useRef, useState } from 'react';
+import { ServerSocketEvents } from '../../../server/socket/server';
 import ChatInput from '../form/ChatInput';
 import { Form, FormControl, FormField, FormItem, useZodForm } from '../ui/form';
 
@@ -35,12 +35,12 @@ const ChannelChatInput: React.FC<{
 
   const { execute, result: state } = useAction(sendMessage, {
     onSuccess: (message) => {
-      socket.emit(SocketEvents.NEW_MESSAGE, {
+      socket.emit(ServerSocketEvents.newMessage, {
         message: message.data,
         channelId: channel.id,
       });
       if (message.data?.mentions?.length ?? 0 > 0) {
-        socket.emit('mention', {
+        socket.emit(ServerSocketEvents.mention, {
           channelId: channel.id,
           mentions: message.data!.mentions,
         });
@@ -121,7 +121,7 @@ const ChannelChatInput: React.FC<{
                         prev.filter((p) => p !== currentMember.username)
                       );
                     }}
-                    onEnter={() => {
+                    onSubmit={() => {
                       form.handleSubmit(handleSubmit)();
                     }}
                   />

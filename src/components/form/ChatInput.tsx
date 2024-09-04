@@ -6,7 +6,7 @@ import ChannelMentionSuggestions from '../channel/ChannelMentionSuggestions';
 type TChatInputProps = {
   onInput?: (content: string) => void;
   onBlur?: (content: string) => void;
-  onEnter?: () => void;
+  onSubmit?: () => void;
   members: MemberWithUser[];
   inputClassName?: string;
   value?: string;
@@ -15,7 +15,7 @@ type TChatInputProps = {
 const ChatInput: React.FC<TChatInputProps> = ({
   onInput,
   onBlur,
-  onEnter,
+  onSubmit,
   members,
   inputClassName,
   value,
@@ -180,7 +180,7 @@ const ChatInput: React.FC<TChatInputProps> = ({
           if (e.key === 'Enter') {
             e.preventDefault();
             if (!isMentionPopoverOpen || !filteredMembers?.length) {
-              onEnter?.();
+              onSubmit?.();
             }
           }
         }}
