@@ -1,9 +1,13 @@
 'use client';
-import { deleteMessage } from '@/features/server/channel/delete-message/delete-message.action';
-import { useToast } from '@/hooks/use-toast';
-import { useModal } from '@/hooks/useModalStore';
+import { deleteMessage } from '@/features/server/channel/message/delete-message/delete-message.action';
 import { checkMessage } from '@/lib/utils/message.utils';
-import { ClipboardCopy, Fingerprint, Trash } from 'lucide-react';
+import {
+  ClipboardCopy,
+  Fingerprint,
+  Shirt,
+  SmilePlus,
+  Trash,
+} from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
 import React, { ComponentProps, PropsWithChildren } from 'react';
 import GenericContextMenu from './GenericContextMenu';
@@ -20,16 +24,29 @@ const ChannelMessageContextMenu: React.FC<
     Omit<ComponentProps<typeof GenericContextMenu>, 'items'>
 > = ({ member, currentMember, message, children, ...props }) => {
   const { canDeleteMessage } = checkMessage(member, currentMember, message);
-
   const { execute } = useAction(deleteMessage, {});
-
-  const { openModal } = useModal();
-  const { toast } = useToast();
 
   return (
     <GenericContextMenu
       {...props}
       items={[
+        {
+          label: 'Add Reaction',
+          subItems: [
+            {
+              label: 'Slip de mathieu',
+              icon: Shirt,
+              onClick: () => {},
+            },
+            {
+              seperator: true,
+            },
+            {
+              label: 'View More',
+              icon: SmilePlus,
+            },
+          ],
+        },
         {
           label: 'Copy Text',
           icon: ClipboardCopy,

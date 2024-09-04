@@ -7,11 +7,84 @@ import {
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuSeparator,
+  ContextMenuSub,
+  ContextMenuSubContent,
+  ContextMenuSubTrigger,
   ContextMenuTrigger,
 } from '../ui/context-menu';
 
-const isSeparator = (item: TItem): item is { seperator: true } => {
+export const isSeparator = (item: TItem): item is { seperator: true } => {
   return (item as any).seperator === true;
+};
+
+type TGenericContextMenuItemProps<T extends TItem> = {
+  item: T;
+  index: number;
+  computeMenuItemClassName?: (item: T, index: number) => string;
+};
+
+const GenericContextMenuItem = <T extends TItem>({
+  item,
+  index,
+  computeMenuItemClassName,
+}: TGenericContextMenuItemProps<T>) => {
+  return isSeparator(item) ? (
+    <ContextMenuSeparator className="bg-[#2e2f34]" />
+  ) : item.when === undefined ||
+    (item.when &&
+      (isFunction(item.when) ? item.when(item, index) : item.when)) ? (
+    item.subItems ? (
+      <ContextMenuSub>
+        <ContextMenuSubTrigger
+          className={cn(
+            'focus:bg-[#4752c4] data-[state=open]:bg-[#4752c4] cursor-pointer',
+            computeMenuItemClassName?.(item, index)
+          )}
+          onClick={() => {
+            item.subItemTriggerOnClick?.(item, index);
+          }}
+        >
+          {item.customRender ? item.customRender(item, index) : item.label}
+        </ContextMenuSubTrigger>
+        <ContextMenuSubContent
+          className="bg-[#111214] min-w-[200px] border-[#2e2f34]"
+          sideOffset={10}
+          alignOffset={-5}
+        >
+          {item.subItems.map((subItem, subItemIndex) => (
+            <GenericContextMenuItem
+              key={subItemIndex}
+              index={subItemIndex}
+              item={subItem}
+              computeMenuItemClassName={computeMenuItemClassName}
+            />
+          ))}
+        </ContextMenuSubContent>
+      </ContextMenuSub>
+    ) : (
+      <ContextMenuItem
+        key={index}
+        className={cn(
+          menuItemVariants({
+            className: computeMenuItemClassName?.(item, index),
+            variant: item.variant,
+          })
+        )}
+        onClick={() => {
+          item.onClick?.(item, index);
+        }}
+      >
+        {item.customRender ? (
+          item.customRender(item, index)
+        ) : (
+          <>
+            {item.label}
+            {item.icon && <item.icon className="w-4 h-4 ml-auto" />}
+          </>
+        )}
+      </ContextMenuItem>
+    )
+  ) : null;
 };
 
 const menuItemVariants = cva(
@@ -34,6 +107,8 @@ type TItem =
       customRender?: (item: TItem, index: number) => React.ReactNode;
       onClick?: (item: TItem, index: number) => void;
       when?: boolean | ((item: TItem, index: number) => boolean);
+      subItems?: TItem[];
+      subItemTriggerOnClick?: (item: TItem, index: number) => void;
     } & VariantProps<typeof menuItemVariants>)
   | {
       seperator: true;
@@ -58,40 +133,19 @@ const GenericContextMenu = <T extends TItem>({
       <ContextMenuTrigger>{children}</ContextMenuTrigger>
       <ContextMenuContent
         className={cn(
-          'bg-[#111214] w-[200px] border-[#2e2f34]',
+          'bg-[#111214] min-w-[200px] border-[#2e2f34]',
           contentClassName,
           disabled && 'hidden'
         )}
       >
-        {items.map((item, index) =>
-          isSeparator(item) ? (
-            <ContextMenuSeparator key={index} className="bg-[#2e2f34]" />
-          ) : item.when === undefined ||
-            (item.when &&
-              (isFunction(item.when) ? item.when(item, index) : item.when)) ? (
-            <ContextMenuItem
-              key={index}
-              className={cn(
-                menuItemVariants({
-                  className: computeMenuItemClassName?.(item, index),
-                  variant: item.variant,
-                })
-              )}
-              onClick={() => {
-                item.onClick?.(item, index);
-              }}
-            >
-              {item.customRender ? (
-                item.customRender(item, index)
-              ) : (
-                <>
-                  {item.label}
-                  {item.icon && <item.icon className="w-4 h-4 ml-auto" />}
-                </>
-              )}
-            </ContextMenuItem>
-          ) : null
-        )}
+        {items.map((item, index) => (
+          <GenericContextMenuItem
+            key={index}
+            index={index}
+            item={item}
+            computeMenuItemClassName={computeMenuItemClassName}
+          />
+        ))}
       </ContextMenuContent>
     </ContextMenu>
   );

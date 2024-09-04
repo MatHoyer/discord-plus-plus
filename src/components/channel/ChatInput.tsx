@@ -1,10 +1,10 @@
 'use client';
-import { sendMessage } from '@/features/server/channel/send-message/send-message.action';
+import { sendMessage } from '@/features/server/channel/message/send-message/send-message.action';
 import {
   MAX_MESSAGE_LENGTH,
   sendMessageSchema,
   TSendMessage,
-} from '@/features/server/channel/send-message/send-message.schema';
+} from '@/features/server/channel/message/send-message/send-message.schema';
 import { cn } from '@/lib/utils';
 import { SocketEvents } from '@/lib/utils/socket.utils';
 import { socket } from '@/socket';

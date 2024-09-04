@@ -1,6 +1,6 @@
 'use client';
 
-import { deleteMessage } from '@/features/server/channel/delete-message/delete-message.action';
+import { deleteMessage } from '@/features/server/channel/message/delete-message/delete-message.action';
 import { useModal } from '@/hooks/useModalStore';
 import { getCustomDate } from '@/lib/utils';
 import { socket } from '@/socket';

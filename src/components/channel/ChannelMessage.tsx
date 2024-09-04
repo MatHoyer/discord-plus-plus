@@ -1,8 +1,8 @@
-import { editMessage } from '@/features/server/channel/edit-message/edit-message.action';
+import { editMessage } from '@/features/server/channel/message/edit-message/edit-message.action';
 import {
   editMessageSchema,
   TEditMessage,
-} from '@/features/server/channel/edit-message/edit-message.schema';
+} from '@/features/server/channel/message/edit-message/edit-message.schema';
 import { useModal } from '@/hooks/useModalStore';
 import { cn } from '@/lib/utils';
 import { checkMessage } from '@/lib/utils/message.utils';

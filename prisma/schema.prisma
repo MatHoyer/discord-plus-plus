@@ -118,11 +118,29 @@ model ServerMessage {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    deleted  Boolean         @default(false)
-    mentions ServerMention[]
+    deleted   Boolean                 @default(false)
+    mentions  ServerMention[]
+    reactions ServerMessageReaction[]
 
     @@index([senderId])
     @@index([channelId])
+}
+
+model ServerMessageReaction {
+    id     Int @id @default(autoincrement())
+    number Int
+
+    messageId Int
+    message   ServerMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+    memberId Int
+    member   Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([messageId])
+    @@index([memberId])
 }
 
 model ServerMention {
@@ -181,8 +199,9 @@ model Member {
     messages ServerMessage[]
     mentions ServerMention[]
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    createdAt DateTime                @default(now())
+    updatedAt DateTime                @updatedAt
+    reactions ServerMessageReaction[]
 
     @@index([userId])
     @@index([serverId])
