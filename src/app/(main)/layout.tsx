@@ -3,10 +3,8 @@ import { useActivity } from '@/hooks/useActivityStore';
 import { socket } from '@/socket';
 import { useSession } from 'next-auth/react';
 import { useEffect } from 'react';
-import {
-  ClientSocketEvents,
-  ServerSocketEvents,
-} from '../../../server/socket/events';
+import { ClientSocketEvents } from '../../../server/socket/client';
+import { ServerSocketEvents } from '../../../server/socket/server';
 
 const SocketLayout = (props: LayoutParams) => {
   const session = useSession();

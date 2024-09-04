@@ -16,6 +16,7 @@ import { Channel } from '@prisma/client';
 import { useAction } from 'next-safe-action/hooks';
 import { useRouter } from 'next/navigation';
 import React from 'react';
+import { ServerSocketEvents } from '../../../../../server/socket/server';
 import { editChannel } from './edit-channel.action';
 import { editChannelSchema } from './edit-channel.schema';
 
@@ -47,7 +48,7 @@ const EditChannelForm: React.FC<TCreateChannelFormProps> = ({
     onSuccess: ({ data }) => {
       close?.();
       router.refresh();
-      socket.emit('edit-channel', data);
+      socket.emit(ServerSocketEvents.editChannel, data);
     },
   });
 

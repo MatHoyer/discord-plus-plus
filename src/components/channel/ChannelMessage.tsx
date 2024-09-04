@@ -13,6 +13,7 @@ import { Edit, Trash } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FieldErrors } from 'react-hook-form';
+import { ServerSocketEvents } from '../../../server/socket/server';
 import ActionTooltip from '../ActionTooltip';
 import ChannelMessageContextMenu from '../context-menus/ChannelMessageContextMenu';
 import ProfileContextMenu from '../context-menus/ProfileContextMenu';
@@ -56,7 +57,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
   const { execute, result: state } = useAction(editMessage, {
     onSuccess: ({ data }) => {
       setIsEditing(false);
-      socket.emit('edit-message', data);
+      socket.emit(ServerSocketEvents.editMessage, data);
     },
   });
 

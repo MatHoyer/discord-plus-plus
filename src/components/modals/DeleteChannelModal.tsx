@@ -6,6 +6,7 @@ import { socket } from '@/socket';
 import { useAction } from 'next-safe-action/hooks';
 import { useRouter } from 'next/navigation';
 import { useRef } from 'react';
+import { ServerSocketEvents } from '../../../server/socket/server';
 import { Button } from '../ui/button';
 import {
   Dialog,
@@ -31,7 +32,7 @@ const DeleteChannelModal: React.FC = () => {
         );
       }
       closeModal();
-      socket.emit('delete-channel', data?.channel);
+      socket.emit(ServerSocketEvents.deleteChannel, data?.channel);
     },
   });
 

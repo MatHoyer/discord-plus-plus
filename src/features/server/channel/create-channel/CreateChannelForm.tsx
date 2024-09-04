@@ -19,6 +19,7 @@ import { Hash, Volume2 } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
 import { useRouter } from 'next/navigation';
 import React, { useId } from 'react';
+import { ServerSocketEvents } from '../../../../../server/socket/server';
 import { createChannel } from './create-channel.action';
 import { createChannelSchema } from './create-channel.schema';
 
@@ -50,7 +51,7 @@ const CreateChannelForm: React.FC<TCreateServerFormProps> = ({
     onSuccess: ({ data }) => {
       close?.();
       router.push(`/servers/${serverId}/channels/${data!.id}`);
-      socket.emit('new-channel', data);
+      socket.emit(ServerSocketEvents.newChannel, data);
     },
   });
 

@@ -4,6 +4,7 @@ import { socket } from '@/socket';
 import { Channel } from '@prisma/client';
 import { useAction } from 'next-safe-action/hooks';
 import React from 'react';
+import { ServerSocketEvents } from '../../../server/socket/server';
 import {
   Tooltip,
   TooltipContent,
@@ -25,12 +26,12 @@ const MessageReaction: React.FC<TMessageReactionProps> = ({
   const { execute } = useAction(reactToMessage, {
     onSuccess: ({ data }) => {
       if (typeof data === 'number') {
-        socket.emit('delete-reaction', {
+        socket.emit(ServerSocketEvents.deleteReaction, {
           reactionId: reaction.id,
           channelId: channel!.id,
         });
       } else {
-        socket.emit('reacted-to-message', {
+        socket.emit(ServerSocketEvents.reactedToMessage, {
           reaction: data,
           channelId: channel!.id,
         });

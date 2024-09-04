@@ -3,6 +3,7 @@
 import { useActivity } from '@/hooks/useActivityStore';
 import { socket } from '@/socket';
 import { useSession } from 'next-auth/react';
+import { ServerSocketEvents } from '../../../server/socket/server';
 import { Activity, TActivity } from '../../../server/User';
 import {
   DropdownMenu,
@@ -13,7 +14,7 @@ import {
 import { activityIndicatorMap } from '../UserAvatarWithActivity';
 
 const handleActivityChange = (activity: TActivity) => {
-  socket.emit('change-activity', { activity });
+  socket.emit(ServerSocketEvents.changeActivity, { activity });
 };
 
 const ActivityState: React.FC<{ activity: TActivity }> = ({ activity }) => {

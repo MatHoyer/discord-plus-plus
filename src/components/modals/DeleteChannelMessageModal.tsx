@@ -5,6 +5,7 @@ import { useModal } from '@/hooks/useModalStore';
 import { getCustomDate } from '@/lib/utils';
 import { socket } from '@/socket';
 import { useAction } from 'next-safe-action/hooks';
+import { ServerSocketEvents } from '../../../server/socket/server';
 import ChannelMessage from '../channel/ChannelMessage';
 import { Button } from '../ui/button';
 import {
@@ -21,7 +22,7 @@ const DeleteChannelMessageModal: React.FC = () => {
   const { execute } = useAction(deleteMessage, {
     onSuccess: ({ data }) => {
       closeModal();
-      socket.emit('delete-message', {
+      socket.emit(ServerSocketEvents.deleteMessage, {
         messageId: data!.id,
         channelId: data!.channelId,
       });

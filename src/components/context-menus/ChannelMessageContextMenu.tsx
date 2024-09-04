@@ -6,6 +6,7 @@ import { Channel } from '@prisma/client';
 import { ClipboardCopy, Fingerprint, SmilePlus, Trash } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
 import React, { ComponentProps, PropsWithChildren } from 'react';
+import { ServerSocketEvents } from '../../../server/socket/server';
 import GenericContextMenu, { isSeparator } from './GenericContextMenu';
 
 type TChannelMessageContextMenuProps = {
@@ -36,12 +37,12 @@ const ChannelMessageContextMenu: React.FC<
   const { execute } = useAction(reactToMessage, {
     onSuccess: ({ data }) => {
       if (typeof data === 'number') {
-        socket.emit('delete-reaction', {
+        socket.emit(ServerSocketEvents.deleteReaction, {
           reactionId: data,
           channelId: channel!.id,
         });
       } else {
-        socket.emit('reacted-to-message', {
+        socket.emit(ServerSocketEvents.reactedToMessage, {
           reaction: data,
           channelId: channel!.id,
         });
