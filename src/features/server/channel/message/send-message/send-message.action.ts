@@ -79,6 +79,19 @@ export const sendMessage = authClient
             },
           },
         },
+        reactions: {
+          include: {
+            members: {
+              include: {
+                member: {
+                  include: {
+                    user: true,
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     });
 

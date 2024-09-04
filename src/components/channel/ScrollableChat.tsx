@@ -39,20 +39,18 @@ const ScrollableChat: React.FC<{
     socket.on(
       `${key}:reacted-to-message`,
       (reaction: ServerMessageReactionWithMembers) => {
-        console.log('here');
         setMessages((prev) => {
           const index = prev.findIndex((m) => m.id === reaction.messageId);
-          console.log(index);
           if (index === -1) {
             return prev;
           }
           const newMessages = [...prev];
           const message = newMessages[index];
-          //   if (message.reactions) {
-          //     message.reactions.push(reaction);
-          //   } else {
-          //     message.reactions = [reaction];
-          //   }
+          if (message.reactions) {
+            message.reactions.push(reaction);
+          } else {
+            message.reactions = [reaction];
+          }
           return newMessages;
         });
       }
@@ -108,7 +106,7 @@ const ScrollableChat: React.FC<{
         observer.unobserve(ref);
       }
     };
-  }, [channel.id, messages]);
+  }, [channel.id, messages.length]);
 
   return (
     <div className="flex-1 overflow-y-scroll flex flex-col-reverse">
