@@ -3,16 +3,10 @@ import { reactToMessage } from '@/features/server/channel/message/react-to-messa
 import { checkMessage } from '@/lib/utils/message.utils';
 import { socket } from '@/socket';
 import { Channel } from '@prisma/client';
-import {
-  ClipboardCopy,
-  Fingerprint,
-  Shirt,
-  SmilePlus,
-  Trash,
-} from 'lucide-react';
+import { ClipboardCopy, Fingerprint, SmilePlus, Trash } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
 import React, { ComponentProps, PropsWithChildren } from 'react';
-import GenericContextMenu from './GenericContextMenu';
+import GenericContextMenu, { isSeparator } from './GenericContextMenu';
 
 type TChannelMessageContextMenuProps = {
   member: MemberWithUser;
@@ -20,6 +14,17 @@ type TChannelMessageContextMenuProps = {
   message: ServerMessageWithSender;
   channel?: Channel;
 };
+
+const EMOJIS = [
+  {
+    label: 'Slip de mathieu',
+    content: '🩲',
+  },
+  {
+    label: 'Banane',
+    content: '🍌',
+  },
+];
 
 const ChannelMessageContextMenu: React.FC<
   TChannelMessageContextMenuProps &
@@ -51,17 +56,23 @@ const ChannelMessageContextMenu: React.FC<
         {
           label: 'Add Reaction',
           subItems: [
-            {
-              label: 'Slip de mathieu',
-              icon: Shirt,
+            ...EMOJIS.map((emoji) => ({
+              ...emoji,
+              customRender: (item) =>
+                isSeparator(item) ? null : (
+                  <>
+                    {item.label}{' '}
+                    <span className="ml-auto text-md">{emoji.content}</span>
+                  </>
+                ),
               onClick: () => {
                 execute({
                   messageId: message.id,
                   memberId: currentMember.id,
-                  content: '🍌',
+                  content: emoji.content,
                 });
               },
-            },
+            })),
             {
               seperator: true,
             },
