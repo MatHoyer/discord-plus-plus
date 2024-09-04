@@ -143,7 +143,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
     >
       <div
         className={cn(
-          'relative group flex items-center px-4 py-2 mb-2 transition-colors w-full',
+          'relative group flex items-center px-4 py-2 transition-colors w-full',
           isMentionned && 'bg-[#444037] bg-opacity-70',
           !isMentionned && 'hover:bg-black/5'
         )}

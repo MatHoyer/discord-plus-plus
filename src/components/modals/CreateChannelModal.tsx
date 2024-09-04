@@ -3,6 +3,7 @@
 import CreateChannelForm from '@/features/server/channel/create-channel/CreateChannelForm';
 import { useModal } from '@/hooks/useModalStore';
 import { SubmitButton } from '../form/SubmitButton';
+import { Button } from '../ui/button';
 import {
   Dialog,
   DialogContent,
@@ -22,7 +23,7 @@ const CreateChannelModal: React.FC = () => {
         {!data.server ? null : (
           <>
             <DialogHeader>
-              <DialogTitle className="text-2xl font-bold">
+              <DialogTitle className="text-xl font-bold">
                 Create a channel
               </DialogTitle>
             </DialogHeader>
@@ -33,7 +34,16 @@ const CreateChannelModal: React.FC = () => {
             >
               {({ pending, form }) => (
                 <DialogFooter>
+                  <Button
+                    variant="link"
+                    onClick={() => {
+                      closeModal();
+                    }}
+                  >
+                    Cancel
+                  </Button>
                   <SubmitButton
+                    variant="blue"
                     disabled={pending || !form.formState.isValid}
                     loading={pending}
                   >

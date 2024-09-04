@@ -37,7 +37,7 @@ const DeleteChannelMessageModal: React.FC = () => {
               </DialogDescription>
               <div
                 style={{
-                  boxShadow: '0 0 3px #3133388b',
+                  boxShadow: '0 0 5px #242628',
                 }}
               >
                 <ChannelMessage

@@ -45,7 +45,7 @@ const InvitePeopleModal: React.FC = () => {
             Invite friends on <span className="font-bold">{server?.name}</span>
           </DialogTitle>
         </DialogHeader>
-        <div>
+        <div className="px-4 py-2">
           <Label className="uppercase text-xs font-bold">
             Server invite link
           </Label>

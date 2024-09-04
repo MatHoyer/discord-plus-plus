@@ -11,7 +11,7 @@ const FullScreenModal: React.FC<FullScreenModalProps> = () => {
         aria-describedby={undefined}
       >
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold">
+          <DialogTitle className="text-xl font-bold">
             Edit the channel
           </DialogTitle>
         </DialogHeader>

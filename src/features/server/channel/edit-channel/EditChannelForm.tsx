@@ -64,23 +64,22 @@ const EditChannelForm: React.FC<TCreateChannelFormProps> = ({
   return (
     <Form {...form} state={state}>
       <FormError state={state} />
-      <form
-        onSubmit={form.handleSubmit(execute)}
-        className={cn('space-y-3', className)}
-      >
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>CHANNEL NAME</FormLabel>
-              <FormControl>
-                <Input {...field} placeholder={channel.name} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+      <form onSubmit={form.handleSubmit(execute)}>
+        <div className={cn('space-y-3', className)}>
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>CHANNEL NAME</FormLabel>
+                <FormControl>
+                  <Input {...field} placeholder={channel.name} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
         {children({ pending: isExecuting, form })}
       </form>
     </Form>

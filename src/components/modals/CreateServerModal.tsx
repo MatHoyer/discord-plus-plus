@@ -3,6 +3,7 @@
 import CreateServerForm from '@/features/server/create-server/CreateServerForm';
 import { useModal } from '@/hooks/useModalStore';
 import { SubmitButton } from '../form/SubmitButton';
+import { Button } from '../ui/button';
 import {
   Dialog,
   DialogContent,
@@ -21,7 +22,7 @@ const CreateServerModal: React.FC = () => {
     <Dialog open={open} onOpenChange={closeModal}>
       <DialogContent className="overflow-hidden">
         <DialogHeader>
-          <DialogTitle className="text-2xl text-center font-bold">
+          <DialogTitle className="text-xl text-center font-bold">
             Customize your server
           </DialogTitle>
           <DialogDescription className="text-center text-zinc-500">
@@ -29,10 +30,20 @@ const CreateServerModal: React.FC = () => {
             always change it later
           </DialogDescription>
         </DialogHeader>
-        <CreateServerForm close={closeModal}>
+        <CreateServerForm close={closeModal} className="px-4">
           {(pending) => (
             <DialogFooter>
-              <SubmitButton loading={pending}>Create</SubmitButton>
+              <Button
+                variant="link"
+                onClick={() => {
+                  closeModal();
+                }}
+              >
+                Cancel
+              </Button>
+              <SubmitButton variant="blue" loading={pending}>
+                Create
+              </SubmitButton>
             </DialogFooter>
           )}
         </CreateServerForm>

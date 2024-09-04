@@ -3,6 +3,7 @@
 import EditChannelForm from '@/features/server/channel/edit-channel/EditChannelForm';
 import { useModal } from '@/hooks/useModalStore';
 import { SubmitButton } from '../form/SubmitButton';
+import { Button } from '../ui/button';
 import {
   Dialog,
   DialogContent,
@@ -23,14 +24,23 @@ const EditChannelModal: React.FC = () => {
     <Dialog open={open} onOpenChange={closeModal}>
       <DialogContent className="overflow-hidden" aria-describedby={undefined}>
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold">
+          <DialogTitle className="text-xl font-bold">
             Edit the channel
           </DialogTitle>
         </DialogHeader>
-        <EditChannelForm channel={channel} close={closeModal}>
+        <EditChannelForm channel={channel} close={closeModal} className="px-4">
           {({ pending, form }) => (
             <DialogFooter>
+              <Button
+                variant="link"
+                onClick={() => {
+                  closeModal();
+                }}
+              >
+                Cancel
+              </Button>
               <SubmitButton
+                variant="blue"
                 disabled={pending || !form.formState.isValid}
                 loading={pending}
               >

@@ -44,7 +44,7 @@ const DeleteChannelModal: React.FC = () => {
         {modalData.channel && (
           <>
             <DialogHeader>
-              <DialogTitle className="text-2xl font-bold">
+              <DialogTitle className="text-xl font-bold">
                 Delete a channel
               </DialogTitle>
               <DialogDescription>
