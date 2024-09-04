@@ -48,6 +48,24 @@ export const reactToMessage = authClient
             },
           },
         });
+
+        if (hasAlreadyReacted) {
+          await prisma.serverMessageReactionMember.deleteMany({
+            where: {
+              memberId,
+              reactionId: reaction.id,
+              messageId,
+            },
+          });
+        } else {
+          await prisma.serverMessageReactionMember.create({
+            data: {
+              memberId,
+              messageId,
+              reactionId: reaction.id,
+            },
+          });
+        }
       }
     } else {
       const newReaction = await prisma.serverMessageReaction.create({

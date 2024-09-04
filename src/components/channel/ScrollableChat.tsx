@@ -46,8 +46,16 @@ const ScrollableChat: React.FC<{
           }
           const newMessages = [...prev];
           const message = newMessages[index];
+
           if (message.reactions) {
-            message.reactions.push(reaction);
+            const reactionIndex = message.reactions.findIndex(
+              (r) => r.id === reaction.id
+            );
+            if (reactionIndex !== -1) {
+              message.reactions[reactionIndex] = reaction;
+            } else {
+              message.reactions.push(reaction);
+            }
           } else {
             message.reactions = [reaction];
           }
