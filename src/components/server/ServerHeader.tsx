@@ -46,7 +46,8 @@ const ServerHeader: React.FC<TServerHeaderProps> = ({
             onClick={() => {
               openModal('invite', { server });
             }}
-            className="text-indingo-600 dark:text-indigo-400 focus:text-white px-3 py-2 text-sm cursor-pointer"
+            variant="blue"
+            className=" focus:text-white px-3 py-2 text-sm cursor-pointer"
           >
             Invite people
             <UserPlus className="h-4 w-4 ml-auto" />

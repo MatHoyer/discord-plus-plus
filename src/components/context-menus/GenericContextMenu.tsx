@@ -88,12 +88,13 @@ const GenericContextMenuItem = <T extends TItem>({
 };
 
 export const menuItemVariants = cva(
-  'cursor-pointer text-xs text-white font-semibold text-black dark:text-neutral-400 dark:hover:text-white',
+  'cursor-pointer text-xs text-white font-semibold dark:hover:text-white',
   {
     variants: {
       variant: {
-        default: 'dark:hover:bg-[#4752c4]',
+        default: 'dark:text-neutral-400 dark:hover:bg-[#4752c4]',
         destructive: 'dark:text-[#f23f42] hover:dark:bg-[#da373c]',
+        blue: 'text-indigo-400 dark:hover:bg-[#4752c4]',
       },
     },
     defaultVariants: { variant: 'default' },

@@ -4,6 +4,7 @@ import { Channeltype, MemberRole } from '@prisma/client';
 import { Hash, ShieldAlert, ShieldCheck, Volume2 } from 'lucide-react';
 import { redirect } from 'next/navigation';
 import React from 'react';
+import ChannelsContextMenu from '../context-menus/ChannelsContextMenu';
 import SideBarProfile from '../profile/SideBarProfile';
 import { ScrollArea } from '../ui/scroll-area';
 import { Separator } from '../ui/separator';
@@ -115,11 +116,13 @@ const ServerSidebar: React.FC<TServerSidebarProps> = async ({ serverId }) => {
           />
         </div>
         <Separator className="bg-zinc-200 dark:bg-zinc-700 rounded-md my-2" />
-        <ServerChannels
-          server={server}
-          channels={{ textChannels, audioChannels }}
-          role={role}
-        />
+        <ChannelsContextMenu server={server}>
+          <ServerChannels
+            server={server}
+            channels={{ textChannels, audioChannels }}
+            role={role}
+          />
+        </ChannelsContextMenu>
       </ScrollArea>
       <SideBarProfile />
     </div>
