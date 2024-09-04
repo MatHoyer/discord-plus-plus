@@ -39,7 +39,7 @@ const ChannelLayout = async (
 
   return (
     <>
-      <div className="bg-white w-[calc(100%-15rem)] dark:bg-[#313338] flex flex-col h-full">
+      <div className="bg-white w-full md:w-[calc(100%-15rem)] dark:bg-[#313338] flex flex-col h-full">
         {props.children}
       </div>
       <div className="hidden md:flex h-full w-60 z-20 flex-col fixed right-0 inset-y-0">
