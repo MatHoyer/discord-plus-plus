@@ -31,6 +31,18 @@ const SocketLayout = (props: LayoutParams) => {
     };
   }, [session.data?.user.id]);
 
+  useEffect(() => {
+    const handleContextmenu = (e: MouseEvent) => {
+      e.preventDefault();
+    };
+
+    document.addEventListener('contextmenu', handleContextmenu);
+
+    return () => {
+      document.removeEventListener('contextmenu', handleContextmenu);
+    };
+  }, []);
+
   return <div className="h-screen">{props.children}</div>;
 };
 
