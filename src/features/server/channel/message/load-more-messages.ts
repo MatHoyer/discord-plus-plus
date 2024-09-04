@@ -27,6 +27,19 @@ export const loadMoreMessages = async (channelId: number, skip: number) => {
           },
         },
       },
+      reactions: {
+        include: {
+          members: {
+            include: {
+              member: {
+                include: {
+                  user: true,
+                },
+              },
+            },
+          },
+        },
+      },
     },
   });
 

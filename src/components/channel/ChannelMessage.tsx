@@ -18,6 +18,7 @@ import ChannelMessageContextMenu from '../context-menus/ChannelMessageContextMen
 import ProfileContextMenu from '../context-menus/ProfileContextMenu';
 import { modal } from '../Modal';
 import ProfilePopover from '../profile/ProfilePopover';
+import MessageReactions from '../reaction/MessageReactions';
 import { roleIconMap } from '../server/ServerSidebar';
 import { Form, FormControl, FormField, FormItem, useZodForm } from '../ui/form';
 import { Input } from '../ui/input';
@@ -195,18 +196,24 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
               </span>
             </div>
             {!isEditing && (
-              <p
-                className={cn(
-                  'text-sm text-zinc-600 dark:text-zinc-300 break-all'
-                )}
-              >
-                {parsedMessage}
-                {isUpdated && (
-                  <span className="text-[10px] mx-2 text-zinc-500 dark:text-zinc-400 select-none">
-                    (edited)
-                  </span>
-                )}
-              </p>
+              <>
+                <p
+                  className={cn(
+                    'text-sm text-zinc-600 dark:text-zinc-300 break-all'
+                  )}
+                >
+                  {parsedMessage}
+                  {isUpdated && (
+                    <span className="text-[10px] mx-2 text-zinc-500 dark:text-zinc-400 select-none">
+                      (edited)
+                    </span>
+                  )}
+                </p>
+                <MessageReactions
+                  reactions={message.reactions}
+                  currentMember={currentMember}
+                />
+              </>
             )}
             {!preview && isEditing && (
               <Form {...form} state={state}>

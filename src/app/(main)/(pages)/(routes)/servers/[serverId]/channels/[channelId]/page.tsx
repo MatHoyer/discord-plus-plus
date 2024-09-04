@@ -55,6 +55,19 @@ const ServerPage = async (
               },
             },
           },
+          reactions: {
+            include: {
+              members: {
+                include: {
+                  member: {
+                    include: {
+                      user: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
         },
       },
     },

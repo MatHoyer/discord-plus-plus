@@ -127,11 +127,27 @@ model ServerMessage {
 }
 
 model ServerMessageReaction {
-    id     Int @id @default(autoincrement())
-    number Int
+    id      Int    @id @default(autoincrement())
+    number  Int
+    content String
 
     messageId Int
     message   ServerMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+    members ServerMessageReactionMember[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([messageId])
+}
+
+model ServerMessageReactionMember {
+    id        Int @id @default(autoincrement())
+    messageId Int
+
+    reactionId Int
+    reaction   ServerMessageReaction @relation(fields: [reactionId], references: [id], onDelete: Cascade)
 
     memberId Int
     member   Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
@@ -196,12 +212,12 @@ model Member {
     serverId Int
     server   Server @relation(fields: [serverId], references: [id], onDelete: Cascade)
 
-    messages ServerMessage[]
-    mentions ServerMention[]
+    messages        ServerMessage[]
+    mentions        ServerMention[]
+    reactionMembers ServerMessageReactionMember[]
 
-    createdAt DateTime                @default(now())
-    updatedAt DateTime                @updatedAt
-    reactions ServerMessageReaction[]
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
     @@index([userId])
     @@index([serverId])

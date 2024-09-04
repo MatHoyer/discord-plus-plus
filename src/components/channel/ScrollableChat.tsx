@@ -1,6 +1,6 @@
 'use client';
 
-import { loadMoreMessages } from '@/features/server/channel/message/loadMoreMessages';
+import { loadMoreMessages } from '@/features/server/channel/message/load-more-messages';
 import { getCustomDate } from '@/lib/utils';
 import { socket } from '@/socket';
 import { useEffect, useRef, useState } from 'react';

@@ -5,6 +5,8 @@ import {
   Server,
   ServerMention,
   ServerMessage,
+  ServerMessageReaction,
+  ServerMessageReactionMember,
   User,
 } from '@prisma/client';
 import { ZodType } from 'zod';
@@ -18,9 +20,14 @@ declare global {
     member: MemberWithUser;
   }
 
+  interface ServerMessageReactionWithMembers extends ServerMessageReaction {
+    members: (ServerMessageReactionMember & { member: MemberWithUser })[];
+  }
+
   interface ServerMessageWithSender extends ServerMessage {
     sender: MemberWithUser;
     mentions: ServerMentionWithUser[];
+    reactions: ServerMessageReactionWithMembers[];
   }
 
   interface ChannelWithMessages extends Channel {

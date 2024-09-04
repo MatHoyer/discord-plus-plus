@@ -1,5 +1,5 @@
 'use client';
-import { deleteMessage } from '@/features/server/channel/message/delete-message/delete-message.action';
+import { reactToMessage } from '@/features/server/channel/message/react-to-message/react-to-message.action';
 import { checkMessage } from '@/lib/utils/message.utils';
 import {
   ClipboardCopy,
@@ -24,7 +24,8 @@ const ChannelMessageContextMenu: React.FC<
     Omit<ComponentProps<typeof GenericContextMenu>, 'items'>
 > = ({ member, currentMember, message, children, ...props }) => {
   const { canDeleteMessage } = checkMessage(member, currentMember, message);
-  const { execute } = useAction(deleteMessage, {});
+
+  const { execute } = useAction(reactToMessage, {});
 
   return (
     <GenericContextMenu
@@ -36,7 +37,13 @@ const ChannelMessageContextMenu: React.FC<
             {
               label: 'Slip de mathieu',
               icon: Shirt,
-              onClick: () => {},
+              onClick: () => {
+                execute({
+                  messageId: message.id,
+                  memberId: currentMember.id,
+                  content: '🍌',
+                });
+              },
             },
             {
               seperator: true,
