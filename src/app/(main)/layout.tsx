@@ -9,7 +9,7 @@ const SocketLayout = (props: LayoutParams) => {
   const changeActivity = useActivity((state) => state.changeActivity);
 
   useEffect(() => {
-    if (session.data?.user) {
+    if (session.data?.user.id) {
       socket.emit('init', { userId: session.data.user.id });
     }
 
@@ -27,7 +27,7 @@ const SocketLayout = (props: LayoutParams) => {
       socket.off('init-activity');
       socket.off('activity-change');
     };
-  }, []);
+  }, [session.data?.user.id]);
 
   return <div className="h-screen">{props.children}</div>;
 };
