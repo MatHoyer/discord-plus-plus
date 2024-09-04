@@ -5,24 +5,22 @@ import {
 } from '@/features/server/channel/message/edit-message/edit-message.schema';
 import { useModal } from '@/hooks/useModalStore';
 import { cn } from '@/lib/utils';
-import { checkMessage } from '@/lib/utils/message.utils';
+import { checkMessage, parseMentionsMessage } from '@/lib/utils/message.utils';
 import { socket } from '@/socket';
 import { Channel } from '@prisma/client';
 import { isEqual } from 'date-fns';
 import { Edit, Trash } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { FieldErrors } from 'react-hook-form';
 import { ServerSocketEvents } from '../../../server/socket/server';
 import ActionTooltip from '../ActionTooltip';
 import ChannelMessageContextMenu from '../context-menus/ChannelMessageContextMenu';
 import ProfileContextMenu from '../context-menus/ProfileContextMenu';
-import { modal } from '../Modal';
+import ChatInput from '../form/ChatInput';
 import ProfilePopover from '../profile/ProfilePopover';
 import MessageReactions from '../reaction/MessageReactions';
 import { roleIconMap } from '../server/ServerSidebar';
 import { Form, FormControl, FormField, FormItem, useZodForm } from '../ui/form';
-import { Input } from '../ui/input';
 import UserAvatar from '../UserAvatar';
 
 type TChannelMessageProps = {
@@ -31,6 +29,7 @@ type TChannelMessageProps = {
   currentMember: MemberWithUser;
   channel?: Channel;
   preview?: boolean;
+  members?: MemberWithUser[];
 };
 
 const ChannelMessage: React.FC<TChannelMessageProps> = ({
@@ -39,6 +38,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
   currentMember,
   channel,
   preview = false,
+  members,
 }) => {
   const { openModal } = useModal();
   const [isEditing, setIsEditing] = useState(false);
@@ -86,15 +86,6 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
     };
   }, [form]);
 
-  const onError = (errors: FieldErrors<TEditMessage>) => {
-    if (errors.content) {
-      modal.error({
-        title: 'Your message is too long',
-        message: errors.content.message,
-      });
-    }
-  };
-
   const parsedMessage = useMemo(() => {
     const parts = message.content.split(/(<@\w+>)/g);
     return parts.map((part, index) => {
@@ -135,6 +126,12 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
   const isMentionned = message.mentions?.some(
     (mention) => mention.member.id === currentMember.id
   );
+
+  const handleSubmit = (v: TEditMessage) => {
+    const parsedContent = parseMentionsMessage(v.content);
+
+    execute({ ...v, content: parsedContent });
+  };
 
   return (
     <ChannelMessageContextMenu
@@ -221,7 +218,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
             {!preview && isEditing && (
               <Form {...form} state={state}>
                 <form
-                  onSubmit={form.handleSubmit(execute, onError)}
+                  onSubmit={form.handleSubmit(handleSubmit)}
                   className="flex items-center w-full gap-x-2 pt-2"
                 >
                   <FormField
@@ -230,13 +227,12 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
                     render={({ field }) => (
                       <FormItem className="flex-1">
                         <FormControl>
-                          <div className="relative w-full">
-                            <Input
-                              className="p-2 bg-zinc-200/90 dark:bg-zinc-700/75 border-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-zinc-600 dark:text-zinc-200"
-                              {...field}
-                              ref={inputRef}
-                            />
-                          </div>
+                          <ChatInput
+                            members={members!}
+                            onEnter={form.handleSubmit(handleSubmit)}
+                            value={field.value}
+                            onInput={field.onChange}
+                          />
                         </FormControl>
                       </FormItem>
                     )}
