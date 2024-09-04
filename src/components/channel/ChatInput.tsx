@@ -11,7 +11,7 @@ import { socket } from '@/socket';
 import { Channel, Member } from '@prisma/client';
 import { Plus, Smile } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { FieldErrors } from 'react-hook-form';
 import { modal } from '../Modal';
 import { Form, FormControl, FormField, FormItem, useZodForm } from '../ui/form';
@@ -115,6 +115,18 @@ const ChatInput: React.FC<{
   };
 
   const handleInput = () => {
+    if (editableDivRef.current?.innerHTML.length === 1) {
+      socket.emit('is-typing', {
+        channelId: channel.id,
+        username: currentMember.username,
+      });
+    } else if (editableDivRef.current?.innerHTML.length === 0) {
+      socket.emit('stop-typing', {
+        channelId: channel.id,
+        username: currentMember.username,
+      });
+    }
+
     if (editableDivRef.current) {
       const content = editableDivRef.current.innerHTML;
       form.setValue('content', content, { shouldValidate: true });
@@ -156,6 +168,10 @@ const ChatInput: React.FC<{
       /<span[^>]*data-user-id="(\w+)"[^>]*>@[^<]+<\/span>/g,
       '<@$1>'
     );
+    socket.emit('stop-typing', {
+      channelId: channel.id,
+      username: currentMember.username,
+    });
     execute({ ...v, content: parsedContent });
   };
 
@@ -178,6 +194,26 @@ const ChatInput: React.FC<{
 
     handleInput();
   };
+
+  const [isTyping, setIsTyping] = useState<string[]>([]);
+
+  useEffect(() => {
+    socket.on(`channel:${channel.id}:is-typing`, (username) => {
+      setIsTyping((prev) => {
+        if (prev.includes(username)) return prev;
+        return [...prev, username];
+      });
+    });
+
+    socket.on(`channel:${channel.id}:stop-typing`, (username) => {
+      setIsTyping((prev) => prev.filter((p) => p !== username));
+    });
+
+    return () => {
+      socket.off(`channel:${channel.id}:is-typing`);
+      socket.off(`channel:${channel.id}:stop-typing`);
+    };
+  }, [channel.id]);
 
   const content = form.watch('content');
 
@@ -220,6 +256,11 @@ const ChatInput: React.FC<{
                         wordBreak: 'break-all',
                       }}
                       onInput={handleInput}
+                      onBlur={() => {
+                        setIsTyping((prev) =>
+                          prev.filter((p) => p !== currentMember.username)
+                        );
+                      }}
                       onKeyDown={(e) => {
                         if (
                           (e.key === 'ArrowDown' || e.key === 'ArrowUp') &&
@@ -261,6 +302,13 @@ const ChatInput: React.FC<{
           </div>
           <div className="absolute top-7 right-8">
             <Smile className="cursor-pointer" />
+          </div>
+          <div className="h-1">
+            {isTyping.length > 0 && (
+              <div className="text-xs text-muted-foreground">
+                {isTyping.join(', ')} is typing...
+              </div>
+            )}
           </div>
         </div>
       </form>

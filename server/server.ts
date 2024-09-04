@@ -93,6 +93,12 @@ app.prepare().then(() => {
       'delete-channel': (channel) => {
         io.emit('delete-channel', channel);
       },
+      'is-typing': ({ channelId, username }) => {
+        io.emit(`channel:${channelId}:is-typing`, username);
+      },
+      'stop-typing': ({ channelId, username }) => {
+        io.emit(`channel:${channelId}:stop-typing`, username);
+      },
     });
   });
 
