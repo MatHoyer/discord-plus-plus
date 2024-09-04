@@ -13,7 +13,7 @@ const ChannelMembersCategory: React.FC<{
         {title} - {members.length}
       </div>
       {members.map((member) => (
-        <ChannelMemberProfileWithActivity member={member} />
+        <ChannelMemberProfileWithActivity key={member.id} member={member} />
       ))}
     </>
   ) : null;
