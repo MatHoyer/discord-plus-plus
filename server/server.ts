@@ -3,6 +3,7 @@ import next from 'next';
 import { Server, Socket } from 'socket.io';
 import { User } from './User';
 import { UserManager } from './UserManager';
+import { ChannelSocketEvents, ClientSocketEvents } from './socket/events';
 
 const dev = process.env.NODE_ENV !== 'production';
 
@@ -43,67 +44,65 @@ app.prepare().then(() => {
       init: ({ userId }) => {
         const user = userManager.getUserById(userId);
         if (!user) {
-          console.log('new user');
           userManager.addUser(new User(userId, socket, io));
         } else {
-          console.log('existing user');
           user!.socket = socket;
           userManager.changeUserActivity(socket.id, user.activityMemory);
         }
         const usersActivity = userManager.getUsersActivity();
-        socket.emit('init-activity', usersActivity);
+        socket.emit(ClientSocketEvents.initActivity, usersActivity);
       },
       disconnect: () => {
         console.log(`${bold}${yellow}user disconnected${reset}`);
         userManager.changeUserActivity(socket.id, 'Offline');
       },
       'new-message': ({ channelId, message }) => {
-        io.emit(`channel:${channelId}:new-message`, message);
+        io.emit(ChannelSocketEvents.newMessage(channelId), message);
       },
       'edit-message': (data) => {
-        io.emit(`channel:${data.channelId}:edit-message`, data);
+        io.emit(ChannelSocketEvents.editMessage(data.channelId), data);
       },
       mention: ({ channelId, mentions }) => {
         for (const mention of mentions) {
           const user = userManager.getUserById(mention.member.userId);
           if (!user) continue;
           if (user.socket) {
-            user.socket.emit(`channel:${channelId}:mention`, mention);
+            user.socket.emit(ChannelSocketEvents.mention(channelId), mention);
           }
         }
       },
       'reacted-to-message': ({ channelId, reaction }) => {
-        io.emit(`channel:${channelId}:reacted-to-message`, reaction);
+        io.emit(ChannelSocketEvents.reactedToMessage(channelId), reaction);
       },
       'delete-reaction': ({ channelId, reactionId }) => {
-        io.emit(`channel:${channelId}:delete-reaction`, reactionId);
+        io.emit(ChannelSocketEvents.deleteReaction(channelId), reactionId);
       },
       'delete-message': ({ channelId, messageId }) => {
-        io.emit(`channel:${channelId}:delete-message`, messageId);
+        io.emit(ChannelSocketEvents.deleteMessage(channelId), messageId);
       },
       'change-activity': ({ activity }) => {
         userManager.changeUserActivity(socket.id, activity);
         const user = userManager.getUserBySocketId(socket.id);
         if (!user) return;
-        io.emit('activity-change', {
+        io.emit(ClientSocketEvents.activityChange, {
           userId: user!.id,
           activity,
         });
       },
       'new-channel': (channel) => {
-        io.emit('new-channel', channel);
+        io.emit(ClientSocketEvents.newChannel, channel);
       },
       'edit-channel': (channel) => {
-        io.emit('edit-channel', channel);
+        io.emit(ClientSocketEvents.editChannel, channel);
       },
       'delete-channel': (channel) => {
-        io.emit('delete-channel', channel);
+        io.emit(ClientSocketEvents.deleteChannel, channel);
       },
       'is-typing': ({ channelId, username }) => {
-        io.emit(`channel:${channelId}:is-typing`, username);
+        io.emit(ChannelSocketEvents.isTyping(channelId), username);
       },
       'stop-typing': ({ channelId, username }) => {
-        io.emit(`channel:${channelId}:stop-typing`, username);
+        io.emit(ChannelSocketEvents.stopTyping(channelId), username);
       },
     });
   });

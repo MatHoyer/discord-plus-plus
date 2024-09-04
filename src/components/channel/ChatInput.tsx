@@ -13,6 +13,7 @@ import { Plus, Smile } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
 import { useEffect, useRef, useState } from 'react';
 import { FieldErrors } from 'react-hook-form';
+import { getChannelSocketEvents } from '../../../server/socket/events';
 import { modal } from '../Modal';
 import { Form, FormControl, FormField, FormItem, useZodForm } from '../ui/form';
 import ChannelMentionSuggestions from './ChannelMentionSuggestions';
@@ -198,20 +199,22 @@ const ChatInput: React.FC<{
   const [isTyping, setIsTyping] = useState<string[]>([]);
 
   useEffect(() => {
-    socket.on(`channel:${channel.id}:is-typing`, (username) => {
+    const channelSocketEvents = getChannelSocketEvents(channel.id);
+
+    socket.on(channelSocketEvents.isTyping, (username) => {
       setIsTyping((prev) => {
         if (prev.includes(username)) return prev;
         return [...prev, username];
       });
     });
 
-    socket.on(`channel:${channel.id}:stop-typing`, (username) => {
+    socket.on(channelSocketEvents.stopTyping, (username) => {
       setIsTyping((prev) => prev.filter((p) => p !== username));
     });
 
     return () => {
-      socket.off(`channel:${channel.id}:is-typing`);
-      socket.off(`channel:${channel.id}:stop-typing`);
+      socket.off(channelSocketEvents.isTyping);
+      socket.off(channelSocketEvents.stopTyping);
     };
   }, [channel.id]);
 

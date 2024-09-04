@@ -4,6 +4,7 @@ import { loadMoreMessages } from '@/features/server/channel/message/load-more-me
 import { getCustomDate } from '@/lib/utils';
 import { socket } from '@/socket';
 import { useEffect, useRef, useState } from 'react';
+import { getChannelSocketEvents } from '../../../server/socket/events';
 import ChannelMessage from './ChannelMessage';
 
 const ScrollableChat: React.FC<{
@@ -18,26 +19,32 @@ const ScrollableChat: React.FC<{
   const countRef = useRef<number>(0);
 
   useEffect(() => {
-    const key = `channel:${channel.id}`;
-
-    socket.on(`${key}:new-message`, (message: ServerMessageWithSender) => {
-      setMessages((prev) => [message, ...prev]);
-    });
-
-    socket.on(`${key}:edit-message`, (message: ServerMessageWithSender) => {
-      setMessages((prev) => {
-        const index = prev.findIndex((m) => m.id === message.id);
-        if (index === -1) {
-          return prev;
-        }
-        const newMessages = [...prev];
-        newMessages[index] = message;
-        return newMessages;
-      });
-    });
+    const channelSocketEvents = getChannelSocketEvents(channel.id);
 
     socket.on(
-      `${key}:reacted-to-message`,
+      channelSocketEvents.newMessage,
+      (message: ServerMessageWithSender) => {
+        setMessages((prev) => [message, ...prev]);
+      }
+    );
+
+    socket.on(
+      channelSocketEvents.editMessage,
+      (message: ServerMessageWithSender) => {
+        setMessages((prev) => {
+          const index = prev.findIndex((m) => m.id === message.id);
+          if (index === -1) {
+            return prev;
+          }
+          const newMessages = [...prev];
+          newMessages[index] = message;
+          return newMessages;
+        });
+      }
+    );
+
+    socket.on(
+      channelSocketEvents.reactedToMessage,
       (reaction: ServerMessageReactionWithMembers) => {
         setMessages((prev) => {
           const index = prev.findIndex((m) => m.id === reaction.messageId);
@@ -64,7 +71,7 @@ const ScrollableChat: React.FC<{
       }
     );
 
-    socket.on(`${key}:delete-reaction`, (reactionId: number) => {
+    socket.on(channelSocketEvents.deleteReaction, (reactionId: number) => {
       setMessages((prev) => {
         const newMessages = [...prev];
         for (const message of newMessages) {
@@ -78,16 +85,16 @@ const ScrollableChat: React.FC<{
       });
     });
 
-    socket.on(`${key}:delete-message`, (messageId: number) => {
+    socket.on(channelSocketEvents.deleteMessage, (messageId: number) => {
       setMessages((prev) => prev.filter((m) => m.id !== messageId));
     });
 
     return () => {
-      socket.off(`${key}:new-message`);
-      socket.off(`${key}:edit-message`);
-      socket.off(`${key}:reacted-to-message`);
-      socket.off(`${key}:delete-reaction`);
-      socket.off(`${key}:delete-message`);
+      socket.off(channelSocketEvents.newMessage);
+      socket.off(channelSocketEvents.editMessage);
+      socket.off(channelSocketEvents.reactedToMessage);
+      socket.off(channelSocketEvents.deleteReaction);
+      socket.off(channelSocketEvents.deleteMessage);
     };
   }, [channel.id]);
 

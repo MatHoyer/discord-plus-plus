@@ -3,6 +3,10 @@ import { useActivity } from '@/hooks/useActivityStore';
 import { socket } from '@/socket';
 import { useSession } from 'next-auth/react';
 import { useEffect } from 'react';
+import {
+  ClientSocketEvents,
+  ServerSocketEvents,
+} from '../../../server/socket/events';
 
 const SocketLayout = (props: LayoutParams) => {
   const session = useSession();
@@ -10,22 +14,22 @@ const SocketLayout = (props: LayoutParams) => {
 
   useEffect(() => {
     if (session.data?.user.id) {
-      socket.emit('init', { userId: session.data.user.id });
+      socket.emit(ServerSocketEvents.init, { userId: session.data.user.id });
     }
 
-    socket.on('init-activity', (usersActivity) => {
+    socket.on(ClientSocketEvents.initActivity, (usersActivity) => {
       for (const { userId, activity } of usersActivity) {
         changeActivity(userId, activity);
       }
     });
 
-    socket.on('activity-change', ({ userId, activity }) => {
+    socket.on(ClientSocketEvents.activityChange, ({ userId, activity }) => {
       changeActivity(userId, activity);
     });
 
     return () => {
-      socket.off('init-activity');
-      socket.off('activity-change');
+      socket.off(ClientSocketEvents.initActivity);
+      socket.off(ClientSocketEvents.activityChange);
     };
   }, [session.data?.user.id]);
 

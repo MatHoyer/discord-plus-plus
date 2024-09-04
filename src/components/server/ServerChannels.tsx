@@ -5,6 +5,7 @@ import { socket } from '@/socket';
 import { Channel, Channeltype, MemberRole } from '@prisma/client';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { ClientSocketEvents } from '../../../server/socket/events';
 import ServerChannel from './ServerChannel';
 import ServerSection from './ServerSection';
 
@@ -38,14 +39,14 @@ const ServerChannels: React.FC<TServerChannelsProps> = ({
   const params = useParams();
 
   useEffect(() => {
-    socket.on('new-channel', (channel: Channel) => {
+    socket.on(ClientSocketEvents.newChannel, (channel: Channel) => {
       setChannels((prev) => ({
         ...prev,
         [channel.type]: [...prev[channel.type], channel],
       }));
     });
 
-    socket.on('edit-channel', (channel: Channel) => {
+    socket.on(ClientSocketEvents.editChannel, (channel: Channel) => {
       setChannels((prev) => ({
         ...prev,
         [channel.type]: prev[channel.type].map((c) =>
@@ -54,7 +55,7 @@ const ServerChannels: React.FC<TServerChannelsProps> = ({
       }));
     });
 
-    socket.on('delete-channel', (channel: Channel) => {
+    socket.on(ClientSocketEvents.deleteChannel, (channel: Channel) => {
       setChannels((prev) => ({
         ...prev,
         [channel.type]: prev[channel.type].filter((c) => c.id !== channel.id),
@@ -62,9 +63,9 @@ const ServerChannels: React.FC<TServerChannelsProps> = ({
     });
 
     return () => {
-      socket.off('new-channel');
-      socket.off('edit-channel');
-      socket.off('delete-channel');
+      socket.off(ClientSocketEvents.newChannel);
+      socket.off(ClientSocketEvents.editChannel);
+      socket.off(ClientSocketEvents.deleteChannel);
     };
   }, []);
 
