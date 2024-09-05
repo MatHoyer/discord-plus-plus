@@ -1,3 +1,4 @@
+import { useDeleteMessage } from '@/features/server/channel/message/delete-message/delete-message.hook';
 import { editMessage } from '@/features/server/channel/message/edit-message/edit-message.action';
 import {
   editMessageSchema,
@@ -56,6 +57,8 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
     replyingToMessage: state.replyingToMessage,
     setReplyingToMessage: state.setReplyingToMessage,
   }));
+
+  const { execute: deleteMessag } = useDeleteMessage();
 
   const isEditing = editingMessageId === message.id;
 
@@ -153,7 +156,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
 
   const isSameSender =
     previousMessage &&
-    previousMessage.sender.id === currentMember.id &&
+    previousMessage.senderId === message.senderId &&
     differenceInMinutes(
       new Date(message.createdAt),
       new Date(previousMessage.createdAt)
@@ -170,7 +173,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
     >
       <div
         className={cn(
-          'relative transition-colors',
+          'relative transition-colors group',
           isMentionned
             ? 'bg-[#444037]/70 hover:bg-[#444037]/50 '
             : 'hover:bg-black/5',
@@ -179,7 +182,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
         )}
       >
         {message.referencedMessage && (
-          <div className="ml-16 mb-[1.5px] text-xs text-zinc-400 flex gap-1 items-center">
+          <div className="ml-[50px] md:ml-16 mb-[1.5px] text-xs text-zinc-400 flex gap-1 items-center">
             <ProfileContextMenu
               member={message.referencedMessage.sender}
               disabled={preview}
@@ -195,7 +198,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
                 <UserAvatar
                   src={message.referencedMessage.sender.user.image}
                   size="xxs"
-                  className="mt-[1.5px]"
+                  className="mt-[6px] md:mt-[1.5px]"
                 />
                 <p
                   className={cn(
@@ -220,7 +223,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
         )}
         <div
           className={cn(
-            ' group flex items-center px-4 transition-colors w-full'
+            'group flex items-center px-4 transition-colors w-full'
           )}
         >
           {(isMentionned || isCurrentReplyingToMessage) && (
@@ -291,7 +294,8 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
                 <>
                   <p
                     className={cn(
-                      'text-sm text-zinc-600 dark:text-zinc-300 break-all mb-1'
+                      'text-sm text-zinc-600 dark:text-zinc-300 break-all',
+                      !isSameSender && 'mb-1'
                     )}
                   >
                     {parsedMessage}
@@ -359,12 +363,20 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
               <ActionTooltip label="Delete">
                 <Trash
                   className="cursor-pointer ml-auto w-4 h-4 text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors"
-                  onClick={() => {
-                    openModal('deleteChannelMessage', {
-                      serverMessage: message,
-                      currentMember,
-                      channel,
-                    });
+                  onClick={(e) => {
+                    if (e.shiftKey) {
+                      deleteMessag({
+                        channelId: message.channelId,
+                        messageId: message.id,
+                        serverId: channel!.serverId,
+                      });
+                    } else {
+                      openModal('deleteChannelMessage', {
+                        serverMessage: message,
+                        currentMember,
+                        channel,
+                      });
+                    }
                   }}
                 />
               </ActionTooltip>
