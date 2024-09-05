@@ -188,22 +188,15 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
                 member={message.referencedMessage.sender}
                 asChild={false}
                 disabled={preview}
+                triggerProps={{
+                  className: 'flex gap-1',
+                }}
               >
                 <UserAvatar
                   src={message.referencedMessage.sender.user.image}
                   size="xxs"
                   className="mt-[1.5px]"
                 />
-              </ProfilePopover>
-            </ProfileContextMenu>
-            <ProfileContextMenu
-              member={message.referencedMessage.sender}
-              disabled={preview}
-            >
-              <ProfilePopover
-                member={message.referencedMessage.sender}
-                disabled={preview}
-              >
                 <p
                   className={cn(
                     'font-bold text-sm',
@@ -214,6 +207,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
                 </p>
               </ProfilePopover>
             </ProfileContextMenu>
+
             <div
               className="hover:text-zinc-200 transition-colors cursor-pointer"
               onClick={() => {

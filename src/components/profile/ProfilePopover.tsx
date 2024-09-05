@@ -8,6 +8,7 @@ type TProfilePopoverProps = {
   asChild?: boolean;
   popoverContentProps?: ComponentProps<typeof PopoverContent>;
   disabled?: boolean;
+  triggerProps?: Omit<ComponentProps<typeof PopoverTrigger>, 'asChild'>;
 };
 
 const ProfilePopover: React.FC<
@@ -18,11 +19,14 @@ const ProfilePopover: React.FC<
   asChild = true,
   popoverContentProps,
   disabled,
+  triggerProps,
   ...rest
 }) => {
   return (
     <Popover {...rest}>
-      <PopoverTrigger asChild={asChild}>{children}</PopoverTrigger>
+      <PopoverTrigger asChild={asChild} {...triggerProps}>
+        {children}
+      </PopoverTrigger>
       <PopoverContent
         side="right"
         {...popoverContentProps}
