@@ -190,10 +190,11 @@ const ChatInput: React.FC<TChatInputProps> = ({
 
   useEventListener(
     'keydown',
-    () => {
+    (e) => {
       if (
         !editingMessageId &&
-        document.activeElement !== editableDivRef.current
+        document.activeElement !== editableDivRef.current &&
+        !e.ctrlKey
       ) {
         focusInput();
       }

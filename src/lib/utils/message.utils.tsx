@@ -28,7 +28,7 @@ export const spanToMention = (message: string) =>
   );
 
 export const mentionClassName =
-  'text-white px-2 py-1 bg-[#3c4270] bg-opacity-50 font-semibold rounded-sm select-none inline-block';
+  'text-white px-2 py-1 bg-[#3c4270] bg-opacity-50 font-semibold rounded-sm inline-block';
 
 export const mentionToSpan = (
   message: ServerMessageWithSender,
