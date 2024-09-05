@@ -186,11 +186,18 @@ const ChatInput: React.FC<TChatInputProps> = ({
     }
   }, [currentMentionnedMember]);
 
-  useEventListener('keydown', () => {
-    if (document.activeElement !== editableDivRef.current) {
-      focusInput();
-    }
-  });
+  useEventListener(
+    'keydown',
+    () => {
+      if (
+        !editingMessageId &&
+        document.activeElement !== editableDivRef.current
+      ) {
+        focusInput();
+      }
+    },
+    [editingMessageId]
+  );
 
   useEventListener(
     'keyup',
@@ -262,7 +269,7 @@ const ChatInput: React.FC<TChatInputProps> = ({
               selection.removeAllRanges();
               selection.addRange(range);
             }
-            // handleInput();
+            handleInput();
           }
         }}
         onBlur={() => {
