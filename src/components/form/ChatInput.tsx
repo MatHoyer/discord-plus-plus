@@ -170,6 +170,8 @@ const ChatInput: React.FC<TChatInputProps> = ({
   useEffect(() => {
     if (editableDivRef.current) {
       editableDivRef.current.innerHTML = value || '';
+      focusInputWithTimeout(100);
+      handleInput();
     }
   }, []);
 
@@ -249,7 +251,7 @@ const ChatInput: React.FC<TChatInputProps> = ({
         }}
         contentEditable
         className={cn(
-          'border-input px-3 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 pr-28 py-4 bg-zinc-200/90 dark:bg-zinc-700/75 border-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-zinc-600 dark:text-zinc-200 resize-none overflow-hidden',
+          'empty:before:content-["Type_here..."] empty:before:text-zinc-500 border-input px-3 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 pr-28 py-4 bg-zinc-200/90 dark:bg-zinc-700/75 border-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-zinc-600 dark:text-zinc-200 resize-none overflow-hidden',
           inputClassName,
           !replyingToMessage ? 'rounded-md' : 'rounded-b-md'
         )}
