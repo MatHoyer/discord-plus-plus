@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 import { checkMessage, parseMentionsMessage } from '@/lib/utils/message.utils';
 import { socket } from '@/socket';
 import { Channel } from '@prisma/client';
-import { isEqual } from 'date-fns';
+import { differenceInMinutes, format, isEqual } from 'date-fns';
 import { Edit, Trash } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -26,6 +26,7 @@ import UserAvatar from '../UserAvatar';
 type TChannelMessageProps = {
   time: string;
   message: ServerMessageWithSender;
+  previousMessage?: ServerMessageWithSender;
   currentMember: MemberWithUser;
   channel?: Channel;
   preview?: boolean;
@@ -35,6 +36,7 @@ type TChannelMessageProps = {
 const ChannelMessage: React.FC<TChannelMessageProps> = ({
   time,
   message,
+  previousMessage,
   currentMember,
   channel,
   preview = false,
@@ -133,6 +135,14 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
     execute({ ...v, content: parsedContent });
   };
 
+  const isSameSender =
+    previousMessage &&
+    previousMessage.sender.id === currentMember.id &&
+    differenceInMinutes(
+      new Date(previousMessage.createdAt),
+      new Date(message.createdAt)
+    ) <= 10;
+
   return (
     <ChannelMessageContextMenu
       member={member}
@@ -143,9 +153,9 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
     >
       <div
         className={cn(
-          'relative group flex items-center px-4 py-2 transition-colors w-full',
-          isMentionned && 'bg-[#444037] bg-opacity-70',
-          !isMentionned && 'hover:bg-black/5'
+          'relative group flex items-center px-4 transition-colors w-full',
+          isMentionned ? 'bg-[#444037] bg-opacity-70' : 'hover:bg-black/5',
+          isSameSender ? 'mb-0 py-[1px]' : 'mb-2 py-2'
         )}
       >
         {isMentionned && (
@@ -155,44 +165,56 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
           <div
             className={cn(
               'hover:drop-shadow-md transition',
-              !preview && 'cursor-pointer '
+              !preview && !isSameSender && 'cursor-pointer'
             )}
           >
-            <ProfileContextMenu member={member} disabled={preview}>
-              <ProfilePopover
-                member={member}
-                asChild={false}
-                disabled={preview}
-              >
-                <UserAvatar
-                  src={member.user.image}
-                  className={preview ? 'cursor-auto' : undefined}
-                />
-              </ProfilePopover>
-            </ProfileContextMenu>
+            {isSameSender ? (
+              <div className="h-7 w-10 flex items-center">
+                <span className="hidden group-hover:flex text-xs text-zinc-500 dark:text-zinc-400">
+                  {format(new Date(message.createdAt), "HH':'mm")}
+                </span>
+              </div>
+            ) : (
+              <ProfileContextMenu member={member} disabled={preview}>
+                <ProfilePopover
+                  member={member}
+                  asChild={false}
+                  disabled={preview}
+                >
+                  <UserAvatar
+                    src={member.user.image}
+                    className={preview ? 'cursor-auto' : undefined}
+                  />
+                </ProfilePopover>
+              </ProfileContextMenu>
+            )}
           </div>
           <div className="flex flex-col w-full">
             <div className="flex items-center gap-x-2 mb-1">
-              <div className="flex items-center gap-x-2">
-                <ProfileContextMenu member={member} disabled={preview}>
-                  <ProfilePopover member={member} disabled={preview}>
-                    <p
-                      className={cn(
-                        'font-semibold text-sm',
-                        !preview && 'hover:underline cursor-pointer'
-                      )}
-                    >
-                      {member.username}
-                    </p>
-                  </ProfilePopover>
-                </ProfileContextMenu>
-                <ActionTooltip label={member.role}>
-                  {roleIconMap[member.role]}
-                </ActionTooltip>
-              </div>
-              <span className="text-xs text-zinc-500 dark:text-zinc-400">
-                {time}
-              </span>
+              {!isSameSender && (
+                <>
+                  <div className="flex items-center gap-x-2">
+                    <ProfileContextMenu member={member} disabled={preview}>
+                      <ProfilePopover member={member} disabled={preview}>
+                        <p
+                          className={cn(
+                            'font-semibold text-sm',
+                            !preview && 'hover:underline cursor-pointer'
+                          )}
+                        >
+                          {member.username}
+                        </p>
+                      </ProfilePopover>
+                    </ProfileContextMenu>
+                    <ActionTooltip label={member.role}>
+                      {roleIconMap[member.role]}
+                    </ActionTooltip>
+                  </div>
+                  <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                    {time}
+                  </span>
+                </>
+              )}
             </div>
             {!isEditing && (
               <>
