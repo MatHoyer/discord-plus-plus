@@ -45,12 +45,17 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
   members,
 }) => {
   const { openModal } = useModal();
-  const { editingMessageId, setEditingMessageId, replyingToMessage } =
-    useGlobalStore((state) => ({
-      editingMessageId: state.editingMessageId,
-      setEditingMessageId: state.setEditingMessageId,
-      replyingToMessage: state.replyingToMessage,
-    }));
+  const {
+    editingMessageId,
+    setEditingMessageId,
+    replyingToMessage,
+    setReplyingToMessage,
+  } = useGlobalStore((state) => ({
+    editingMessageId: state.editingMessageId,
+    setEditingMessageId: state.setEditingMessageId,
+    replyingToMessage: state.replyingToMessage,
+    setReplyingToMessage: state.setReplyingToMessage,
+  }));
 
   const isEditing = editingMessageId === message.id;
 
@@ -152,7 +157,8 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
     differenceInMinutes(
       new Date(message.createdAt),
       new Date(previousMessage.createdAt)
-    ) <= 10;
+    ) <= 10 &&
+    !message.referencedMessage;
 
   return (
     <ChannelMessageContextMenu
@@ -164,7 +170,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
     >
       <div
         className={cn(
-          'relative group flex items-center px-4 transition-colors w-full',
+          'relative',
           isMentionned
             ? 'bg-[#444037]/70 hover:bg-[#403d38]/50'
             : 'hover:bg-black/5',
@@ -172,154 +178,205 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
           isCurrentReplyingToMessage && 'bg-[#393c48] hover:bg-[#35384a]'
         )}
       >
-        {isMentionned ||
-          (isCurrentReplyingToMessage && (
+        {message.referencedMessage && (
+          <div className="ml-16 mb-[1.5px] text-xs text-zinc-400 flex gap-1 items-center">
+            <ProfileContextMenu
+              member={message.referencedMessage.sender}
+              disabled={preview}
+            >
+              <ProfilePopover
+                member={message.referencedMessage.sender}
+                asChild={false}
+                disabled={preview}
+              >
+                <UserAvatar
+                  src={message.referencedMessage.sender.user.image}
+                  size="xxs"
+                  className="mt-[1.5px]"
+                />
+              </ProfilePopover>
+            </ProfileContextMenu>
+            <ProfileContextMenu
+              member={message.referencedMessage.sender}
+              disabled={preview}
+            >
+              <ProfilePopover
+                member={message.referencedMessage.sender}
+                disabled={preview}
+              >
+                <p
+                  className={cn(
+                    'font-bold text-sm',
+                    !preview && 'hover:underline cursor-pointer'
+                  )}
+                >
+                  {message.referencedMessage.sender.username}
+                </p>
+              </ProfilePopover>
+            </ProfileContextMenu>
+            <div
+              className="hover:text-zinc-200 transition-colors cursor-pointer"
+              onClick={() => {
+                // setReplyingToMessage(message.referencedMessage);
+              }}
+            >
+              {message.referencedMessage.content}
+            </div>
+          </div>
+        )}
+        <div
+          className={cn(
+            ' group flex items-center px-4 transition-colors w-full'
+          )}
+        >
+          {(isMentionned || isCurrentReplyingToMessage) && (
             <div
               className={cn(
-                'absolute left-0 w-1 h-full ',
+                'absolute left-0 bottom-0 w-1 h-full',
                 isMentionned && 'bg-[#f0b132]',
                 isCurrentReplyingToMessage && 'bg-[#5865f2]'
               )}
             />
-          ))}
-        <div className="group flex gap-x-2 items-start w-full">
-          <div
-            className={cn(
-              'hover:drop-shadow-md transition',
-              !preview && !isSameSender && 'cursor-pointer'
-            )}
-          >
-            {isSameSender ? (
-              <div className="h-7 w-10 flex items-center">
-                <span className="hidden group-hover:flex text-xs text-zinc-500 dark:text-zinc-400">
-                  {format(new Date(message.createdAt), "HH':'mm")}
-                </span>
-              </div>
-            ) : (
-              <ProfileContextMenu member={member} disabled={preview}>
-                <ProfilePopover
-                  member={member}
-                  asChild={false}
-                  disabled={preview}
-                >
-                  <UserAvatar
-                    src={member.user.image}
-                    className={preview ? 'cursor-auto' : undefined}
-                  />
-                </ProfilePopover>
-              </ProfileContextMenu>
-            )}
-          </div>
-          <div className="flex flex-col w-full">
-            <div className="flex items-center gap-x-2 mb-1">
-              {!isSameSender && (
-                <>
-                  <div className="flex items-center gap-x-2">
-                    <ProfileContextMenu member={member} disabled={preview}>
-                      <ProfilePopover member={member} disabled={preview}>
-                        <p
-                          className={cn(
-                            'font-semibold text-sm',
-                            !preview && 'hover:underline cursor-pointer'
-                          )}
-                        >
-                          {member.username}
-                        </p>
-                      </ProfilePopover>
-                    </ProfileContextMenu>
-                    <ActionTooltip label={member.role}>
-                      {roleIconMap[member.role]}
-                    </ActionTooltip>
-                  </div>
-                  <span className="text-xs text-zinc-500 dark:text-zinc-400">
-                    {time}
+          )}
+          <div className="group flex gap-x-2 items-start w-full">
+            <div
+              className={cn(
+                'hover:drop-shadow-md transition',
+                !preview && !isSameSender && 'cursor-pointer'
+              )}
+            >
+              {isSameSender ? (
+                <div className="h-7 w-10 flex items-center">
+                  <span className="hidden group-hover:flex text-xs text-zinc-500 dark:text-zinc-400">
+                    {format(new Date(message.createdAt), "HH':'mm")}
                   </span>
-                </>
+                </div>
+              ) : (
+                <ProfileContextMenu member={member} disabled={preview}>
+                  <ProfilePopover
+                    member={member}
+                    asChild={false}
+                    disabled={preview}
+                  >
+                    <UserAvatar
+                      src={member.user.image}
+                      className={preview ? 'cursor-auto' : undefined}
+                    />
+                  </ProfilePopover>
+                </ProfileContextMenu>
               )}
             </div>
-            {!isEditing && (
-              <>
-                <p
-                  className={cn(
-                    'text-sm text-zinc-600 dark:text-zinc-300 break-all mb-1'
-                  )}
-                >
-                  {parsedMessage}
-                  {isUpdated && (
-                    <span className="text-[10px] mx-2 text-zinc-500 dark:text-zinc-400 select-none">
-                      (edited)
+            <div className="flex flex-col w-full">
+              <div className="flex items-center gap-x-2 mb-1">
+                {!isSameSender && (
+                  <>
+                    <div className="flex items-center gap-x-2">
+                      <ProfileContextMenu member={member} disabled={preview}>
+                        <ProfilePopover member={member} disabled={preview}>
+                          <p
+                            className={cn(
+                              'font-semibold text-sm',
+                              !preview && 'hover:underline cursor-pointer'
+                            )}
+                          >
+                            {member.username}
+                          </p>
+                        </ProfilePopover>
+                      </ProfileContextMenu>
+                      <ActionTooltip label={member.role}>
+                        {roleIconMap[member.role]}
+                      </ActionTooltip>
+                    </div>
+                    <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                      {time}
                     </span>
-                  )}
-                </p>
-              </>
-            )}
-            {!preview && isEditing && (
-              <Form {...form} state={state}>
-                <form
-                  onSubmit={form.handleSubmit(handleSubmit)}
-                  className="flex items-center w-full gap-x-2 pt-2"
-                >
-                  <FormField
-                    control={form.control}
-                    name="content"
-                    render={({ field }) => (
-                      <FormItem className="flex-1">
-                        <FormControl>
-                          <ChatInput
-                            inputRef={inputRef}
-                            members={members!}
-                            onSubmit={form.handleSubmit(handleSubmit)}
-                            value={field.value}
-                            onInput={field.onChange}
-                            xOffset={4.8}
-                            yOffset={message.reactions.length > 0 ? 110 : 85}
-                          />
-                        </FormControl>
-                      </FormItem>
+                  </>
+                )}
+              </div>
+              {!isEditing && (
+                <>
+                  <p
+                    className={cn(
+                      'text-sm text-zinc-600 dark:text-zinc-300 break-all mb-1'
                     )}
-                  />
-                </form>
-                <span className="text-[10px] mt-1 text-zinc-400 select-none">
-                  escape to cancel, enter to save
-                </span>
-              </Form>
-            )}
-            <MessageReactions
-              reactions={message.reactions}
-              currentMember={currentMember}
-              channel={channel}
-            />
+                  >
+                    {parsedMessage}
+                    {isUpdated && (
+                      <span className="text-[10px] mx-2 text-zinc-500 dark:text-zinc-400 select-none">
+                        (edited)
+                      </span>
+                    )}
+                  </p>
+                </>
+              )}
+              {!preview && isEditing && (
+                <Form {...form} state={state}>
+                  <form
+                    onSubmit={form.handleSubmit(handleSubmit)}
+                    className="flex items-center w-full gap-x-2 pt-2"
+                  >
+                    <FormField
+                      control={form.control}
+                      name="content"
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormControl>
+                            <ChatInput
+                              inputRef={inputRef}
+                              members={members!}
+                              onSubmit={form.handleSubmit(handleSubmit)}
+                              value={field.value}
+                              onInput={field.onChange}
+                              xOffset={4.8}
+                              yOffset={message.reactions.length > 0 ? 110 : 85}
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </form>
+                  <span className="text-[10px] mt-1 text-zinc-400 select-none">
+                    escape to cancel, enter to save
+                  </span>
+                </Form>
+              )}
+              <MessageReactions
+                reactions={message.reactions}
+                currentMember={currentMember}
+                channel={channel}
+              />
+            </div>
           </div>
-        </div>
-        {!preview && canDeleteMessage && !isEditing && (
-          <div className="hidden group-hover:flex items-center gap-x-2 absolute p-1 -top-2 right-5 bg-white dark:bg-zinc-800 border rounded-sm z-20">
-            {canEditMessage && (
-              <ActionTooltip label="Edit">
-                <Edit
+          {!preview && canDeleteMessage && !isEditing && (
+            <div className="hidden group-hover:flex items-center gap-x-2 absolute p-1 -top-2 right-5 bg-white dark:bg-zinc-800 border rounded-sm z-20">
+              {canEditMessage && (
+                <ActionTooltip label="Edit">
+                  <Edit
+                    className="cursor-pointer ml-auto w-4 h-4 text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors"
+                    onClick={() => {
+                      setEditingMessageId(message.id);
+                      setTimeout(() => {
+                        inputRef.current?.focus();
+                      }, 100);
+                    }}
+                  />
+                </ActionTooltip>
+              )}
+              <ActionTooltip label="Delete">
+                <Trash
                   className="cursor-pointer ml-auto w-4 h-4 text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors"
                   onClick={() => {
-                    setEditingMessageId(message.id);
-                    setTimeout(() => {
-                      inputRef.current?.focus();
-                    }, 100);
+                    openModal('deleteChannelMessage', {
+                      serverMessage: message,
+                      currentMember,
+                      channel,
+                    });
                   }}
                 />
               </ActionTooltip>
-            )}
-            <ActionTooltip label="Delete">
-              <Trash
-                className="cursor-pointer ml-auto w-4 h-4 text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors"
-                onClick={() => {
-                  openModal('deleteChannelMessage', {
-                    serverMessage: message,
-                    currentMember,
-                    channel,
-                  });
-                }}
-              />
-            </ActionTooltip>
-          </div>
-        )}
+            </div>
+          )}
+        </div>
       </div>
     </ChannelMessageContextMenu>
   );

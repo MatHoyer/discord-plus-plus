@@ -78,6 +78,15 @@ export const formatMessageMention = async (
           },
         },
       },
+      referencedMessage: {
+        include: {
+          sender: {
+            include: {
+              user: true,
+            },
+          },
+        },
+      },
     },
   });
 };

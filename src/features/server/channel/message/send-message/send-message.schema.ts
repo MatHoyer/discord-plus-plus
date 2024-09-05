@@ -12,6 +12,7 @@ export const sendMessageSchema = z.object({
   content: messageSchema,
   channelId: positiveNumber,
   memberId: positiveNumber,
+  replyingToMessageId: positiveNumber.optional(),
 });
 
 export type TSendMessage = z.infer<typeof sendMessageSchema>;

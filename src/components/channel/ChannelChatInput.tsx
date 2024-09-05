@@ -66,7 +66,12 @@ const ChannelChatInput: React.FC<{
       channelId: channel.id,
       username: currentMember.username,
     });
-    execute({ ...v, content: parsedContent });
+    execute({
+      ...v,
+      content: parsedContent,
+      replyingToMessageId: replyingToMessage?.id,
+    });
+    setReplyingToMessage(undefined);
   };
 
   const [isTyping, setIsTyping] = useState<string[]>([]);

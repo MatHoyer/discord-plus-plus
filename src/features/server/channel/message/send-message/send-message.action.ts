@@ -16,13 +16,14 @@ export const sendMessage = authClient
     if (!userId) {
       throw new Error('Unauthorized');
     }
-    const { memberId, content, channelId } = parsedInput;
+    const { memberId, content, channelId, replyingToMessageId } = parsedInput;
 
     const message = await prisma.serverMessage.create({
       data: {
         content,
         channelId,
         senderId: memberId,
+        referencedMessageId: replyingToMessageId,
       },
     });
 
