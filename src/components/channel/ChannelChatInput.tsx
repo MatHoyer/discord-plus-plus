@@ -7,7 +7,7 @@ import {
 } from '@/features/server/channel/message/send-message/send-message.schema';
 import { useGlobalStore } from '@/hooks/useGlobalStore';
 import { cn } from '@/lib/utils';
-import { parseMentionsMessage } from '@/lib/utils/message.utils';
+import { spanToMention } from '@/lib/utils/message.utils';
 import { socket } from '@/socket';
 import { Channel, Member } from '@prisma/client';
 import { Plus, Smile } from 'lucide-react';
@@ -43,7 +43,7 @@ const ChannelChatInput: React.FC<{
     mode: 'onSubmit',
   });
 
-  const { execute, result: state } = useAction(sendMessage, {
+  const { executeAsync, result: state } = useAction(sendMessage, {
     onSuccess: (message) => {
       socket.emit(ServerSocketEvents.newMessage, {
         message: message.data,
@@ -60,13 +60,13 @@ const ChannelChatInput: React.FC<{
     },
   });
 
-  const handleSubmit = (v: TSendMessage) => {
-    const parsedContent = parseMentionsMessage(v.content);
+  const handleSubmit = async (v: TSendMessage) => {
+    const parsedContent = spanToMention(v.content);
     socket.emit(ServerSocketEvents.stopTyping, {
       channelId: channel.id,
       username: currentMember.username,
     });
-    execute({
+    await executeAsync({
       ...v,
       content: parsedContent,
       replyingToMessageId: replyingToMessage?.id,

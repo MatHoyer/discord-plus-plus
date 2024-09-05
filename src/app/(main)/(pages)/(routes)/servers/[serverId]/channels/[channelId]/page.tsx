@@ -75,6 +75,15 @@ const ServerPage = async (
                   user: true,
                 },
               },
+              mentions: {
+                include: {
+                  member: {
+                    include: {
+                      user: true,
+                    },
+                  },
+                },
+              },
             },
           },
         },

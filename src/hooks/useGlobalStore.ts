@@ -14,6 +14,9 @@ type TGlobalStore = {
   setEditingMessageId: (id: number | undefined) => void;
   replyingToMessage: ServerMessageWithSender | undefined;
   setReplyingToMessage: (message: ServerMessageWithSender | undefined) => void;
+  currentMentionnedMember: MemberWithUser | undefined;
+  addCurrentMemberMention: (member: MemberWithUser | undefined) => void;
+  removeCurrentMemberMention: () => void;
 };
 
 export const useGlobalStore = create<TGlobalStore>((set) => ({
@@ -64,4 +67,9 @@ export const useGlobalStore = create<TGlobalStore>((set) => ({
     set((state) => ({
       replyingToMessage: state.editingMessageId ? undefined : message,
     })),
+  currentMentionnedMember: undefined,
+  addCurrentMemberMention: (member) =>
+    set(() => ({ currentMentionnedMember: member })),
+  removeCurrentMemberMention: () =>
+    set(() => ({ currentMentionnedMember: undefined })),
 }));

@@ -29,12 +29,19 @@ const ChatInput: React.FC<TChatInputProps> = ({
   xOffset,
   yOffset,
 }) => {
-  const { replyingToMessage, setReplyingToMessage, editingMessageId } =
-    useGlobalStore((state) => ({
-      replyingToMessage: state.replyingToMessage,
-      setReplyingToMessage: state.setReplyingToMessage,
-      editingMessageId: state.editingMessageId,
-    }));
+  const {
+    replyingToMessage,
+    setReplyingToMessage,
+    editingMessageId,
+    currentMentionnedMember,
+    removeCurrentMemberMention,
+  } = useGlobalStore((state) => ({
+    replyingToMessage: state.replyingToMessage,
+    setReplyingToMessage: state.setReplyingToMessage,
+    editingMessageId: state.editingMessageId,
+    currentMentionnedMember: state.currentMentionnedMember,
+    removeCurrentMemberMention: state.removeCurrentMemberMention,
+  }));
   const [filteredMembers, setFilteredMembers] = useState<
     MemberWithUser[] | null
   >(members);
@@ -42,25 +49,7 @@ const ChatInput: React.FC<TChatInputProps> = ({
   const [atSymbolPosition, setAtSymbolPosition] = useState<number | null>(null);
   const [isMentionPopoverOpen, setIsMentionPopoverOpen] = useState(false);
 
-  const handleMentionSelect = (member: MemberWithUser) => {
-    if (!editableDivRef.current || !savedRange) return;
-
-    editableDivRef.current.focus();
-    const selection = window.getSelection();
-
-    if (!selection) return;
-
-    selection.removeAllRanges();
-    selection.addRange(savedRange);
-
-    const range = selection.getRangeAt(0);
-
-    if (!range || atSymbolPosition === null) return;
-
-    range.setStart(range.startContainer, atSymbolPosition);
-    range.setEnd(range.startContainer, range.endOffset);
-    range.deleteContents();
-
+  const addMemberMention = (member: MemberWithUser, range: Range) => {
     const mentionSpan = document.createElement('span');
     mentionSpan.textContent = `@${member.username}`;
     mentionSpan.className =
@@ -74,12 +63,41 @@ const ChatInput: React.FC<TChatInputProps> = ({
     range.setStartAfter(mentionSpan);
     range.setEndAfter(mentionSpan);
 
-    selection.removeAllRanges();
-    selection.addRange(range);
+    return range;
+  };
 
-    handleInput();
-    setIsMentionPopoverOpen(false);
-    setAtSymbolPosition(null);
+  const handleMentionSelect = (member: MemberWithUser) => {
+    if (!editableDivRef.current) return;
+    if (document.activeElement !== editableDivRef.current) {
+      focusInputWithTimeout(10);
+    }
+    setTimeout(() => {
+      const selection = window.getSelection();
+
+      if (!selection) return;
+
+      if (savedRange) {
+        selection.removeAllRanges();
+        selection.addRange(savedRange);
+      }
+
+      const range = selection.getRangeAt(0);
+      if (!range) return;
+
+      range.setStart(
+        range.startContainer,
+        atSymbolPosition ?? range.startOffset
+      );
+      range.setEnd(range.startContainer, range.endOffset);
+      range.deleteContents();
+
+      selection.removeAllRanges();
+      selection.addRange(addMemberMention(member, range));
+
+      handleInput();
+      setIsMentionPopoverOpen(false);
+      setAtSymbolPosition(null);
+    }, 100);
   };
 
   const handleInput = () => {
@@ -139,12 +157,6 @@ const ChatInput: React.FC<TChatInputProps> = ({
     );
   };
 
-  useEffect(() => {
-    if (editableDivRef.current) {
-      editableDivRef.current.innerHTML = value || '';
-    }
-  }, []);
-
   const focusInput = () => {
     editableDivRef.current?.focus();
   };
@@ -156,10 +168,23 @@ const ChatInput: React.FC<TChatInputProps> = ({
   };
 
   useEffect(() => {
+    if (editableDivRef.current) {
+      editableDivRef.current.innerHTML = value || '';
+    }
+  }, []);
+
+  useEffect(() => {
     if (replyingToMessage) {
       focusInputWithTimeout();
     }
   }, [replyingToMessage]);
+
+  useEffect(() => {
+    if (currentMentionnedMember) {
+      handleMentionSelect(currentMentionnedMember);
+      removeCurrentMemberMention();
+    }
+  }, [currentMentionnedMember]);
 
   useEventListener('keydown', () => {
     if (document.activeElement !== editableDivRef.current) {
@@ -237,7 +262,7 @@ const ChatInput: React.FC<TChatInputProps> = ({
               selection.removeAllRanges();
               selection.addRange(range);
             }
-            handleInput();
+            // handleInput();
           }
         }}
         onBlur={() => {

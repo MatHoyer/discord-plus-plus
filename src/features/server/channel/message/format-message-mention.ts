@@ -85,6 +85,15 @@ export const formatMessageMention = async (
               user: true,
             },
           },
+          mentions: {
+            include: {
+              member: {
+                include: {
+                  user: true,
+                },
+              },
+            },
+          },
         },
       },
     },

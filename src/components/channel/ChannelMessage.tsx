@@ -8,7 +8,11 @@ import { useEventListener } from '@/hooks/useEventListener';
 import { useGlobalStore } from '@/hooks/useGlobalStore';
 import { useModal } from '@/hooks/useModalStore';
 import { cn } from '@/lib/utils';
-import { checkMessage, parseMentionsMessage } from '@/lib/utils/message.utils';
+import {
+  checkMessage,
+  mentionToSpan,
+  spanToMention,
+} from '@/lib/utils/message.utils';
 import { socket } from '@/socket';
 import { Channel } from '@prisma/client';
 import { differenceInMinutes, format, isEqual } from 'date-fns';
@@ -101,42 +105,18 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
     [form]
   );
 
-  const parsedMessage = useMemo(() => {
-    const parts = message.content.split(/(<@\w+>)/g);
-    return parts.map((part, index) => {
-      const match = part.match(/^<@(\w+)>$/);
-      if (match) {
-        const mentionId = +match[1];
-        const mention = message.mentions?.find((m) => m.id === mentionId);
-        if (mention) {
-          return (
-            <ProfileContextMenu
-              key={index}
-              member={mention.member}
-              disabled={preview}
-            >
-              <ProfilePopover
-                member={mention.member}
-                asChild
-                disabled={preview}
-              >
-                <span
-                  className={cn(
-                    'text-white p-1 bg-[#3c4270] bg-opacity-50 font-semibold rounded-sm select-none',
-                    !preview &&
-                      'hover:bg-[#5864f3] hover:bg-opacity-100 transition-colors hover:underline cursor-pointer'
-                  )}
-                >
-                  @{mention.member.username}
-                </span>
-              </ProfilePopover>
-            </ProfileContextMenu>
-          );
-        }
-      }
-      return <span key={index}>{part}</span>;
-    });
-  }, [message.content, message.mentions, preview]);
+  const parsedMessage = useMemo(
+    () => mentionToSpan(message, preview),
+    [message.content, message.mentions, preview]
+  );
+
+  const parsedReferencedMessage = useMemo(
+    () =>
+      message.referencedMessage
+        ? mentionToSpan(message.referencedMessage, preview)
+        : [],
+    [message.referencedMessage, preview]
+  );
 
   const isCurrentReplyingToMessage = replyingToMessage?.id === message.id;
 
@@ -149,7 +129,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
     !isCurrentReplyingToMessage;
 
   const handleSubmit = (v: TEditMessage) => {
-    const parsedContent = parseMentionsMessage(v.content);
+    const parsedContent = spanToMention(v.content);
 
     execute({ ...v, content: parsedContent });
   };
@@ -217,7 +197,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
                 // setReplyingToMessage(message.referencedMessage);
               }}
             >
-              {message.referencedMessage.content}
+              {parsedReferencedMessage}
             </div>
           </div>
         )}

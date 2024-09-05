@@ -1,4 +1,5 @@
 'use client';
+import { useGlobalStore } from '@/hooks/useGlobalStore';
 import { useModal } from '@/hooks/useModalStore';
 import { useToast } from '@/hooks/useToast';
 import { AtSign, CircleUserRound, Fingerprint } from 'lucide-react';
@@ -17,6 +18,10 @@ const ProfileContextMenu: React.FC<
   const { openModal } = useModal();
   const { toast } = useToast();
 
+  const { addCurrentMemberMention } = useGlobalStore((state) => ({
+    addCurrentMemberMention: state.addCurrentMemberMention,
+  }));
+
   return (
     <GenericContextMenu
       {...props}
@@ -31,6 +36,9 @@ const ProfileContextMenu: React.FC<
         {
           label: 'Mention',
           icon: AtSign,
+          onClick: () => {
+            addCurrentMemberMention(member);
+          },
         },
         {
           seperator: true,
