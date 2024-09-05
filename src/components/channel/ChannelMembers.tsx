@@ -9,7 +9,7 @@ const ChannelMembersCategory: React.FC<{
 }> = ({ title, members }) =>
   members.length > 0 ? (
     <>
-      <div className="text-[#8e9ba4] text-sm font-semibold">
+      <div className="text-[#8e9ba4] text-sm font-semibold cursor-default">
         {title} - {members.length}
       </div>
       {members.map((member) => (

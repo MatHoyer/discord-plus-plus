@@ -89,18 +89,43 @@ CREATE TABLE "ServerMessage" (
     "content" TEXT NOT NULL,
     "senderId" INTEGER,
     "channelId" INTEGER NOT NULL,
+    "deleted" BOOLEAN NOT NULL DEFAULT false,
+    "referencedMessageId" INTEGER,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "deleted" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "ServerMessage_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "ServerMessageReaction" (
+    "id" SERIAL NOT NULL,
+    "number" INTEGER NOT NULL,
+    "content" TEXT NOT NULL,
+    "messageId" INTEGER NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "ServerMessageReaction_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "ServerMessageReactionMember" (
+    "id" SERIAL NOT NULL,
+    "messageId" INTEGER NOT NULL,
+    "reactionId" INTEGER NOT NULL,
+    "memberId" INTEGER NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "ServerMessageReactionMember_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "ServerMention" (
     "id" SERIAL NOT NULL,
     "messageId" INTEGER NOT NULL,
-    "userId" INTEGER NOT NULL,
+    "memberId" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -123,6 +148,7 @@ CREATE TABLE "Channel" (
 CREATE TABLE "Member" (
     "id" SERIAL NOT NULL,
     "role" "MemberRole" NOT NULL DEFAULT 'GUEST',
+    "username" TEXT NOT NULL,
     "userId" INTEGER NOT NULL,
     "serverId" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -174,10 +200,22 @@ CREATE INDEX "ServerMessage_senderId_idx" ON "ServerMessage"("senderId");
 CREATE INDEX "ServerMessage_channelId_idx" ON "ServerMessage"("channelId");
 
 -- CreateIndex
+CREATE INDEX "ServerMessage_referencedMessageId_idx" ON "ServerMessage"("referencedMessageId");
+
+-- CreateIndex
+CREATE INDEX "ServerMessageReaction_messageId_idx" ON "ServerMessageReaction"("messageId");
+
+-- CreateIndex
+CREATE INDEX "ServerMessageReactionMember_messageId_idx" ON "ServerMessageReactionMember"("messageId");
+
+-- CreateIndex
+CREATE INDEX "ServerMessageReactionMember_memberId_idx" ON "ServerMessageReactionMember"("memberId");
+
+-- CreateIndex
 CREATE INDEX "ServerMention_messageId_idx" ON "ServerMention"("messageId");
 
 -- CreateIndex
-CREATE INDEX "ServerMention_userId_idx" ON "ServerMention"("userId");
+CREATE INDEX "ServerMention_memberId_idx" ON "ServerMention"("memberId");
 
 -- CreateIndex
 CREATE INDEX "Channel_serverId_idx" ON "Channel"("serverId");
@@ -210,10 +248,22 @@ ALTER TABLE "ServerMessage" ADD CONSTRAINT "ServerMessage_senderId_fkey" FOREIGN
 ALTER TABLE "ServerMessage" ADD CONSTRAINT "ServerMessage_channelId_fkey" FOREIGN KEY ("channelId") REFERENCES "Channel"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "ServerMessage" ADD CONSTRAINT "ServerMessage_referencedMessageId_fkey" FOREIGN KEY ("referencedMessageId") REFERENCES "ServerMessage"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ServerMessageReaction" ADD CONSTRAINT "ServerMessageReaction_messageId_fkey" FOREIGN KEY ("messageId") REFERENCES "ServerMessage"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ServerMessageReactionMember" ADD CONSTRAINT "ServerMessageReactionMember_reactionId_fkey" FOREIGN KEY ("reactionId") REFERENCES "ServerMessageReaction"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ServerMessageReactionMember" ADD CONSTRAINT "ServerMessageReactionMember_memberId_fkey" FOREIGN KEY ("memberId") REFERENCES "Member"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "ServerMention" ADD CONSTRAINT "ServerMention_messageId_fkey" FOREIGN KEY ("messageId") REFERENCES "ServerMessage"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ServerMention" ADD CONSTRAINT "ServerMention_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "ServerMention" ADD CONSTRAINT "ServerMention_memberId_fkey" FOREIGN KEY ("memberId") REFERENCES "Member"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Channel" ADD CONSTRAINT "Channel_serverId_fkey" FOREIGN KEY ("serverId") REFERENCES "Server"("id") ON DELETE CASCADE ON UPDATE CASCADE;
