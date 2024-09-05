@@ -104,7 +104,7 @@ const ChannelChatInput: React.FC<{
                 <FormControl>
                   <ChatInput
                     inputRef={inputRef}
-                    offset={2}
+                    xOffset={2}
                     inputClassName=" pl-14"
                     members={members}
                     onInput={(content) => {

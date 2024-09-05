@@ -28,6 +28,7 @@ declare global {
     sender: MemberWithUser;
     mentions: ServerMentionWithUser[];
     reactions: ServerMessageReactionWithMembers[];
+    referencedMessage: ServerMessageWithSender;
   }
 
   interface ChannelWithMessages extends Channel {

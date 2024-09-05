@@ -11,7 +11,8 @@ type TChatInputProps = {
   onSubmit?: () => void;
   inputClassName?: string;
   value?: string;
-  offset?: number;
+  xOffset?: number;
+  yOffset?: number;
 };
 
 const ChatInput: React.FC<TChatInputProps> = ({
@@ -22,7 +23,8 @@ const ChatInput: React.FC<TChatInputProps> = ({
   inputClassName,
   value,
   inputRef: editableDivRef,
-  offset,
+  xOffset,
+  yOffset,
 }) => {
   const [filteredMembers, setFilteredMembers] = useState<
     MemberWithUser[] | null
@@ -140,7 +142,8 @@ const ChatInput: React.FC<TChatInputProps> = ({
         members={filteredMembers || []}
         onSelect={handleMentionSelect}
         open={isMentionPopoverOpen}
-        offset={offset}
+        xOffset={xOffset}
+        yOffset={yOffset}
       />
       <div
         ref={editableDivRef}
@@ -172,13 +175,13 @@ const ChatInput: React.FC<TChatInputProps> = ({
               selection.removeAllRanges();
               selection.addRange(range);
             }
+            handleInput();
           }
         }}
-        onBlur={
-          onBlur
-            ? () => onBlur(editableDivRef.current?.innerHTML || '')
-            : undefined
-        }
+        onBlur={() => {
+          setIsMentionPopoverOpen(false);
+          onBlur?.(editableDivRef.current?.innerHTML || '');
+        }}
         onKeyDown={(e) => {
           if (
             (e.key === 'ArrowDown' || e.key === 'ArrowUp') &&

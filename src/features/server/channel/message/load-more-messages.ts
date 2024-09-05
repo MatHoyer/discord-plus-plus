@@ -40,6 +40,15 @@ export const loadMoreMessages = async (channelId: number, skip: number) => {
           },
         },
       },
+      referencedMessage: {
+        include: {
+          sender: {
+            include: {
+              user: true,
+            },
+          },
+        },
+      },
     },
   });
 

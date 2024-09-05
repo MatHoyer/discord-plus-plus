@@ -3,6 +3,7 @@ import {
   editMessageSchema,
   TEditMessage,
 } from '@/features/server/channel/message/edit-message/edit-message.schema';
+import { useGlobalStore } from '@/hooks/useGlobalStore';
 import { useModal } from '@/hooks/useModalStore';
 import { cn } from '@/lib/utils';
 import { checkMessage, parseMentionsMessage } from '@/lib/utils/message.utils';
@@ -11,7 +12,7 @@ import { Channel } from '@prisma/client';
 import { differenceInMinutes, format, isEqual } from 'date-fns';
 import { Edit, Trash } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { ServerSocketEvents } from '../../../server/socket/server';
 import ActionTooltip from '../ActionTooltip';
 import ChannelMessageContextMenu from '../context-menus/ChannelMessageContextMenu';
@@ -43,7 +44,11 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
   members,
 }) => {
   const { openModal } = useModal();
-  const [isEditing, setIsEditing] = useState(false);
+  const { editingMessageId, setEditingMessageId } = useGlobalStore((state) => ({
+    editingMessageId: state.editingMessageId,
+    setEditingMessageId: state.setEditingMessageId,
+  }));
+  const isEditing = editingMessageId === message.id;
 
   const member = message.sender;
   const isUpdated = !isEqual(message.createdAt, message.updatedAt);
@@ -58,7 +63,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
 
   const { execute, result: state } = useAction(editMessage, {
     onSuccess: ({ data }) => {
-      setIsEditing(false);
+      setEditingMessageId(undefined);
       socket.emit(ServerSocketEvents.editMessage, data);
     },
   });
@@ -76,7 +81,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        setIsEditing(false);
+        setEditingMessageId(undefined);
         form.reset();
       }
     };
@@ -232,11 +237,6 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
                     </span>
                   )}
                 </p>
-                <MessageReactions
-                  reactions={message.reactions}
-                  currentMember={currentMember}
-                  channel={channel}
-                />
               </>
             )}
             {!preview && isEditing && (
@@ -257,7 +257,8 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
                             onSubmit={form.handleSubmit(handleSubmit)}
                             value={field.value}
                             onInput={field.onChange}
-                            offset={4.8}
+                            xOffset={4.8}
+                            yOffset={message.reactions.length > 0 ? 110 : 85}
                           />
                         </FormControl>
                       </FormItem>
@@ -265,20 +266,25 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
                   />
                 </form>
                 <span className="text-[10px] mt-1 text-zinc-400 select-none">
-                  Press escape to cancel, enter to save
+                  escape to cancel, enter to save
                 </span>
               </Form>
             )}
+            <MessageReactions
+              reactions={message.reactions}
+              currentMember={currentMember}
+              channel={channel}
+            />
           </div>
         </div>
-        {!preview && canDeleteMessage && (
+        {!preview && canDeleteMessage && !isEditing && (
           <div className="hidden group-hover:flex items-center gap-x-2 absolute p-1 -top-2 right-5 bg-white dark:bg-zinc-800 border rounded-sm z-20">
             {canEditMessage && (
               <ActionTooltip label="Edit">
                 <Edit
                   className="cursor-pointer ml-auto w-4 h-4 text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors"
                   onClick={() => {
-                    setIsEditing(true);
+                    setEditingMessageId(message.id);
                     setTimeout(() => {
                       inputRef.current?.focus();
                     }, 100);

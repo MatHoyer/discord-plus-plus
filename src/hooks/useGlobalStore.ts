@@ -10,6 +10,8 @@ type TGlobalStore = {
     mention: ServerMentionWithUser
   ) => void;
   deleteChannelMention: (channelId: number, mentionId: number) => void;
+  editingMessageId: number | undefined;
+  setEditingMessageId: (id: number | undefined) => void;
 };
 
 export const useGlobalStore = create<TGlobalStore>((set) => ({
@@ -50,4 +52,9 @@ export const useGlobalStore = create<TGlobalStore>((set) => ({
 
       return { channelMentions: state.channelMentions };
     }),
+  editingMessageId: 0,
+  setEditingMessageId: (id) =>
+    set(() => ({
+      editingMessageId: id,
+    })),
 }));

@@ -68,6 +68,15 @@ const ServerPage = async (
               },
             },
           },
+          referencedMessage: {
+            include: {
+              sender: {
+                include: {
+                  user: true,
+                },
+              },
+            },
+          },
         },
       },
     },

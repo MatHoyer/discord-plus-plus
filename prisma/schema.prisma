@@ -115,15 +115,20 @@ model ServerMessage {
     channelId Int
     channel   Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
     deleted   Boolean                 @default(false)
     mentions  ServerMention[]
     reactions ServerMessageReaction[]
 
+    referencedMessageId Int?
+    referencedMessage   ServerMessage?  @relation("referencedMessage", fields: [referencedMessageId], references: [id], onDelete: SetNull)
+    serverMessage       ServerMessage[] @relation("referencedMessage")
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
     @@index([senderId])
     @@index([channelId])
+    @@index([referencedMessageId])
 }
 
 model ServerMessageReaction {

@@ -1,11 +1,18 @@
 'use client';
 import { useDeleteMessage } from '@/features/server/channel/message/delete-message/delete-message.hook';
 import { reactToMessage } from '@/features/server/channel/message/react-to-message/react-to-message.action';
+import { useGlobalStore } from '@/hooks/useGlobalStore';
 import { useModal } from '@/hooks/useModalStore';
 import { checkMessage } from '@/lib/utils/message.utils';
 import { socket } from '@/socket';
 import { Channel } from '@prisma/client';
-import { ClipboardCopy, Fingerprint, SmilePlus, Trash } from 'lucide-react';
+import {
+  ClipboardCopy,
+  Edit,
+  Fingerprint,
+  SmilePlus,
+  Trash,
+} from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
 import React, { ComponentProps, PropsWithChildren } from 'react';
 import { ServerSocketEvents } from '../../../server/socket/server';
@@ -34,10 +41,17 @@ const ChannelMessageContextMenu: React.FC<
     PropsWithChildren &
     Omit<ComponentProps<typeof GenericContextMenu>, 'items'>
 > = ({ member, currentMember, message, channel, children, ...props }) => {
-  const { canDeleteMessage } = checkMessage(member, currentMember, message);
+  const { canDeleteMessage, canEditMessage } = checkMessage(
+    member,
+    currentMember,
+    message
+  );
 
   const { openModal } = useModal();
   const { execute: deleteMessage } = useDeleteMessage();
+  const setEditingMessageId = useGlobalStore(
+    (state) => state.setEditingMessageId
+  );
 
   const { execute: react } = useAction(reactToMessage, {
     onSuccess: ({ data }) => {
@@ -87,6 +101,14 @@ const ChannelMessageContextMenu: React.FC<
               icon: SmilePlus,
             },
           ],
+        },
+        {
+          label: 'Edit Message',
+          icon: Edit,
+          when: canEditMessage,
+          onClick: () => {
+            setEditingMessageId(message.id);
+          },
         },
         {
           label: 'Copy Text',

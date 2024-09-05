@@ -8,14 +8,16 @@ type TChannelMentionSuggestionsProps = {
   members: MemberWithUser[];
   onSelect: (member: MemberWithUser) => void;
   open: boolean;
-  offset?: number;
+  xOffset?: number;
+  yOffset?: number;
 };
 
 const ChannelMentionSuggestions: React.FC<TChannelMentionSuggestionsProps> = ({
   members,
   onSelect,
   open,
-  offset = 2,
+  xOffset = 2,
+  yOffset = 85,
 }) => {
   const usersActivity = useActivity((state) => state.users);
   const [selectedSuggestion, setSelectedSuggestion] = useState<number | null>(
@@ -58,8 +60,8 @@ const ChannelMentionSuggestions: React.FC<TChannelMentionSuggestionsProps> = ({
         open && members.length > 0 && 'block'
       )}
       style={{
-        width: `calc(100% - ${offset}rem)`,
-        bottom: '85px',
+        width: `calc(100% - ${xOffset}rem)`,
+        bottom: `${yOffset}px`,
       }}
     >
       <div className="text-white font-semibold text-xs mb-2 ">MEMBERS</div>
