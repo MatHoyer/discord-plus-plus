@@ -60,8 +60,8 @@ export const useGlobalStore = create<TGlobalStore>((set) => ({
       editingMessageId: id,
     })),
   replyingToMessage: undefined,
-  setReplyingToMessage: (id) =>
-    set(() => ({
-      replyingToMessage: id,
+  setReplyingToMessage: (message) =>
+    set((state) => ({
+      replyingToMessage: state.editingMessageId ? undefined : message,
     })),
 }));

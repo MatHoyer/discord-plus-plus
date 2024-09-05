@@ -50,12 +50,12 @@ const ChannelMessageContextMenu: React.FC<
 
   const { openModal } = useModal();
   const { execute: deleteMessage } = useDeleteMessage();
-  const { setEditingMessageId, setReplyingToMessage } = useGlobalStore(
-    (state) => ({
+  const { editingMessageId, setEditingMessageId, setReplyingToMessage } =
+    useGlobalStore((state) => ({
+      editingMessageId: state.editingMessageId,
       setEditingMessageId: state.setEditingMessageId,
       setReplyingToMessage: state.setReplyingToMessage,
-    })
-  );
+    }));
 
   const { execute: react } = useAction(reactToMessage, {
     onSuccess: ({ data }) => {
@@ -117,6 +117,7 @@ const ChannelMessageContextMenu: React.FC<
         {
           label: 'Reply',
           icon: Reply,
+          when: !editingMessageId,
           onClick: () => {
             setReplyingToMessage(message);
           },

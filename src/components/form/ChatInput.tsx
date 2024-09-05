@@ -29,12 +29,12 @@ const ChatInput: React.FC<TChatInputProps> = ({
   xOffset,
   yOffset,
 }) => {
-  const { replyingToMessage, setReplyingToMessage } = useGlobalStore(
-    (state) => ({
+  const { replyingToMessage, setReplyingToMessage, editingMessageId } =
+    useGlobalStore((state) => ({
       replyingToMessage: state.replyingToMessage,
       setReplyingToMessage: state.setReplyingToMessage,
-    })
-  );
+      editingMessageId: state.editingMessageId,
+    }));
   const [filteredMembers, setFilteredMembers] = useState<
     MemberWithUser[] | null
   >(members);
@@ -190,7 +190,7 @@ const ChatInput: React.FC<TChatInputProps> = ({
       <div
         className={cn(
           'hidden bg-[#2b2d31] rounded-t-md px-3 py-2 cursor-pointer select-none',
-          replyingToMessage && 'flex items-center'
+          replyingToMessage && !editingMessageId && 'flex items-center'
         )}
       >
         <span className="text-sm text-zinc-400">

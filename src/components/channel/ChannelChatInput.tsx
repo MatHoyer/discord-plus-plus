@@ -23,12 +23,12 @@ const ChannelChatInput: React.FC<{
   currentMember: Member;
   members: MemberWithUser[];
 }> = ({ channel, currentMember, members }) => {
-  const { replyingToMessage, setReplyingToMessage } = useGlobalStore(
-    (state) => ({
+  const { replyingToMessage, setReplyingToMessage, editingMessageId } =
+    useGlobalStore((state) => ({
       replyingToMessage: state.replyingToMessage,
       setReplyingToMessage: state.setReplyingToMessage,
-    })
-  );
+      editingMessageId: state.editingMessageId,
+    }));
 
   const formRef = useRef<HTMLFormElement>(null);
   const inputRef = useRef<HTMLDivElement>(null);
@@ -102,7 +102,9 @@ const ChannelChatInput: React.FC<{
             type="button"
             className={cn(
               'absolute left-8 h-[24px] w-[24px] bg-zinc-500 dark:bg-zinc-400 hover:bg-zinc-600 dark:hover:bg-zinc-300 transition-colors rounded-full p-1 flex items-center justify-center',
-              replyingToMessage ? 'top-[60px]' : 'top-7'
+              replyingToMessage && !editingMessageId
+                ? 'top-[66px]'
+                : 'top-[30px]'
             )}
           >
             <Plus className="cursor-pointer text-white dark:text-[#313338]" />
@@ -150,7 +152,9 @@ const ChannelChatInput: React.FC<{
           <div
             className={cn(
               'absolute right-8 flex items-center gap-2',
-              replyingToMessage ? 'top-[60px]' : 'top-[33px]'
+              replyingToMessage && !editingMessageId
+                ? 'top-[66px]'
+                : 'top-[30px]'
             )}
           >
             <div className="text-xs">
