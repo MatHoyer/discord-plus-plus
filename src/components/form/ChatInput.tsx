@@ -2,6 +2,7 @@
 import { useEventListener } from '@/hooks/useEventListener';
 import { useGlobalStore } from '@/hooks/useGlobalStore';
 import { cn } from '@/lib/utils';
+import { mentionClassName } from '@/lib/utils/message.utils';
 import { CircleX } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import ChannelMentionSuggestions from '../channel/ChannelMentionSuggestions';
@@ -52,8 +53,7 @@ const ChatInput: React.FC<TChatInputProps> = ({
   const addMemberMention = (member: MemberWithUser, range: Range) => {
     const mentionSpan = document.createElement('span');
     mentionSpan.textContent = `@${member.username}`;
-    mentionSpan.className =
-      'text-white px-2 py-1 bg-[#32355c] bg-opacity-70 font-semibold rounded-md';
+    mentionSpan.className = mentionClassName;
     mentionSpan.dataset.userId = member.id.toString();
     mentionSpan.contentEditable = 'false';
 

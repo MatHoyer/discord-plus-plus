@@ -125,7 +125,7 @@ const ScrollableChat: React.FC<{
   }, [channel.id, messages.length]);
 
   return (
-    <div className="flex-1 overflow-y-scroll flex flex-col-reverse">
+    <div className="flex-1 overflow-y-scroll overflow-x-hidden flex flex-col-reverse">
       {messages.map((message) => (
         <ChannelMessage
           key={message.id}

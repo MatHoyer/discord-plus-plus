@@ -27,6 +27,9 @@ export const spanToMention = (message: string) =>
     '<@$1>'
   );
 
+export const mentionClassName =
+  'text-white px-2 py-1 bg-[#3c4270] bg-opacity-50 font-semibold rounded-sm select-none inline-block';
+
 export const mentionToSpan = (
   message: ServerMessageWithSender,
   disabled: boolean = false
@@ -46,8 +49,10 @@ export const mentionToSpan = (
           >
             <ProfilePopover member={mention.member} asChild disabled={disabled}>
               <span
+                role="button"
+                aria-expanded="false"
                 className={cn(
-                  'text-white p-1 bg-[#3c4270] bg-opacity-50 font-semibold rounded-sm select-none',
+                  mentionClassName,
                   !disabled &&
                     'hover:bg-[#5864f3] hover:bg-opacity-100 transition-colors hover:underline cursor-pointer'
                 )}
