@@ -263,7 +263,12 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
                 </ProfileContextMenu>
               )}
             </div>
-            <div className="flex flex-col w-full">
+            <div
+              className={cn(
+                'flex flex-col w-full',
+                message.reactions.length > 0 && 'mb-1'
+              )}
+            >
               <div className="flex items-center gap-x-2 mb-1">
                 {!isSameSender && (
                   <>
@@ -294,8 +299,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
                 <>
                   <p
                     className={cn(
-                      'text-sm text-zinc-600 dark:text-zinc-300 break-all',
-                      !isSameSender && 'mb-1'
+                      'text-sm text-zinc-600 dark:text-zinc-300 break-all'
                     )}
                   >
                     {parsedMessage}
