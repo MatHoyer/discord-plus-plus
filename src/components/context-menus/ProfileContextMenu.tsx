@@ -1,6 +1,6 @@
 'use client';
-import { useToast } from '@/hooks/use-toast';
 import { useModal } from '@/hooks/useModalStore';
+import { useToast } from '@/hooks/useToast';
 import { AtSign, CircleUserRound, Fingerprint } from 'lucide-react';
 import React, { ComponentProps, PropsWithChildren } from 'react';
 import GenericContextMenu from './GenericContextMenu';

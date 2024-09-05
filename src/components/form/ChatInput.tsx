@@ -1,5 +1,8 @@
 'use client';
+import { useEventListener } from '@/hooks/useEventListener';
+import { useGlobalStore } from '@/hooks/useGlobalStore';
 import { cn } from '@/lib/utils';
+import { CircleX } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import ChannelMentionSuggestions from '../channel/ChannelMentionSuggestions';
 
@@ -26,6 +29,12 @@ const ChatInput: React.FC<TChatInputProps> = ({
   xOffset,
   yOffset,
 }) => {
+  const { replyingToMessage, setReplyingToMessage } = useGlobalStore(
+    (state) => ({
+      replyingToMessage: state.replyingToMessage,
+      setReplyingToMessage: state.setReplyingToMessage,
+    })
+  );
   const [filteredMembers, setFilteredMembers] = useState<
     MemberWithUser[] | null
   >(members);
@@ -136,8 +145,41 @@ const ChatInput: React.FC<TChatInputProps> = ({
     }
   }, []);
 
+  const focusInput = () => {
+    editableDivRef.current?.focus();
+  };
+
+  const focusInputWithTimeout = (ms: number = 100) => {
+    setTimeout(() => {
+      focusInput();
+    }, ms);
+  };
+
+  useEffect(() => {
+    if (replyingToMessage) {
+      focusInputWithTimeout();
+    }
+  }, [replyingToMessage]);
+
+  useEventListener('keydown', () => {
+    if (document.activeElement !== editableDivRef.current) {
+      focusInput();
+    }
+  });
+
+  useEventListener(
+    'keyup',
+    (e) => {
+      if (e.key === 'Escape') {
+        if (isMentionPopoverOpen) setIsMentionPopoverOpen(false);
+        if (!!replyingToMessage) setReplyingToMessage(undefined);
+      }
+    },
+    [isMentionPopoverOpen, replyingToMessage]
+  );
+
   return (
-    <div>
+    <div className="relative">
       <ChannelMentionSuggestions
         members={filteredMembers || []}
         onSelect={handleMentionSelect}
@@ -145,6 +187,25 @@ const ChatInput: React.FC<TChatInputProps> = ({
         xOffset={xOffset}
         yOffset={yOffset}
       />
+      <div
+        className={cn(
+          'hidden bg-[#2b2d31] rounded-t-md px-3 py-2 cursor-pointer select-none',
+          replyingToMessage && 'flex items-center'
+        )}
+      >
+        <span className="text-sm text-zinc-400">
+          Replying to{' '}
+          <span className="text-zinc-300 font-semibold">
+            {replyingToMessage?.sender.username}
+          </span>
+        </span>
+        <CircleX
+          className="ml-auto w-5 h-5 fill-zinc-400 hover:fill-zinc-200 text-[#2b2d31] transition-colors"
+          onClick={() => {
+            setReplyingToMessage(undefined);
+          }}
+        />
+      </div>
       <div
         ref={editableDivRef}
         onPaste={(e) => {
@@ -156,8 +217,9 @@ const ChatInput: React.FC<TChatInputProps> = ({
         }}
         contentEditable
         className={cn(
-          'rounded-md border-input px-3 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 pr-28 py-4 bg-zinc-200/90 dark:bg-zinc-700/75 border-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-zinc-600 dark:text-zinc-200 resize-none overflow-hidden',
-          inputClassName
+          'border-input px-3 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 pr-28 py-4 bg-zinc-200/90 dark:bg-zinc-700/75 border-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-zinc-600 dark:text-zinc-200 resize-none overflow-hidden',
+          inputClassName,
+          !replyingToMessage ? 'rounded-md' : 'rounded-b-md'
         )}
         style={{
           whiteSpace: 'pre-wrap',
@@ -191,9 +253,7 @@ const ChatInput: React.FC<TChatInputProps> = ({
           }
           if (e.key === '@') {
             setIsMentionPopoverOpen(true);
-            setTimeout(() => {
-              editableDivRef.current?.focus();
-            }, 100);
+            focusInputWithTimeout();
           }
           if (e.key === 'Enter') {
             e.preventDefault();

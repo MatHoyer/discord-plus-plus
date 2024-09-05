@@ -5,6 +5,7 @@ import {
   sendMessageSchema,
   TSendMessage,
 } from '@/features/server/channel/message/send-message/send-message.schema';
+import { useGlobalStore } from '@/hooks/useGlobalStore';
 import { cn } from '@/lib/utils';
 import { parseMentionsMessage } from '@/lib/utils/message.utils';
 import { socket } from '@/socket';
@@ -22,6 +23,13 @@ const ChannelChatInput: React.FC<{
   currentMember: Member;
   members: MemberWithUser[];
 }> = ({ channel, currentMember, members }) => {
+  const { replyingToMessage, setReplyingToMessage } = useGlobalStore(
+    (state) => ({
+      replyingToMessage: state.replyingToMessage,
+      setReplyingToMessage: state.setReplyingToMessage,
+    })
+  );
+
   const formRef = useRef<HTMLFormElement>(null);
   const inputRef = useRef<HTMLDivElement>(null);
 
@@ -92,7 +100,10 @@ const ChannelChatInput: React.FC<{
         <div className="relative p-4 pb-6">
           <button
             type="button"
-            className="absolute top-7 left-8 h-[24px] w-[24px] bg-zinc-500 dark:bg-zinc-400 hover:bg-zinc-600 dark:hover:bg-zinc-300 transition-colors rounded-full p-1 flex items-center justify-center"
+            className={cn(
+              'absolute left-8 h-[24px] w-[24px] bg-zinc-500 dark:bg-zinc-400 hover:bg-zinc-600 dark:hover:bg-zinc-300 transition-colors rounded-full p-1 flex items-center justify-center',
+              replyingToMessage ? 'top-[60px]' : 'top-7'
+            )}
           >
             <Plus className="cursor-pointer text-white dark:text-[#313338]" />
           </button>
@@ -136,17 +147,22 @@ const ChannelChatInput: React.FC<{
               </FormItem>
             )}
           />
-          <div className="text-xs absolute top-[33px] right-16">
-            <span
-              className={cn(
-                content.length > MAX_MESSAGE_LENGTH && 'text-red-500'
-              )}
-            >
-              {content.length}
-            </span>
-            /2000
-          </div>
-          <div className="absolute top-7 right-8">
+          <div
+            className={cn(
+              'absolute right-8 flex items-center gap-2',
+              replyingToMessage ? 'top-[60px]' : 'top-[33px]'
+            )}
+          >
+            <div className="text-xs">
+              <span
+                className={cn(
+                  content.length > MAX_MESSAGE_LENGTH && 'text-red-500'
+                )}
+              >
+                {content.length}
+              </span>
+              /2000
+            </div>
             <Smile className="cursor-pointer" />
           </div>
           <div className="h-1">

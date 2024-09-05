@@ -10,6 +10,7 @@ import {
   ClipboardCopy,
   Edit,
   Fingerprint,
+  Reply,
   SmilePlus,
   Trash,
 } from 'lucide-react';
@@ -49,8 +50,11 @@ const ChannelMessageContextMenu: React.FC<
 
   const { openModal } = useModal();
   const { execute: deleteMessage } = useDeleteMessage();
-  const setEditingMessageId = useGlobalStore(
-    (state) => state.setEditingMessageId
+  const { setEditingMessageId, setReplyingToMessage } = useGlobalStore(
+    (state) => ({
+      setEditingMessageId: state.setEditingMessageId,
+      setReplyingToMessage: state.setReplyingToMessage,
+    })
   );
 
   const { execute: react } = useAction(reactToMessage, {
@@ -108,6 +112,13 @@ const ChannelMessageContextMenu: React.FC<
           when: canEditMessage,
           onClick: () => {
             setEditingMessageId(message.id);
+          },
+        },
+        {
+          label: 'Reply',
+          icon: Reply,
+          onClick: () => {
+            setReplyingToMessage(message);
           },
         },
         {

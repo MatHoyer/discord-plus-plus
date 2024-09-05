@@ -3,6 +3,7 @@ import {
   editMessageSchema,
   TEditMessage,
 } from '@/features/server/channel/message/edit-message/edit-message.schema';
+import { useEventListener } from '@/hooks/useEventListener';
 import { useGlobalStore } from '@/hooks/useGlobalStore';
 import { useModal } from '@/hooks/useModalStore';
 import { cn } from '@/lib/utils';
@@ -12,7 +13,7 @@ import { Channel } from '@prisma/client';
 import { differenceInMinutes, format, isEqual } from 'date-fns';
 import { Edit, Trash } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
-import { useEffect, useMemo, useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import { ServerSocketEvents } from '../../../server/socket/server';
 import ActionTooltip from '../ActionTooltip';
 import ChannelMessageContextMenu from '../context-menus/ChannelMessageContextMenu';
@@ -44,10 +45,13 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
   members,
 }) => {
   const { openModal } = useModal();
-  const { editingMessageId, setEditingMessageId } = useGlobalStore((state) => ({
-    editingMessageId: state.editingMessageId,
-    setEditingMessageId: state.setEditingMessageId,
-  }));
+  const { editingMessageId, setEditingMessageId, replyingToMessage } =
+    useGlobalStore((state) => ({
+      editingMessageId: state.editingMessageId,
+      setEditingMessageId: state.setEditingMessageId,
+      replyingToMessage: state.replyingToMessage,
+    }));
+
   const isEditing = editingMessageId === message.id;
 
   const member = message.sender;
@@ -78,20 +82,16 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
     },
   });
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
+  useEventListener(
+    'keydown',
+    (e) => {
       if (e.key === 'Escape') {
         setEditingMessageId(undefined);
         form.reset();
       }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [form]);
+    },
+    [form]
+  );
 
   const parsedMessage = useMemo(() => {
     const parts = message.content.split(/(<@\w+>)/g);
@@ -130,9 +130,15 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
     });
   }, [message.content, message.mentions, preview]);
 
-  const isMentionned = message.mentions?.some(
-    (mention) => mention.member.id === currentMember.id
-  );
+  const isCurrentReplyingToMessage = replyingToMessage?.id === message.id;
+
+  const isMentionned =
+    (message.mentions?.some(
+      (mention) => mention.member.id === currentMember.id
+    ) ||
+      (message.referencedMessage?.senderId === currentMember.id &&
+        message.senderId !== currentMember.id)) &&
+    !isCurrentReplyingToMessage;
 
   const handleSubmit = (v: TEditMessage) => {
     const parsedContent = parseMentionsMessage(v.content);
@@ -162,12 +168,20 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
           isMentionned
             ? 'bg-[#444037]/70 hover:bg-[#403d38]/50'
             : 'hover:bg-black/5',
-          isSameSender ? 'mb-0 py-[1px]' : 'mb-2 py-2'
+          isSameSender ? 'mb-0 py-[1px]' : 'mb-2 py-2',
+          isCurrentReplyingToMessage && 'bg-[#393c48] hover:bg-[#35384a]'
         )}
       >
-        {isMentionned && (
-          <div className="absolute left-0 w-1 h-full bg-[#f0b132]" />
-        )}
+        {isMentionned ||
+          (isCurrentReplyingToMessage && (
+            <div
+              className={cn(
+                'absolute left-0 w-1 h-full ',
+                isMentionned && 'bg-[#f0b132]',
+                isCurrentReplyingToMessage && 'bg-[#5865f2]'
+              )}
+            />
+          ))}
         <div className="group flex gap-x-2 items-start w-full">
           <div
             className={cn(

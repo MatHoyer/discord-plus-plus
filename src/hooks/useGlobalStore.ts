@@ -12,6 +12,8 @@ type TGlobalStore = {
   deleteChannelMention: (channelId: number, mentionId: number) => void;
   editingMessageId: number | undefined;
   setEditingMessageId: (id: number | undefined) => void;
+  replyingToMessage: ServerMessageWithSender | undefined;
+  setReplyingToMessage: (message: ServerMessageWithSender | undefined) => void;
 };
 
 export const useGlobalStore = create<TGlobalStore>((set) => ({
@@ -56,5 +58,10 @@ export const useGlobalStore = create<TGlobalStore>((set) => ({
   setEditingMessageId: (id) =>
     set(() => ({
       editingMessageId: id,
+    })),
+  replyingToMessage: undefined,
+  setReplyingToMessage: (id) =>
+    set(() => ({
+      replyingToMessage: id,
     })),
 }));
