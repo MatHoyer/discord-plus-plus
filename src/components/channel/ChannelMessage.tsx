@@ -154,7 +154,9 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
       <div
         className={cn(
           'relative group flex items-center px-4 transition-colors w-full',
-          isMentionned ? 'bg-[#444037] bg-opacity-70' : 'hover:bg-black/5',
+          isMentionned
+            ? 'bg-[#444037]/70 hover:bg-[#403d38]/50'
+            : 'hover:bg-black/5',
           isSameSender ? 'mb-0 py-[1px]' : 'mb-2 py-2'
         )}
       >
@@ -270,7 +272,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
           </div>
         </div>
         {!preview && canDeleteMessage && (
-          <div className="hidden group-hover:flex items-center gap-x-2 absolute p-1 -top-2 right-5 bg-white dark:bg-zinc-800 border rounded-sm">
+          <div className="hidden group-hover:flex items-center gap-x-2 absolute p-1 -top-2 right-5 bg-white dark:bg-zinc-800 border rounded-sm z-20">
             {canEditMessage && (
               <ActionTooltip label="Edit">
                 <Edit
