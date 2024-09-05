@@ -170,9 +170,9 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
     >
       <div
         className={cn(
-          'relative',
+          'relative transition-colors',
           isMentionned
-            ? 'bg-[#444037]/70 hover:bg-[#403d38]/50'
+            ? 'bg-[#444037]/70 hover:bg-[#444037]/50 '
             : 'hover:bg-black/5',
           isSameSender ? 'mb-0 py-[1px]' : 'mb-2 py-2',
           isCurrentReplyingToMessage && 'bg-[#393c48] hover:bg-[#35384a]'
