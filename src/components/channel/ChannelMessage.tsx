@@ -139,8 +139,8 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
     previousMessage &&
     previousMessage.sender.id === currentMember.id &&
     differenceInMinutes(
-      new Date(previousMessage.createdAt),
-      new Date(message.createdAt)
+      new Date(message.createdAt),
+      new Date(previousMessage.createdAt)
     ) <= 10;
 
   return (
