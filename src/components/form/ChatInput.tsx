@@ -13,6 +13,7 @@ type TChatInputProps = {
   onInput?: (content: string) => void;
   onBlur?: (content: string) => void;
   onSubmit?: () => void;
+  onImagePaste?: (file: File) => void;
   inputClassName?: string;
   value?: string;
   xOffset?: number;
@@ -23,6 +24,7 @@ const ChatInput: React.FC<TChatInputProps> = ({
   onInput,
   onBlur,
   onSubmit,
+  onImagePaste,
   members,
   inputClassName,
   value,
@@ -229,7 +231,6 @@ const ChatInput: React.FC<TChatInputProps> = ({
         ref={editableDivRef}
         onPaste={(e) => {
           e.preventDefault();
-
           const clipboardData =
             e.clipboardData || (window as any).clipboardData;
           const items = clipboardData.items;
@@ -238,17 +239,18 @@ const ChatInput: React.FC<TChatInputProps> = ({
             if (type.startsWith('image')) {
               const file = item.getAsFile();
               if (file) {
+                onImagePaste?.(file);
               }
+            } else if (type === 'text/plain') {
+              const text = clipboardData.getData('text/plain');
+              insertTextAtCursor(text);
             }
           }
-          const text = clipboardData.getData('text/plain');
-          insertTextAtCursor(text);
         }}
         contentEditable
         className={cn(
-          'empty:before:content-["Type_here..."] empty:before:cursor-text empty:before:text-zinc-500 border-input px-3 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 pr-28 py-4 bg-zinc-200/90 dark:bg-zinc-700/75 border-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-zinc-600 dark:text-zinc-200 resize-none overflow-hidden',
-          inputClassName,
-          !replyingToMessage ? 'rounded-md' : 'rounded-b-md'
+          'empty:before:content-["Type_here..."] empty:before:cursor-text empty:before:text-zinc-500 border-input px-3 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 pr-28 py-4 bg-zinc-200/90 dark:bg-zinc-700 border-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-zinc-600 dark:text-zinc-200 resize-none overflow-hidden',
+          inputClassName
         )}
         style={{
           whiteSpace: 'pre-wrap',

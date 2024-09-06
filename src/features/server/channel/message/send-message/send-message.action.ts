@@ -13,10 +13,17 @@ export const sendMessage = authClient
   })
   .action(async ({ parsedInput, ctx }) => {
     const { userId } = ctx;
+
     if (!userId) {
       throw new Error('Unauthorized');
     }
-    const { memberId, content, channelId, replyingToMessageId } = parsedInput;
+    const {
+      memberId,
+      content,
+      channelId,
+      replyingToMessageId,
+      attachmentFormData,
+    } = parsedInput;
 
     const message = await prisma.serverMessage.create({
       data: {
@@ -27,5 +34,8 @@ export const sendMessage = authClient
       },
     });
 
+    if (attachmentFormData) {
+      const attachments = attachmentFormData.getAll('attachments') as File[];
+    }
     return await formatMessageMention(message, true);
   });

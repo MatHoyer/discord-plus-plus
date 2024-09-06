@@ -12,6 +12,7 @@ import { socket } from '@/socket';
 import { Channel, Member } from '@prisma/client';
 import { CircleX, Plus, Smile } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
+import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { getChannelSocketEvents } from '../../../server/socket/channel';
 import { ServerSocketEvents } from '../../../server/socket/server';
@@ -23,6 +24,9 @@ const ChannelChatInput: React.FC<{
   currentMember: Member;
   members: MemberWithUser[];
 }> = ({ channel, currentMember, members }) => {
+  const [attachments, setAttachments] = useState<File[]>([]);
+  const [attachmentPreviews, setAttachmentPreviews] = useState<string[]>([]);
+
   const { replyingToMessage, setReplyingToMessage, editingMessageId } =
     useGlobalStore((state) => ({
       replyingToMessage: state.replyingToMessage,
@@ -66,12 +70,20 @@ const ChannelChatInput: React.FC<{
       channelId: channel.id,
       username: currentMember.username,
     });
+
+    const formData = new FormData();
+    for (const attachment of attachments) {
+      formData.append('attachments', attachment);
+    }
+
     await executeAsync({
       ...v,
       content: parsedContent,
       replyingToMessageId: replyingToMessage?.id,
+      attachmentFormData: formData,
     });
     setReplyingToMessage(undefined);
+    setAttachments([]);
   };
 
   const [isTyping, setIsTyping] = useState<string[]>([]);
@@ -103,24 +115,44 @@ const ChannelChatInput: React.FC<{
     <Form {...form} state={state}>
       <form ref={formRef} onSubmit={form.handleSubmit(handleSubmit)}>
         <div className="relative p-4 pb-6">
-          <div
-            className={cn(
-              'hidden bg-[#2b2d31] rounded-t-md px-3 py-2 cursor-pointer select-none absolute w-[calc(100%-2rem)] -top-4',
-              replyingToMessage && !editingMessageId && 'flex items-center'
-            )}
-          >
-            <span className="text-sm text-zinc-400">
-              Replying to{' '}
-              <span className="text-zinc-300 font-semibold">
-                {replyingToMessage?.sender.username}
+          <div className="absolute w-[calc(100%-2rem)] bottom-20">
+            <div
+              className={cn(
+                'hidden bg-[#2b2d31] rounded-t-md px-3 py-2 cursor-pointer select-none',
+                replyingToMessage && 'flex items-center'
+              )}
+            >
+              <span className="text-sm text-zinc-400">
+                Replying to{' '}
+                <span className="text-zinc-300 font-semibold">
+                  {replyingToMessage?.sender.username}
+                </span>
               </span>
-            </span>
-            <CircleX
-              className="ml-auto w-5 h-5 fill-zinc-400 hover:fill-zinc-200 text-[#2b2d31] transition-colors"
-              onClick={() => {
-                setReplyingToMessage(undefined);
-              }}
-            />
+              <CircleX
+                className="ml-auto w-5 h-5 fill-zinc-400 hover:fill-zinc-200 text-[#2b2d31] transition-colors"
+                onClick={() => {
+                  setReplyingToMessage(undefined);
+                }}
+              />
+            </div>
+            <div
+              className={cn(
+                'hidden bg-zinc-700 px-3 py-2 select-none border-zinc-600 border-b-[1px] gap-2 overflow-x-auto',
+                attachmentPreviews.length > 0 && 'flex items-center',
+                replyingToMessage ? 'rounded-t-none' : 'rounded-t-md'
+              )}
+            >
+              {attachmentPreviews.map((preview, i) => (
+                <Image
+                  key={i}
+                  src={preview}
+                  width={200}
+                  height={200}
+                  className="rounded-md"
+                  alt="Attachment preview"
+                />
+              ))}
+            </div>
           </div>
           <button
             type="button"
@@ -139,7 +171,12 @@ const ChannelChatInput: React.FC<{
                   <ChatInput
                     inputRef={inputRef}
                     xOffset={2}
-                    inputClassName=" pl-14"
+                    inputClassName={cn(
+                      'pl-14',
+                      replyingToMessage || attachmentPreviews.length > 0
+                        ? 'rounded-b-md'
+                        : 'rounded-md'
+                    )}
                     members={members}
                     onInput={(content) => {
                       if (content.length === 1) {
@@ -165,6 +202,19 @@ const ChannelChatInput: React.FC<{
                     onSubmit={() => {
                       form.handleSubmit(handleSubmit)();
                     }}
+                    onImagePaste={(file) => {
+                      setAttachments((prev) => [...prev, file]);
+                      const reader = new FileReader();
+
+                      reader.onload = (e) => {
+                        const imageSrc = e.target?.result as string;
+                        if (imageSrc) {
+                          setAttachmentPreviews((prev) => [...prev, imageSrc]);
+                        }
+                      };
+
+                      reader.readAsDataURL(file);
+                    }}
                   />
                 </FormControl>
               </FormItem>
@@ -172,10 +222,7 @@ const ChannelChatInput: React.FC<{
           />
           <div
             className={cn(
-              'absolute right-8 flex items-center gap-2',
-              replyingToMessage && !editingMessageId
-                ? 'top-[66px]'
-                : 'top-[30px]'
+              'absolute right-8 flex items-center gap-2 top-[30px]'
             )}
           >
             <div className="text-xs">

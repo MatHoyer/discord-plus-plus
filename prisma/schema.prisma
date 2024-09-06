@@ -120,8 +120,9 @@ model ServerMessage {
     reactions ServerMessageReaction[]
 
     referencedMessageId Int?
-    referencedMessage   ServerMessage?  @relation("referencedMessage", fields: [referencedMessageId], references: [id], onDelete: SetNull)
-    serverMessage       ServerMessage[] @relation("referencedMessage")
+    referencedMessage   ServerMessage?            @relation("referencedMessage", fields: [referencedMessageId], references: [id], onDelete: SetNull)
+    serverMessage       ServerMessage[]           @relation("referencedMessage")
+    attachments         ServerMessageAttachment[]
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -129,6 +130,25 @@ model ServerMessage {
     @@index([senderId])
     @@index([channelId])
     @@index([referencedMessageId])
+}
+
+model ServerMessageAttachment {
+    id Int @id @default(autoincrement())
+
+    filename    String
+    contentType String
+    size        Int
+    width       Int
+    height      Int
+    url         String
+
+    messageId Int
+    message   ServerMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([messageId])
 }
 
 model ServerMessageReaction {
