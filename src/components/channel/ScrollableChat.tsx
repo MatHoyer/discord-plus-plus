@@ -24,6 +24,7 @@ const ScrollableChat: React.FC<{
   );
 
   const topRef = useRef<HTMLDivElement>(null);
+  const bottomRef = useRef<HTMLDivElement>(null);
   const countRef = useRef<number>(0);
 
   useEffect(() => {
@@ -135,7 +136,7 @@ const ScrollableChat: React.FC<{
     const element = document.querySelector(`[data-message-id='${messageId}']`);
     if (element) {
       setFlashReferencedMessageId(messageId);
-      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      element.scrollIntoView({ behavior: 'instant', block: 'center' });
     }
     return undefined;
   };
@@ -148,7 +149,6 @@ const ScrollableChat: React.FC<{
         channel.id,
         referencedMessage.id
       );
-
       const filteredAroundMessages = aroundMessages.filter(
         (m) => !messages.some((msg) => msg.id === m.id)
       );
@@ -163,11 +163,12 @@ const ScrollableChat: React.FC<{
 
   return (
     <div className="flex-1 overflow-y-scroll overflow-x-hidden flex flex-col-reverse">
-      {messages.map((message) => (
+      <div ref={bottomRef} className="p-1" />
+      {messages.map((message, index) => (
         <ChannelMessage
           key={message.id}
           message={message}
-          previousMessage={messages[messages.indexOf(message) + 1]}
+          previousMessage={messages[index + 1]}
           currentMember={currentMember}
           time={getCustomDate(new Date(message.createdAt))}
           channel={channel}

@@ -4,7 +4,7 @@ import { Member, ServerMessage } from '@prisma/client';
 import { cn } from '.';
 import { checkRole } from './member.utils';
 
-export const MESSAGE_TOP_LIMIT = 10;
+export const MESSAGE_TOP_LIMIT = 5;
 
 export const checkMessage = (
   member: Member,
