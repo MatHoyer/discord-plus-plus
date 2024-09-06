@@ -12,7 +12,7 @@ const ProfileHeader: React.FC<TProfileHeaderProps> = ({ member }) => {
   const usersActivity = useActivity((state) => state.users);
 
   return (
-    <div>
+    <div className="mb-4">
       <div className="relative w-full h-36 rounded-lg">
         <Image
           src="https://wallpapers.com/images/featured/beautiful-background-td7gsxerv3ecl20h.jpg"

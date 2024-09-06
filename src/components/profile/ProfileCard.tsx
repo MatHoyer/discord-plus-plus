@@ -42,7 +42,7 @@ const ProfileCard: React.FC<TProfileCardProps> = ({
     <div className="flex flex-col">
       <ProfileHeader member={member} />
       {isSideBar && (
-        <div className="flex flex-col my-4 gap-4">
+        <div className="flex flex-col mb-4 gap-4">
           <ProfileContentSection>
             <ProfileSectionButton onClick={() => {}}>
               <Pencil className="h-4 w-4 fill-zinc-400 text-[#232528] group-hover:text-[#37393f] transition-colors" />
