@@ -19,7 +19,7 @@ const ActivityState: React.FC<{ activity: TActivity }> = ({ activity }) => {
   return (
     <div className="flex items-center gap-2 w-full h-full">
       <div className="h-4 w-4">{activityIndicatorMap[activity]}</div>
-      <div>{Activity[activity]}</div>
+      <div className="text-sm text-[#b0b4bb]">{Activity[activity]}</div>
     </div>
   );
 };
@@ -34,9 +34,9 @@ const SelectActivity: React.FC<TSelectActivityProps> = ({ member }) => {
   return (
     <div className="w-full">
       <DropdownMenu>
-        <DropdownMenuTrigger className="w-full flex justify-start ">
+        <DropdownMenuTrigger className="w-full flex justify-start items-center ">
           <ActivityState activity={users[member.user.id] || Activity.Online} />
-          <ChevronRight />
+          <ChevronRight className="text-[#b0b4bb] h-4 w-4" />
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           {Object.keys(Activity).map((key) => {

@@ -30,11 +30,12 @@ const ProfilePopover: React.FC<
         {children}
       </PopoverTrigger>
       <PopoverContent
-        side="right"
+        side={isSideBar ? 'top' : 'right'}
         {...popoverContentProps}
         className={cn(
           popoverContentProps?.className,
           disabled && 'hidden',
+          isSideBar && 'translate-x-6',
           'p-0 rounded-md'
         )}
       >

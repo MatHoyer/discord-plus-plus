@@ -46,7 +46,7 @@ const ProfileCard: React.FC<TProfileCardProps> = ({
           <ProfileContentSection>
             <ProfileSectionButton onClick={() => {}}>
               <Pencil className="h-4 w-4 fill-zinc-400 text-[#232528] group-hover:text-[#37393f] transition-colors" />
-              <p>Edit profile</p>
+              <p className="text-sm text-[#b0b4bb]">Edit profile</p>
             </ProfileSectionButton>
             <ProfileSectionSeparator />
             <ProfileSectionButton>
@@ -56,12 +56,12 @@ const ProfileCard: React.FC<TProfileCardProps> = ({
           <ProfileContentSection>
             <ProfileSectionButton onClick={() => signOut()}>
               <LogOut className="h-4 w-4 text-zinc-400" />
-              <p>Log out</p>
+              <p className="text-sm text-[#b0b4bb]">Log out</p>
             </ProfileSectionButton>
             <ProfileSectionSeparator />
             <ProfileSectionButton>
               <Fingerprint className="h-4 w-4 text-zinc-400" />
-              <p>Copy user id</p>
+              <p className="text-sm text-[#b0b4bb]">Copy user id</p>
             </ProfileSectionButton>
           </ProfileContentSection>
         </div>
