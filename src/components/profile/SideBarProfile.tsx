@@ -1,19 +1,42 @@
 'use client';
 
 import { useActivity } from '@/hooks/useActivityStore';
-import { useSession } from 'next-auth/react';
-import ProfilePopover from './ProfilePopover';
+import { Headphones, LucideProps, Mic, Settings } from 'lucide-react';
+import { Activity } from '../../../server/User';
+import ChannelMemberProfileWithActivity from '../channel/ChannelMemberProfileWithActivity';
 
-const SideBarProfile: React.FC<{ member: MemberWithUser }> = ({ member }) => {
+const IconContainer: React.FC<{ Icon: React.ComponentType<LucideProps> }> = ({
+  Icon,
+}) => {
+  return (
+    <div className="hover:bg-[#35373c] transition-colors rounded-md p-1 cursor-pointer group">
+      <Icon className="text-zinc-400 group-hover:animate-spin group-hover:text-zinc-200 transition-colors" />
+    </div>
+  );
+};
+
+type TSideBarProfileProps = {
+  currentMember: MemberWithUser;
+};
+
+const SideBarProfile: React.FC<TSideBarProfileProps> = ({ currentMember }) => {
   const users = useActivity((state) => state.users);
-  const session = useSession();
-
-  if (!session.data?.user) return null;
 
   return (
-    <ProfilePopover member={member}>
-      <div>yo</div>
-    </ProfilePopover>
+    <div className="w-full p-2 flex items-center bg-[#232428]">
+      <div className="max-w-[50%]">
+        <ChannelMemberProfileWithActivity member={currentMember} isSideBar>
+          <div className="truncate text-xs text-zinc-400">
+            {Activity[users[currentMember.userId]]}
+          </div>
+        </ChannelMemberProfileWithActivity>
+      </div>
+      <div className="flex justify-evenly w-full">
+        <IconContainer Icon={Mic} />
+        <IconContainer Icon={Headphones} />
+        <IconContainer Icon={Settings} />
+      </div>
+    </div>
   );
 };
 

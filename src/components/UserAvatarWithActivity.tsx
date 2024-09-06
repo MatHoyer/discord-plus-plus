@@ -20,6 +20,7 @@ export const avatarVariants = cva(
         default: 'h-7 w-7 md:h-10 md:w-10',
         xxs: 'h-2 w-2 md:w-4 md:h-4',
         xs: 'md:w-6 md:h-6',
+        sm: 'h-5 w-5 md:w-8 md:h-8',
         xl: 'h-12 w-12 md:w-20 md:h-20',
       },
     },

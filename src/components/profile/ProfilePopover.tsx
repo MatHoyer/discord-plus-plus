@@ -9,6 +9,7 @@ type TProfilePopoverProps = {
   popoverContentProps?: ComponentProps<typeof PopoverContent>;
   disabled?: boolean;
   triggerProps?: Omit<ComponentProps<typeof PopoverTrigger>, 'asChild'>;
+  isSideBar?: boolean;
 };
 
 const ProfilePopover: React.FC<
@@ -20,6 +21,7 @@ const ProfilePopover: React.FC<
   popoverContentProps,
   disabled,
   triggerProps,
+  isSideBar = false,
   ...rest
 }) => {
   return (
@@ -36,7 +38,7 @@ const ProfilePopover: React.FC<
           'p-0 rounded-md'
         )}
       >
-        <ProfileCard member={member} />
+        <ProfileCard member={member} isSideBar={isSideBar} />
       </PopoverContent>
     </Popover>
   );

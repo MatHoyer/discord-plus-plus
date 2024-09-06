@@ -1,71 +1,18 @@
 'use client';
 import { useActivity } from '@/hooks/useActivityStore';
 import { getCustomDate } from '@/lib/utils';
-import { socket } from '@/socket';
-import { useSession } from 'next-auth/react';
 import Image from 'next/image';
-import { Activity, TActivity } from '../../../server/User';
-import { ServerSocketEvents } from '../../../server/socket/server';
-import UserAvatarWithActivity, {
-  activityIndicatorMap,
-} from '../UserAvatarWithActivity';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '../ui/dropdown-menu';
+import UserAvatarWithActivity from '../UserAvatarWithActivity';
 
-const handleActivityChange = (activity: TActivity) => {
-  socket.emit(ServerSocketEvents.changeActivity, { activity });
-};
-
-const ActivityState: React.FC<{ activity: TActivity }> = ({ activity }) => {
-  return (
-    <div className="flex items-center gap-2 cursor-pointer w-full h-full">
-      <div className="h-4">{activityIndicatorMap[activity]}</div>
-      <div>{Activity[activity]}</div>
-    </div>
-  );
-};
-
-const SelectActivity: React.FC = ({}) => {
-  const users = useActivity((state) => state.users);
-  const session = useSession();
-
-  if (!session.data?.user) return null;
-
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger>
-        <ActivityState
-          activity={users[session.data.user.id] || Activity.Online}
-        />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        {Object.keys(Activity).map((key) => {
-          return (
-            <DropdownMenuItem
-              key={key}
-              onClick={() => handleActivityChange(key as TActivity)}
-            >
-              <ActivityState activity={key as TActivity} />
-            </DropdownMenuItem>
-          );
-        })}
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-};
-
-const ProfileHeader: React.FC<{
+type TProfileHeaderProps = {
   member: MemberWithUser;
-  shouldHaveSettings?: boolean;
-}> = ({ member, shouldHaveSettings = false }) => {
+};
+
+const ProfileHeader: React.FC<TProfileHeaderProps> = ({ member }) => {
   const usersActivity = useActivity((state) => state.users);
 
   return (
-    <>
+    <div>
       <div className="relative w-full h-36 rounded-lg">
         <Image
           src="https://wallpapers.com/images/featured/beautiful-background-td7gsxerv3ecl20h.jpg"
@@ -103,8 +50,7 @@ const ProfileHeader: React.FC<{
           </div>
         </div>
       </div>
-      {shouldHaveSettings && <SelectActivity />}
-    </>
+    </div>
   );
 };
 
