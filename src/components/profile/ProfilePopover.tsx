@@ -30,7 +30,11 @@ const ProfilePopover: React.FC<
       <PopoverContent
         side="right"
         {...popoverContentProps}
-        className={cn(popoverContentProps?.className, disabled && 'hidden')}
+        className={cn(
+          popoverContentProps?.className,
+          disabled && 'hidden',
+          'p-0 rounded-md'
+        )}
       >
         <ProfileCard member={member} />
       </PopoverContent>
