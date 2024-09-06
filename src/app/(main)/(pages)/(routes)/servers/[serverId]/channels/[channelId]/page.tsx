@@ -6,7 +6,7 @@ import ScrollableChat from '@/components/channel/ScrollableChat';
 
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
-import { MESSAGE_TOP_LIMIT } from '@/lib/utils/message.utils';
+import { MESSAGE_INCLUDES, MESSAGE_TOP_LIMIT } from '@/lib/utils/message.utils';
 import { redirect } from 'next/navigation';
 
 const ServerPage = async (
@@ -41,53 +41,7 @@ const ServerPage = async (
         where: {
           deleted: false,
         },
-        include: {
-          sender: {
-            include: {
-              user: true,
-            },
-          },
-          mentions: {
-            include: {
-              member: {
-                include: {
-                  user: true,
-                },
-              },
-            },
-          },
-          reactions: {
-            include: {
-              members: {
-                include: {
-                  member: {
-                    include: {
-                      user: true,
-                    },
-                  },
-                },
-              },
-            },
-          },
-          referencedMessage: {
-            include: {
-              sender: {
-                include: {
-                  user: true,
-                },
-              },
-              mentions: {
-                include: {
-                  member: {
-                    include: {
-                      user: true,
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
+        ...MESSAGE_INCLUDES,
       },
     },
   });

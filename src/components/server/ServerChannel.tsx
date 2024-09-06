@@ -2,7 +2,7 @@
 import { useModal } from '@/hooks/useModalStore';
 import { cn, iconMap } from '@/lib/utils';
 import { Channel, MemberRole } from '@prisma/client';
-import { Edit, Trash } from 'lucide-react';
+import { Edit, Trash2 } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import React from 'react';
 import ActionTooltip from '../ActionTooltip';
@@ -84,7 +84,7 @@ const ServerChannel: React.FC<TServerChannelProps> = ({
                 />
               </ActionTooltip>
               <ActionTooltip label="Delete">
-                <Trash
+                <Trash2
                   onClick={(e) => {
                     e.stopPropagation();
                     openModal('deleteChannel', {

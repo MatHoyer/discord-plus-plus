@@ -138,8 +138,8 @@ model ServerMessageAttachment {
     filename    String
     contentType String
     size        Int
-    width       Int
-    height      Int
+    width       Int?
+    height      Int?
     url         String
 
     messageId Int

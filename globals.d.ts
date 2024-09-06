@@ -5,6 +5,7 @@ import {
   Server,
   ServerMention,
   ServerMessage,
+  ServerMessageAttachment,
   ServerMessageReaction,
   ServerMessageReactionMember,
   User,
@@ -29,6 +30,7 @@ declare global {
     mentions: ServerMentionWithUser[];
     reactions: ServerMessageReactionWithMembers[];
     referencedMessage: ServerMessageWithSender;
+    attachments?: ServerMessageAttachment[];
   }
 
   interface ChannelWithMessages extends Channel {

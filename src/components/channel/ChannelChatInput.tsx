@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 import { spanToMention } from '@/lib/utils/message.utils';
 import { socket } from '@/socket';
 import { Channel, Member } from '@prisma/client';
-import { CircleX, Pencil, Plus, Smile, Trash } from 'lucide-react';
+import { CircleX, Pencil, Plus, Smile, Trash2 } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
@@ -61,6 +61,8 @@ const ChannelChatInput: React.FC<{
       }
       form.reset();
       inputRef.current!.innerHTML = '';
+      setAttachments([]);
+      setAttachmentPreviews([]);
     },
   });
 
@@ -137,7 +139,7 @@ const ChannelChatInput: React.FC<{
             </div>
             <div
               className={cn(
-                'hidden bg-zinc-700 px-3 py-2 select-none border-zinc-600 border-b-[1px] gap-2 overflow-x-auto',
+                'hidden bg-zinc-700 px-3 py-2 select-none border-zinc-600 border-b-[1px] gap-6 overflow-x-auto',
                 attachmentPreviews.length > 0 && 'flex items-center',
                 replyingToMessage ? 'rounded-t-none' : 'rounded-t-md'
               )}
@@ -161,7 +163,7 @@ const ChannelChatInput: React.FC<{
                       <Pencil className="w-4 h-4 fill-zinc-400 group-hover:fill-zinc-200 group-hover:text-zinc-200 transition-colors" />
                     </div>
                     <div className="group p-1 rounded-md hover:bg-zinc-700 transition-colors">
-                      <Trash
+                      <Trash2
                         className="w-4 h-4 text-[#da373c]/70 hover:text-[#da373c]/90 transition-colors"
                         onClick={() => {
                           setAttachmentPreviews((prev) =>

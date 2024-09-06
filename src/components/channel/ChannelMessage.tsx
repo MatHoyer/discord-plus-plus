@@ -16,8 +16,9 @@ import {
 import { socket } from '@/socket';
 import { Channel } from '@prisma/client';
 import { differenceInMinutes, format, isEqual } from 'date-fns';
-import { Edit, Trash } from 'lucide-react';
+import { Edit, Trash2 } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
+import Image from 'next/image';
 import { useMemo, useRef } from 'react';
 import { ServerSocketEvents } from '../../../server/socket/server';
 import ActionTooltip from '../ActionTooltip';
@@ -64,9 +65,6 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
     flashReferencedMessageId: state.flashReferencedMessageId,
   }));
 
-  if (!message.reactions) {
-    console.log('HERERHEHREHREH', message.id);
-  }
   const { execute: deleteMessag } = useDeleteMessage();
 
   const isEditing = editingMessageId === message.id;
@@ -200,7 +198,6 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
                 </p>
               </ProfilePopover>
             </ProfileContextMenu>
-
             <div
               className="hover:text-zinc-200 transition-colors cursor-pointer"
               onClick={() => {
@@ -337,6 +334,37 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
                 currentMember={currentMember}
                 channel={channel}
               />
+              {(message?.attachments?.length || 0) > 0 && (
+                <div className="flex flex-row items-center gap-4">
+                  {message.attachments?.map((attachment) => (
+                    <div
+                      key={attachment.id}
+                      className="relative group/attachment"
+                    >
+                      <Image
+                        src={attachment.url}
+                        width={200}
+                        height={200}
+                        alt="attachment"
+                        className="rounded-md cursor-pointer"
+                      />
+                      <ActionTooltip label="Delete">
+                        <button
+                          style={{
+                            boxShadow: '0 0 5px #242628',
+                          }}
+                          className="group/attachment-inside group-hover/attachment:flex hidden absolute right-0 top-2 cursor-pointer bg-[#313338] hover:bg-red-500 p-1 rounded-md transition-colors border-[#303136] border-[1px]"
+                        >
+                          <Trash2
+                            className="w-5 h-5 text-zinc-400 group-hover/attachment-inside:text-zinc-200 transition-colors"
+                            onClick={() => {}}
+                          />
+                        </button>
+                      </ActionTooltip>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
           {!preview && canDeleteMessage && !isEditing && (
@@ -355,7 +383,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
                 </ActionTooltip>
               )}
               <ActionTooltip label="Delete">
-                <Trash
+                <Trash2
                   className="cursor-pointer ml-auto w-4 h-4 text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors"
                   onClick={(e) => {
                     if (e.shiftKey) {

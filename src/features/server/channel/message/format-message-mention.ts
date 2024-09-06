@@ -1,6 +1,7 @@
 'use server';
 
 import prisma from '@/lib/prisma';
+import { MESSAGE_INCLUDES } from '@/lib/utils/message.utils';
 import { ServerMessage } from '@prisma/client';
 
 export const formatMessageMention = async (
@@ -49,53 +50,6 @@ export const formatMessageMention = async (
       id: message.id,
     },
     data,
-    include: {
-      channel: true,
-      sender: {
-        include: {
-          user: true,
-        },
-      },
-      mentions: {
-        include: {
-          member: {
-            include: {
-              user: true,
-            },
-          },
-        },
-      },
-      reactions: {
-        include: {
-          members: {
-            include: {
-              member: {
-                include: {
-                  user: true,
-                },
-              },
-            },
-          },
-        },
-      },
-      referencedMessage: {
-        include: {
-          sender: {
-            include: {
-              user: true,
-            },
-          },
-          mentions: {
-            include: {
-              member: {
-                include: {
-                  user: true,
-                },
-              },
-            },
-          },
-        },
-      },
-    },
+    ...MESSAGE_INCLUDES,
   });
 };

@@ -7,7 +7,7 @@ import {
   LogOut,
   PlusCircle,
   Settings,
-  Trash,
+  Trash2,
   UserPlus,
   Users,
 } from 'lucide-react';
@@ -83,7 +83,7 @@ const ServerHeader: React.FC<TServerHeaderProps> = ({
             variant="destructive"
           >
             Delete Server
-            <Trash className="h-4 w-4 ml-auto" />
+            <Trash2 className="h-4 w-4 ml-auto" />
           </DropdownMenuItem>
         )}
         {!isAdmin && (

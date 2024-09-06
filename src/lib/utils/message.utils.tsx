@@ -117,5 +117,6 @@ export const MESSAGE_INCLUDES = {
         },
       },
     },
+    attachments: true,
   },
 };
