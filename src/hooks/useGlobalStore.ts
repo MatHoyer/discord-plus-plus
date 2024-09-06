@@ -17,6 +17,8 @@ type TGlobalStore = {
   currentMentionnedMember: MemberWithUser | undefined;
   addCurrentMemberMention: (member: MemberWithUser | undefined) => void;
   removeCurrentMemberMention: () => void;
+  flashReferencedMessageId: number | undefined;
+  setFlashReferencedMessageId: (id: number | undefined) => void;
 };
 
 export const useGlobalStore = create<TGlobalStore>((set) => ({
@@ -72,4 +74,13 @@ export const useGlobalStore = create<TGlobalStore>((set) => ({
     set(() => ({ currentMentionnedMember: member })),
   removeCurrentMemberMention: () =>
     set(() => ({ currentMentionnedMember: undefined })),
+  flashReferencedMessageId: undefined,
+  setFlashReferencedMessageId: (id) =>
+    set(() => {
+      setTimeout(() => {
+        set(() => ({ flashReferencedMessageId: undefined }));
+      }, 3000);
+
+      return { flashReferencedMessageId: id };
+    }),
 }));

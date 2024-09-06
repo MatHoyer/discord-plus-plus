@@ -1,6 +1,10 @@
 'use client';
 
-import { loadMoreMessages } from '@/features/server/channel/message/load-more-messages';
+import {
+  loadMoreMessages,
+  loadMoreMessagesAround,
+} from '@/features/server/channel/message/load-more-messages';
+import { useGlobalStore } from '@/hooks/useGlobalStore';
 import { getCustomDate } from '@/lib/utils';
 import { socket } from '@/socket';
 import { useEffect, useRef, useState } from 'react';
@@ -14,6 +18,9 @@ const ScrollableChat: React.FC<{
 }> = ({ channel, currentMember, members }) => {
   const [messages, setMessages] = useState<ServerMessageWithSender[]>(
     channel.messages
+  );
+  const setFlashReferencedMessageId = useGlobalStore(
+    (state) => state.setFlashReferencedMessageId
   );
 
   const topRef = useRef<HTMLDivElement>(null);
@@ -124,6 +131,36 @@ const ScrollableChat: React.FC<{
     };
   }, [channel.id, messages.length]);
 
+  const scrollToMessage = (messageId: number) => {
+    const element = document.querySelector(`[data-message-id='${messageId}']`);
+    if (element) {
+      setFlashReferencedMessageId(messageId);
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    return undefined;
+  };
+
+  const onReferencedMessageClicked = async (
+    referencedMessage: ServerMessageWithSender
+  ) => {
+    if (!scrollToMessage(referencedMessage.id)) {
+      const aroundMessages = await loadMoreMessagesAround(
+        channel.id,
+        referencedMessage.id
+      );
+
+      const filteredAroundMessages = aroundMessages.filter(
+        (m) => !messages.some((msg) => msg.id === m.id)
+      );
+
+      setMessages((prev) => [...prev, ...filteredAroundMessages]);
+
+      setTimeout(() => {
+        scrollToMessage(referencedMessage.id);
+      }, 100);
+    }
+  };
+
   return (
     <div className="flex-1 overflow-y-scroll overflow-x-hidden flex flex-col-reverse">
       {messages.map((message) => (
@@ -135,9 +172,10 @@ const ScrollableChat: React.FC<{
           time={getCustomDate(new Date(message.createdAt))}
           channel={channel}
           members={members}
+          onReferencedMessageClicked={onReferencedMessageClicked}
         />
       ))}
-      <div ref={topRef} className="p-1" />
+      {/* <div ref={topRef} className="p-1" /> */}
     </div>
   );
 };

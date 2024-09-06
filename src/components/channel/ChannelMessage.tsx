@@ -38,6 +38,7 @@ type TChannelMessageProps = {
   channel?: Channel;
   preview?: boolean;
   members?: MemberWithUser[];
+  onReferencedMessageClicked?: (message: ServerMessageWithSender) => void;
 };
 
 const ChannelMessage: React.FC<TChannelMessageProps> = ({
@@ -48,20 +49,24 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
   channel,
   preview = false,
   members,
+  onReferencedMessageClicked,
 }) => {
   const { openModal } = useModal();
   const {
     editingMessageId,
     setEditingMessageId,
     replyingToMessage,
-    setReplyingToMessage,
+    flashReferencedMessageId,
   } = useGlobalStore((state) => ({
     editingMessageId: state.editingMessageId,
     setEditingMessageId: state.setEditingMessageId,
     replyingToMessage: state.replyingToMessage,
-    setReplyingToMessage: state.setReplyingToMessage,
+    flashReferencedMessageId: state.flashReferencedMessageId,
   }));
 
+  if (!message.reactions) {
+    console.log('HERERHEHREHREH', message.id);
+  }
   const { execute: deleteMessag } = useDeleteMessage();
 
   const isEditing = editingMessageId === message.id;
@@ -107,7 +112,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
 
   const parsedMessage = useMemo(
     () => mentionToSpan(message, preview),
-    [message.content, message.mentions, preview]
+    [message, preview]
   );
 
   const parsedReferencedMessage = useMemo(
@@ -118,6 +123,8 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
     [message.referencedMessage, preview]
   );
 
+  const isFlashing = flashReferencedMessageId === message.id;
+
   const isCurrentReplyingToMessage = replyingToMessage?.id === message.id;
 
   const isMentionned =
@@ -126,7 +133,8 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
     ) ||
       (message.referencedMessage?.senderId === currentMember.id &&
         message.senderId !== currentMember.id)) &&
-    !isCurrentReplyingToMessage;
+    !isCurrentReplyingToMessage &&
+    !isFlashing;
 
   const handleSubmit = (v: TEditMessage) => {
     const parsedContent = spanToMention(v.content);
@@ -152,13 +160,15 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
       channel={channel}
     >
       <div
+        data-message-id={message.id}
         className={cn(
           'relative transition-colors group',
           isMentionned
             ? 'bg-[#444037]/70 hover:bg-[#444037]/50 '
             : 'hover:bg-black/5',
           isSameSender ? 'mb-0 py-[1px]' : 'mb-2 py-2',
-          isCurrentReplyingToMessage && 'bg-[#393c48] hover:bg-[#35384a]'
+          isCurrentReplyingToMessage && 'bg-[#393c48] hover:bg-[#35384a]',
+          isFlashing && 'bg-[#393c48] hover:bg-[#35384a]'
         )}
       >
         {message.referencedMessage && (
@@ -194,7 +204,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
             <div
               className="hover:text-zinc-200 transition-colors cursor-pointer"
               onClick={() => {
-                // setReplyingToMessage(message.referencedMessage);
+                onReferencedMessageClicked?.(message.referencedMessage);
               }}
             >
               {parsedReferencedMessage}

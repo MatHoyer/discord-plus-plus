@@ -4,7 +4,7 @@ import { Member, ServerMessage } from '@prisma/client';
 import { cn } from '.';
 import { checkRole } from './member.utils';
 
-export const MESSAGE_TOP_LIMIT = 50;
+export const MESSAGE_TOP_LIMIT = 10;
 
 export const checkMessage = (
   member: Member,
@@ -68,4 +68,54 @@ export const mentionToSpan = (
     }
     return <span key={index}>{part}</span>;
   });
+};
+
+export const MESSAGE_INCLUDES = {
+  include: {
+    sender: {
+      include: {
+        user: true,
+      },
+    },
+    mentions: {
+      include: {
+        member: {
+          include: {
+            user: true,
+          },
+        },
+      },
+    },
+    reactions: {
+      include: {
+        members: {
+          include: {
+            member: {
+              include: {
+                user: true,
+              },
+            },
+          },
+        },
+      },
+    },
+    referencedMessage: {
+      include: {
+        sender: {
+          include: {
+            user: true,
+          },
+        },
+        mentions: {
+          include: {
+            member: {
+              include: {
+                user: true,
+              },
+            },
+          },
+        },
+      },
+    },
+  },
 };

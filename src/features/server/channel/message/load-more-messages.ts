@@ -1,7 +1,7 @@
 'use server';
 
 import prisma from '@/lib/prisma';
-import { MESSAGE_TOP_LIMIT } from '@/lib/utils/message.utils';
+import { MESSAGE_INCLUDES, MESSAGE_TOP_LIMIT } from '@/lib/utils/message.utils';
 
 export const loadMoreMessages = async (channelId: number, skip: number) => {
   const messages = await prisma.serverMessage.findMany({
@@ -14,53 +14,7 @@ export const loadMoreMessages = async (channelId: number, skip: number) => {
     orderBy: {
       createdAt: 'desc',
     },
-    include: {
-      sender: {
-        include: {
-          user: true,
-        },
-      },
-      mentions: {
-        include: {
-          member: {
-            include: {
-              user: true,
-            },
-          },
-        },
-      },
-      reactions: {
-        include: {
-          members: {
-            include: {
-              member: {
-                include: {
-                  user: true,
-                },
-              },
-            },
-          },
-        },
-      },
-      referencedMessage: {
-        include: {
-          sender: {
-            include: {
-              user: true,
-            },
-          },
-          mentions: {
-            include: {
-              member: {
-                include: {
-                  user: true,
-                },
-              },
-            },
-          },
-        },
-      },
-    },
+    ...MESSAGE_INCLUDES,
   });
 
   const messagesCount = await prisma.serverMessage.count({
@@ -74,4 +28,62 @@ export const loadMoreMessages = async (channelId: number, skip: number) => {
     messages: ServerMessageWithSender[];
     messagesCount: number;
   };
+};
+
+export const loadMoreMessagesAround = async (
+  channelId: number,
+  referencedMessageId: number
+) => {
+  const beforeCount = Math.floor(MESSAGE_TOP_LIMIT / 2);
+  const afterCount = MESSAGE_TOP_LIMIT - beforeCount - 1;
+
+  const referencedMessage = await prisma.serverMessage.findUnique({
+    where: {
+      channelId,
+      id: referencedMessageId,
+    },
+    ...MESSAGE_INCLUDES,
+  });
+
+  if (!referencedMessage) {
+    throw new Error('Message not found');
+  }
+
+  const messagesBefore = await prisma.serverMessage.findMany({
+    where: {
+      channelId,
+      deleted: false,
+      createdAt: {
+        lt: new Date(referencedMessage.createdAt),
+      },
+    },
+    take: beforeCount,
+    orderBy: {
+      createdAt: 'desc',
+    },
+    ...MESSAGE_INCLUDES,
+  });
+
+  const messagesAfter = await prisma.serverMessage.findMany({
+    where: {
+      channelId,
+      deleted: false,
+      createdAt: {
+        gt: new Date(referencedMessage.createdAt),
+      },
+    },
+    take: afterCount,
+    orderBy: {
+      createdAt: 'asc',
+    },
+    ...MESSAGE_INCLUDES,
+  });
+
+  const messages = [
+    ...messagesBefore.reverse(),
+    referencedMessage,
+    ...messagesAfter,
+  ];
+
+  return messages as ServerMessageWithSender[];
 };
