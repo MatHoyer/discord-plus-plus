@@ -1,5 +1,7 @@
 'use server';
+
 import prisma from '@/lib/prisma';
+import { MESSAGE_TOP_LIMIT } from '@/lib/utils/message.utils';
 
 export const loadMoreMessages = async (channelId: number, skip: number) => {
   const messages = await prisma.serverMessage.findMany({
@@ -8,7 +10,7 @@ export const loadMoreMessages = async (channelId: number, skip: number) => {
       deleted: false,
     },
     skip: skip,
-    take: 10,
+    take: MESSAGE_TOP_LIMIT,
     orderBy: {
       createdAt: 'desc',
     },
