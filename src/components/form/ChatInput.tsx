@@ -1,6 +1,7 @@
 'use client';
 import { useEventListener } from '@/hooks/useEventListener';
 import { useGlobalStore } from '@/hooks/useGlobalStore';
+import { useModal } from '@/hooks/useModalStore';
 import { cn } from '@/lib/utils';
 import { mentionClassName } from '@/lib/utils/message.utils';
 import { CircleX } from 'lucide-react';
@@ -43,6 +44,7 @@ const ChatInput: React.FC<TChatInputProps> = ({
     currentMentionnedMember: state.currentMentionnedMember,
     removeCurrentMemberMention: state.removeCurrentMemberMention,
   }));
+  const isModalOpen = useModal((state) => state.isOpen);
   const [filteredMembers, setFilteredMembers] = useState<
     MemberWithUser[] | null
   >(members);
@@ -194,12 +196,13 @@ const ChatInput: React.FC<TChatInputProps> = ({
       if (
         !editingMessageId &&
         document.activeElement !== editableDivRef.current &&
-        !e.ctrlKey
+        !e.ctrlKey &&
+        !isModalOpen
       ) {
         focusInput();
       }
     },
-    [editingMessageId]
+    [editingMessageId, isModalOpen]
   );
 
   useEventListener(
