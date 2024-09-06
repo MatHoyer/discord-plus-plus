@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 import { spanToMention } from '@/lib/utils/message.utils';
 import { socket } from '@/socket';
 import { Channel, Member } from '@prisma/client';
-import { CircleX, Plus, Smile } from 'lucide-react';
+import { CircleX, Pencil, Plus, Smile, Trash } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
@@ -143,14 +143,38 @@ const ChannelChatInput: React.FC<{
               )}
             >
               {attachmentPreviews.map((preview, i) => (
-                <Image
-                  key={i}
-                  src={preview}
-                  width={200}
-                  height={200}
-                  className="rounded-md"
-                  alt="Attachment preview"
-                />
+                <div key={i} className="relative">
+                  <Image
+                    src={preview}
+                    width={200}
+                    height={200}
+                    className="rounded-md"
+                    alt="Attachment preview"
+                  />
+                  <button
+                    style={{
+                      boxShadow: '0 0 5px #242628',
+                    }}
+                    className="absolute z-20 top-0 -right-4 bg-[#313338] border-[#303136] border-[1px] flex p-[1px] text-zinc-400 items-center gap-1 justify-center rounded-md"
+                  >
+                    <div className="group p-1 rounded-md hover:bg-zinc-700 transition-colors">
+                      <Pencil className="w-4 h-4 fill-zinc-400 group-hover:fill-zinc-200 group-hover:text-zinc-200 transition-colors" />
+                    </div>
+                    <div className="group p-1 rounded-md hover:bg-zinc-700 transition-colors">
+                      <Trash
+                        className="w-4 h-4 text-[#da373c]/70 hover:text-[#da373c]/90 transition-colors"
+                        onClick={() => {
+                          setAttachmentPreviews((prev) =>
+                            prev.filter((_, index) => index !== i)
+                          );
+                          setAttachments((prev) =>
+                            prev.filter((_, index) => index !== i)
+                          );
+                        }}
+                      />
+                    </div>
+                  </button>
+                </div>
               ))}
             </div>
           </div>
