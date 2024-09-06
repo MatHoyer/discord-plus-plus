@@ -4,7 +4,6 @@ import { useGlobalStore } from '@/hooks/useGlobalStore';
 import { useModal } from '@/hooks/useModalStore';
 import { cn } from '@/lib/utils';
 import { mentionClassName } from '@/lib/utils/message.utils';
-import { CircleX } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import ChannelMentionSuggestions from '../channel/ChannelMentionSuggestions';
 
@@ -217,7 +216,7 @@ const ChatInput: React.FC<TChatInputProps> = ({
   );
 
   return (
-    <div className="relative">
+    <div>
       <ChannelMentionSuggestions
         members={filteredMembers || []}
         onSelect={handleMentionSelect}
@@ -225,31 +224,23 @@ const ChatInput: React.FC<TChatInputProps> = ({
         xOffset={xOffset}
         yOffset={yOffset}
       />
-      <div
-        className={cn(
-          'hidden bg-[#2b2d31] rounded-t-md px-3 py-2 cursor-pointer select-none',
-          replyingToMessage && !editingMessageId && 'flex items-center'
-        )}
-      >
-        <span className="text-sm text-zinc-400">
-          Replying to{' '}
-          <span className="text-zinc-300 font-semibold">
-            {replyingToMessage?.sender.username}
-          </span>
-        </span>
-        <CircleX
-          className="ml-auto w-5 h-5 fill-zinc-400 hover:fill-zinc-200 text-[#2b2d31] transition-colors"
-          onClick={() => {
-            setReplyingToMessage(undefined);
-          }}
-        />
-      </div>
+
       <div
         ref={editableDivRef}
         onPaste={(e) => {
           e.preventDefault();
+
           const clipboardData =
             e.clipboardData || (window as any).clipboardData;
+          const items = clipboardData.items;
+          for (const item of items) {
+            const { type } = item;
+            if (type.startsWith('image')) {
+              const file = item.getAsFile();
+              if (file) {
+              }
+            }
+          }
           const text = clipboardData.getData('text/plain');
           insertTextAtCursor(text);
         }}

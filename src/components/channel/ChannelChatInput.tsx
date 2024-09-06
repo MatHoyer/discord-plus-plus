@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 import { spanToMention } from '@/lib/utils/message.utils';
 import { socket } from '@/socket';
 import { Channel, Member } from '@prisma/client';
-import { Plus, Smile } from 'lucide-react';
+import { CircleX, Plus, Smile } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
 import { useEffect, useRef, useState } from 'react';
 import { getChannelSocketEvents } from '../../../server/socket/channel';
@@ -103,13 +103,29 @@ const ChannelChatInput: React.FC<{
     <Form {...form} state={state}>
       <form ref={formRef} onSubmit={form.handleSubmit(handleSubmit)}>
         <div className="relative p-4 pb-6">
+          <div
+            className={cn(
+              'hidden bg-[#2b2d31] rounded-t-md px-3 py-2 cursor-pointer select-none absolute w-[calc(100%-2rem)] -top-4',
+              replyingToMessage && !editingMessageId && 'flex items-center'
+            )}
+          >
+            <span className="text-sm text-zinc-400">
+              Replying to{' '}
+              <span className="text-zinc-300 font-semibold">
+                {replyingToMessage?.sender.username}
+              </span>
+            </span>
+            <CircleX
+              className="ml-auto w-5 h-5 fill-zinc-400 hover:fill-zinc-200 text-[#2b2d31] transition-colors"
+              onClick={() => {
+                setReplyingToMessage(undefined);
+              }}
+            />
+          </div>
           <button
             type="button"
             className={cn(
-              'absolute left-8 h-[24px] w-[24px] bg-zinc-500 dark:bg-zinc-400 hover:bg-zinc-600 dark:hover:bg-zinc-300 transition-colors rounded-full p-1 flex items-center justify-center',
-              replyingToMessage && !editingMessageId
-                ? 'top-[66px]'
-                : 'top-[30px]'
+              'absolute left-8 h-[24px] w-[24px] top-[30px] bg-zinc-500 dark:bg-zinc-400 hover:bg-zinc-600 dark:hover:bg-zinc-300 transition-colors rounded-full p-1 flex items-center justify-center'
             )}
           >
             <Plus className="cursor-pointer text-white dark:text-[#313338]" />
