@@ -9,8 +9,8 @@ const IconContainer: React.FC<{ Icon: React.ComponentType<LucideProps> }> = ({
   Icon,
 }) => {
   return (
-    <div className="hover:bg-[#35373c] transition-colors rounded-md p-1 cursor-pointer group">
-      <Icon className="text-zinc-400 group-hover:animate-spin group-hover:text-zinc-200 transition-colors" />
+    <div className="hover:bg-[#35373c] transition-colors rounded-md p-2 cursor-pointer group">
+      <Icon className="text-zinc-400 group-hover:animate-spin group-hover:text-zinc-200 transition-colors h-5 w-5" />
     </div>
   );
 };
