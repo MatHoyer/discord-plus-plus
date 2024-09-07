@@ -53,8 +53,8 @@ const MessageReaction: React.FC<TMessageReactionProps> = ({
             onClick={
               preview
                 ? undefined
-                : async () => {
-                    await execute({
+                : () => {
+                    execute({
                       content: reaction.content,
                       memberId: currentMember.id,
                       messageId: reaction.messageId,
