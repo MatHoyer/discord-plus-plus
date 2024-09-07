@@ -48,7 +48,7 @@ const GuildSearch: React.FC<TGuildSearchProps> = ({ guildId, data }) => {
   const onSuggestionSelected = (id: number, type: 'channel' | 'member') => {
     setIsOpen(false);
     if (type === 'channel') {
-      return router.push(`/guilds/${guildId}/channels/${id}`);
+      return router.push(`/channels/${guildId}/${id}`);
     }
 
     return router.push(`/conversation/${id}`);

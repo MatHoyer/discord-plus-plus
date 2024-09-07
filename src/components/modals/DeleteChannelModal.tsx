@@ -28,7 +28,7 @@ const DeleteChannelModal: React.FC = () => {
     onSuccess: ({ data }) => {
       if (modalDataRef.current?.currentChannelId === data?.channel?.id) {
         router.push(
-          `/guilds/${modalDataRef.current.channel?.guildId}/channels/${data?.generalChannel?.id}`
+          `/channels/${modalDataRef.current.channel?.guildId}/${data?.generalChannel?.id}`
         );
       }
       closeModal();

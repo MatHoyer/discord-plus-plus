@@ -16,7 +16,7 @@ const MemberProfileModal: React.FC = () => {
         aria-describedby={undefined}
       >
         <DialogTitle className="sr-only" />
-        {!!data.member && !!data.user && (
+        {data.member && data.user && (
           <ProfileHeader user={data.user} member={data.member} />
         )}
       </DialogContent>

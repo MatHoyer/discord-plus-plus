@@ -38,7 +38,7 @@ const CreateGuileForm: React.FC<TCreateGuildFormProps> = ({
   } = useAction(createGuild, {
     onSuccess: ({ data }) => {
       close?.();
-      router.push(`/guilds/${data!.id}`);
+      router.push(`/channels/${data!.id}`);
     },
   });
 

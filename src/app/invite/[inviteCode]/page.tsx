@@ -32,7 +32,7 @@ const InvitePage = async (props: PageParams<{ inviteCode: string }>) => {
   });
 
   if (existingServer) {
-    return redirect(`/guilds/${existingServer.id}`);
+    return redirect(`/channels/${existingServer.id}`);
   }
 
   const server = await prisma.guild.update({
@@ -52,7 +52,7 @@ const InvitePage = async (props: PageParams<{ inviteCode: string }>) => {
   });
 
   if (server) {
-    return redirect(`/guilds/${server.id}`);
+    return redirect(`/channels/${server.id}`);
   }
 };
 

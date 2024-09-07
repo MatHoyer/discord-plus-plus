@@ -50,7 +50,7 @@ const CreateChannelForm: React.FC<TCreateServerFormProps> = ({
   } = useAction(createChannel, {
     onSuccess: ({ data }) => {
       close?.();
-      router.push(`/guilds/${guildId}/channels/${data!.id}`);
+      router.push(`/channels/${guildId}/${data!.id}`);
       socket.emit(ServerSocketEvents.newChannel, data);
     },
   });

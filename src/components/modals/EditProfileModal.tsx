@@ -12,7 +12,7 @@ const EditProfileModal: React.FC = () => {
 
   return (
     <FullScreenModal open={open} onOpenChange={closeModal}>
-      {data.user ? (
+      {data.user && (
         <div className="flex">
           <div className="flex flex-1">
             <div className="flex flex-auto h-screen bg-[#2b2d31] justify-end">
@@ -52,7 +52,7 @@ const EditProfileModal: React.FC = () => {
             </div>
           </div>
         </div>
-      ) : null}
+      )}
     </FullScreenModal>
   );
 };

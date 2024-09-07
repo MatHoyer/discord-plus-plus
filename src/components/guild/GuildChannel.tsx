@@ -37,7 +37,7 @@ const GuildChannel: React.FC<TServerChannelProps> = ({
       )}
       <button
         onClick={() => {
-          router.push(`/guilds/${guildId}/channels/${channel.id}`);
+          router.push(`/channels/${guildId}/${channel.id}`);
           onClick?.(channel.id);
         }}
         className={cn(

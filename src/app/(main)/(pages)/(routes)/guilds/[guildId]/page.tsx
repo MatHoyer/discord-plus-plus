@@ -10,7 +10,7 @@ const ServerPage = async (props: PageParams<{ guildId: string }>) => {
   });
 
   if (channel)
-    return redirect(`/guilds/${props.params.guildId}/channels/${channel.id}`);
+    return redirect(`/channels/${props.params.guildId}/${channel.id}`);
 
   redirect('/');
 };

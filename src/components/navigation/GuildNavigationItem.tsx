@@ -14,7 +14,7 @@ const GuildNavigationItem: React.FC<{ guild: Guild }> = ({ guild }) => {
       label={guild.name}
       isSelected={guildId === guild.id.toString()}
       onClick={() => {
-        router.push(`/guilds/${guild.id}`);
+        router.push(`/channels/${guild.id}`);
       }}
       side="right"
       align="center"

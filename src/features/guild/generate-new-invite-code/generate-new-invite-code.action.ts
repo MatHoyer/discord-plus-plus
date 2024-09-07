@@ -23,7 +23,7 @@ export const generateNewInviteCode = authClient
       },
     });
 
-    revalidatePath(`/guilds/${server.id}`);
+    revalidatePath(`/channels/${server.id}`);
 
     return server;
   });
