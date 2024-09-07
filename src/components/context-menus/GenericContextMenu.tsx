@@ -13,7 +13,9 @@ import {
   ContextMenuTrigger,
 } from '../ui/context-menu';
 
-export const isSeparator = (item: TItem): item is { seperator: true } => {
+export const isSeparator = (
+  item: TItem
+): item is { seperator: true; when?: boolean } => {
   return (item as any).seperator === true;
 };
 
@@ -29,7 +31,9 @@ const GenericContextMenuItem = <T extends TItem>({
   computeMenuItemClassName,
 }: TGenericContextMenuItemProps<T>) => {
   return isSeparator(item) ? (
-    <ContextMenuSeparator className="bg-[#2e2f34]" />
+    item.when === undefined || (item.when && item.when) ? (
+      <ContextMenuSeparator className="bg-[#2e2f34]" />
+    ) : null
   ) : item.when === undefined ||
     (item.when &&
       (isFunction(item.when) ? item.when(item, index) : item.when)) ? (
@@ -121,6 +125,7 @@ type TItem =
     } & VariantProps<typeof menuItemVariants>)
   | {
       seperator: true;
+      when?: boolean;
     };
 
 type TGenericContextMenuProps<T extends TItem> = {
@@ -150,6 +155,12 @@ const GenericContextMenu = <T extends TItem>({
           contentClassName,
           disabled && 'hidden'
         )}
+        onContextMenu={(e) => {
+          // prevent having multiple context menus open at the same time
+          if (e.button === 2) {
+            e.preventDefault();
+          }
+        }}
       >
         {items.map((item, index) => (
           <GenericContextMenuItem

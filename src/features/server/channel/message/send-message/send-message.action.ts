@@ -45,7 +45,7 @@ export const sendMessage = authClient
         fs.writeFileSync(fullFilePath, buffer);
 
         storedAttachments.push({
-          filename: attachment.name,
+          filename: fileName,
           contentType: attachment.type,
           size: attachment.size,
           url: '/' + filePath.replaceAll('\\', '/'),

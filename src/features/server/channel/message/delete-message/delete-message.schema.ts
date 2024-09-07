@@ -6,3 +6,5 @@ export const deleteMessageSchema = z.object({
   serverId: positiveNumber,
   channelId: positiveNumber,
 });
+
+export type TDeleteMessageSchema = z.infer<typeof deleteMessageSchema>;

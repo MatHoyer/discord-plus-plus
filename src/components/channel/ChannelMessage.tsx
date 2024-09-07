@@ -1,3 +1,4 @@
+import { deleteAttachment } from '@/features/server/channel/message/delete-attachment/delete-attachment.action';
 import { useDeleteMessage } from '@/features/server/channel/message/delete-message/delete-message.hook';
 import { editMessage } from '@/features/server/channel/message/edit-message/edit-message.action';
 import {
@@ -67,7 +68,10 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
     flashReferencedMessageId: state.flashReferencedMessageId,
   }));
 
-  const { execute: deleteMessag } = useDeleteMessage();
+  const { execute: deleteMessage } = useDeleteMessage();
+  const { execute: executeDeleteAttachment } = useAction(deleteAttachment, {
+    onSuccess: ({ data }) => {},
+  });
 
   const isEditing = editingMessageId === message.id;
 
@@ -364,24 +368,39 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
                         key={attachment.id}
                         className="relative group/attachment"
                       >
-                        <Image
-                          src={attachment.url}
-                          width={200}
-                          height={200}
-                          alt="attachment"
-                          className="rounded-md cursor-pointer"
-                        />
+                        <ChannelMessageContextMenu
+                          member={member}
+                          currentMember={currentMember}
+                          message={message}
+                          disabled={preview}
+                          channel={channel}
+                          attachment={attachment}
+                        >
+                          <Image
+                            src={attachment.url}
+                            width={0}
+                            height={0}
+                            alt="attachment"
+                            sizes="100vw"
+                            className="rounded-md cursor-pointer w-full h-auto"
+                          />
+                        </ChannelMessageContextMenu>
                         <ActionTooltip label="Delete">
                           <button
                             style={{
                               boxShadow: '0 0 5px #242628',
                             }}
-                            className="group/attachment-inside group-hover/attachment:flex hidden absolute right-0 top-2 cursor-pointer bg-[#313338] hover:bg-red-500 p-1 rounded-md transition-colors border-[#303136] border-[1px]"
+                            className="group/attachment-inside group-hover/attachment:flex hidden absolute right-0 top-2 cursor-pointer bg-[#313338] hover:bg-red-500 hover:border-red-500 p-1 rounded-md transition-colors border-[#303136] border-[1px]"
+                            onClick={() => {
+                              executeDeleteAttachment({
+                                atachmentId: attachment.id,
+                                channelId: message.channelId,
+                                messageId: message.id,
+                                serverId: message.sender.serverId,
+                              });
+                            }}
                           >
-                            <Trash2
-                              className="w-5 h-5 text-zinc-400 group-hover/attachment-inside:text-zinc-200 transition-colors"
-                              onClick={() => {}}
-                            />
+                            <Trash2 className="w-5 h-5 text-zinc-400 group-hover/attachment-inside:text-zinc-200 transition-colors" />
                           </button>
                         </ActionTooltip>
                       </div>
@@ -410,7 +429,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
                     className="cursor-pointer ml-auto w-4 h-4 text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors"
                     onClick={(e) => {
                       if (e.shiftKey) {
-                        deleteMessag({
+                        deleteMessage({
                           channelId: message.channelId,
                           messageId: message.id,
                           serverId: channel!.serverId,

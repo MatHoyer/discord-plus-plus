@@ -3,14 +3,16 @@ import { useDeleteMessage } from '@/features/server/channel/message/delete-messa
 import { reactToMessage } from '@/features/server/channel/message/react-to-message/react-to-message.action';
 import { useGlobalStore } from '@/hooks/useGlobalStore';
 import { useModal } from '@/hooks/useModalStore';
+import { getAttachmentAsBlob } from '@/lib/utils/attachment.utils';
 import { checkMessage } from '@/lib/utils/message.utils';
 import { socket } from '@/socket';
-import { Channel } from '@prisma/client';
+import { Channel, ServerMessageAttachment } from '@prisma/client';
 import {
   ClipboardCopy,
   Edit,
   Fingerprint,
   Reply,
+  Save,
   SmilePlus,
   Trash,
 } from 'lucide-react';
@@ -24,6 +26,7 @@ type TChannelMessageContextMenuProps = {
   currentMember: MemberWithUser;
   message: ServerMessageWithSender;
   channel?: Channel;
+  attachment?: ServerMessageAttachment;
 };
 
 const EMOJIS = [
@@ -41,7 +44,15 @@ const ChannelMessageContextMenu: React.FC<
   TChannelMessageContextMenuProps &
     PropsWithChildren &
     Omit<ComponentProps<typeof GenericContextMenu>, 'items'>
-> = ({ member, currentMember, message, channel, children, ...props }) => {
+> = ({
+  member,
+  currentMember,
+  message,
+  channel,
+  attachment,
+  children,
+  ...props
+}) => {
   const { canDeleteMessage, canEditMessage } = checkMessage(
     member,
     currentMember,
@@ -72,6 +83,9 @@ const ChannelMessageContextMenu: React.FC<
       }
     },
   });
+
+  const isAttachment = !!attachment;
+  const isImage = isAttachment && attachment?.contentType.startsWith('image/');
 
   return (
     <GenericContextMenu
@@ -149,6 +163,36 @@ const ChannelMessageContextMenu: React.FC<
             }
           },
           when: canDeleteMessage,
+        },
+        {
+          seperator: true,
+          when: isAttachment,
+        },
+        {
+          label: 'Copy Image',
+          when: isImage,
+          icon: ClipboardCopy,
+          onClick: async () => {
+            const blob = await getAttachmentAsBlob(attachment!.url);
+            console.log(blob);
+            await navigator.clipboard.write([
+              new ClipboardItem({
+                [blob.type]: blob,
+              }),
+            ]);
+          },
+        },
+        {
+          label: 'Save Image',
+          when: isImage,
+          icon: Save,
+          onClick: async () => {
+            const blob = await getAttachmentAsBlob(attachment!.url);
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'image.png';
+            link.click();
+          },
         },
         {
           seperator: true,
