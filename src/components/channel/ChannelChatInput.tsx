@@ -5,7 +5,9 @@ import {
   sendMessageSchema,
   TSendMessage,
 } from '@/features/server/channel/message/send-message/send-message.schema';
+import { useEventListener } from '@/hooks/useEventListener';
 import { useGlobalStore } from '@/hooks/useGlobalStore';
+import { useModal } from '@/hooks/useModalStore';
 import { cn } from '@/lib/utils';
 import { spanToMention } from '@/lib/utils/message.utils';
 import { socket } from '@/socket';
@@ -33,6 +35,8 @@ const ChannelChatInput: React.FC<{
       setReplyingToMessage: state.setReplyingToMessage,
       editingMessageId: state.editingMessageId,
     }));
+
+  const { isOpen, openModal, closeModal } = useModal();
 
   const formRef = useRef<HTMLFormElement>(null);
   const inputRef = useRef<HTMLDivElement>(null);
@@ -110,6 +114,65 @@ const ChannelChatInput: React.FC<{
       socket.off(channelSocketEvents.stopTyping);
     };
   }, [channel.id]);
+
+  useEventListener(
+    'dragenter',
+    (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      openModal('uploadAttachment', { channel });
+    },
+    []
+  );
+
+  useEventListener(
+    'dragover',
+    (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+    },
+    []
+  );
+
+  useEventListener(
+    'drop',
+    (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const files = e.dataTransfer?.files;
+      if (files && files.length > 0) {
+        for (const file of files) {
+          setAttachments((prev) => [...prev, file]);
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const imageSrc = e.target?.result as string;
+            if (imageSrc) {
+              setAttachmentPreviews((prev) => [...prev, imageSrc]);
+            }
+          };
+          reader.readAsDataURL(file);
+        }
+      }
+      closeModal();
+    },
+    []
+  );
+
+  useEventListener('dragleave', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (
+      e.clientX <= 0 ||
+      e.clientY <= 0 ||
+      e.clientX >= window.innerWidth ||
+      e.clientY >= window.innerHeight
+    ) {
+      closeModal();
+    }
+  });
 
   const content = form.watch('content');
 

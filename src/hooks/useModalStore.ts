@@ -9,7 +9,8 @@ export type TModalType =
   | 'deleteChannelMessage'
   | 'deleteChannel'
   | 'editChannel'
-  | 'memberProfile';
+  | 'memberProfile'
+  | 'uploadAttachment';
 
 type TModalData = {
   server?: Server;

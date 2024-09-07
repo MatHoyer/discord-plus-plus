@@ -14,7 +14,12 @@ export const deleteAttachment = authClient
       flattenValidationErrors(ve).fieldErrors,
   })
   .action(async ({ parsedInput, ctx }) => {
-    const { messageId, channelId, serverId, atachmentId } = parsedInput;
+    const {
+      messageId,
+      channelId,
+      serverId,
+      attachmentId: atachmentId,
+    } = parsedInput;
 
     const message = await checkMessage({
       channelId,

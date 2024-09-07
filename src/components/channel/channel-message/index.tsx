@@ -332,7 +332,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
                   preview={preview}
                   onDeleteAttachment={(attachment) => {
                     executeDeleteAttachment({
-                      atachmentId: attachment.id,
+                      attachmentId: attachment.id,
                       channelId: message.channelId,
                       messageId: message.id,
                       serverId: message.sender.serverId,

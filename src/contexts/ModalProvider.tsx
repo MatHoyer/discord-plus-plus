@@ -5,6 +5,7 @@ import DeleteChannelModal from '@/components/modals/DeleteChannelModal';
 import EditChannelModal from '@/components/modals/EditChannelModal';
 import InvitePeopleModal from '@/components/modals/InvitePeopleModal';
 import MemberProfileModal from '@/components/modals/MemberProfileModal';
+import UploadAttachmentModal from '@/components/modals/UploadAttachmentModal';
 
 const ModalProvider: React.FC = () => {
   return (
@@ -16,6 +17,7 @@ const ModalProvider: React.FC = () => {
       <DeleteChannelModal />
       <EditChannelModal />
       <MemberProfileModal />
+      <UploadAttachmentModal />
     </>
   );
 };

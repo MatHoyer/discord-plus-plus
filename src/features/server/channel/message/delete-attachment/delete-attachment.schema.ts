@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { deleteMessageSchema } from '../delete-message/delete-message.schema';
 
 export const deleteAttachmentSchema = deleteMessageSchema.extend({
-  atachmentId: positiveNumber,
+  attachmentId: positiveNumber,
 });
 
 export type TDeleteAttachmentSchema = z.infer<typeof deleteAttachmentSchema>;
