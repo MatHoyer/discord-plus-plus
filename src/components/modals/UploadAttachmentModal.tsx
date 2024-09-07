@@ -24,21 +24,21 @@ const UploadAttachmentModal: React.FC = () => {
               width={80}
               height={80}
               alt="left upload"
-              className="-rotate-[38deg] absolute -top-20 right-[calc(50%+8px)]"
+              className="-rotate-[38deg] absolute -top-20 right-[calc(50%+15px)]"
             />
             <Image
               src="/assets/upload-middle.svg"
               width={80}
               height={80}
               alt="left upload"
-              className="absolute -top-20 right-[calc(50%-40px)] z-30"
+              className="absolute -top-[90px] right-[calc(50%-40px)] z-30"
             />
             <Image
               src="/assets/upload-right.svg"
               width={80}
               height={80}
               alt="left upload"
-              className="rotate-[38deg] absolute -top-20 right-[calc(50%-85px)]"
+              className="rotate-[35deg] absolute -top-[110px] right-[calc(50%-70px)] origin-bottom-left"
             />
             <div className="mt-12">
               <h1 className="text-2xl font-bold">
