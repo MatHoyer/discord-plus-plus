@@ -385,24 +385,26 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
                             className="rounded-md cursor-pointer w-full h-auto"
                           />
                         </ChannelMessageContextMenu>
-                        <ActionTooltip label="Delete">
-                          <button
-                            style={{
-                              boxShadow: '0 0 5px #242628',
-                            }}
-                            className="group/attachment-inside group-hover/attachment:flex hidden absolute right-0 top-2 cursor-pointer bg-[#313338] hover:bg-red-500 hover:border-red-500 p-1 rounded-md transition-colors border-[#303136] border-[1px]"
-                            onClick={() => {
-                              executeDeleteAttachment({
-                                atachmentId: attachment.id,
-                                channelId: message.channelId,
-                                messageId: message.id,
-                                serverId: message.sender.serverId,
-                              });
-                            }}
-                          >
-                            <Trash2 className="w-5 h-5 text-zinc-400 group-hover/attachment-inside:text-zinc-200 transition-colors" />
-                          </button>
-                        </ActionTooltip>
+                        {!preview && (
+                          <ActionTooltip label="Delete">
+                            <button
+                              style={{
+                                boxShadow: '0 0 5px #242628',
+                              }}
+                              className="group/attachment-inside group-hover/attachment:flex hidden absolute right-0 top-2 cursor-pointer bg-[#313338] hover:bg-red-500 hover:border-red-500 p-1 rounded-md transition-colors border-[#303136] border-[1px]"
+                              onClick={() => {
+                                executeDeleteAttachment({
+                                  atachmentId: attachment.id,
+                                  channelId: message.channelId,
+                                  messageId: message.id,
+                                  serverId: message.sender.serverId,
+                                });
+                              }}
+                            >
+                              <Trash2 className="w-5 h-5 text-zinc-400 group-hover/attachment-inside:text-zinc-200 transition-colors" />
+                            </button>
+                          </ActionTooltip>
+                        )}
                       </div>
                     ))}
                   </div>
