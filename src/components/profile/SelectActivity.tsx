@@ -34,7 +34,7 @@ const SelectActivity: React.FC<TSelectActivityProps> = ({ member }) => {
   return (
     <div className="w-full">
       <DropdownMenu>
-        <DropdownMenuTrigger className="w-full flex justify-start items-center ">
+        <DropdownMenuTrigger className="w-full flex justify-start items-center">
           <ActivityState activity={users[member.user.id] || Activity.Online} />
           <ChevronRight className="text-[#b0b4bb] h-4 w-4" />
         </DropdownMenuTrigger>

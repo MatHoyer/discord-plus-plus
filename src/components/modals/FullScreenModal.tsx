@@ -1,5 +1,5 @@
 import React, { ComponentProps, PropsWithChildren } from 'react';
-import { Dialog, DialogContent } from '../ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '../ui/dialog';
 
 type TFullScreenModalProps = {} & PropsWithChildren &
   ComponentProps<typeof Dialog>;
@@ -15,6 +15,7 @@ const FullScreenModal: React.FC<TFullScreenModalProps> = ({
         aria-describedby={undefined}
         showClose={false}
       >
+        <DialogTitle className="sr-only">Full screen modal</DialogTitle>
         {children}
       </DialogContent>
     </Dialog>
