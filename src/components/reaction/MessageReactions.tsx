@@ -14,6 +14,7 @@ const MessageReactions: React.FC<TMessageReactionsProps> = ({
   channel,
 }) => {
   if (reactions.length === 0) return null;
+  console.log('coucou');
 
   return (
     <div className="flex gap-2 group mt-[4.5px]">
