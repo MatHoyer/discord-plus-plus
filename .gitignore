@@ -37,4 +37,4 @@ next-env.d.ts
 
 dist
 
-/public/uploads
+/public/uploads/upload*
