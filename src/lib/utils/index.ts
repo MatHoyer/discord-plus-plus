@@ -1,7 +1,7 @@
 import { Channeltype } from '@prisma/client';
 import { clsx, type ClassValue } from 'clsx';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { enUs } from 'date-fns/locale';
 import { Hash, Volume2 } from 'lucide-react';
 import { twMerge } from 'tailwind-merge';
 
@@ -18,13 +18,14 @@ export enum DateString {
   month = 'MMMM yyyy',
   year = 'yyyy',
   time = 'HH:mm',
+  ddddMMYYYY = 'MMMM dd, yyyy',
 }
 
 export const getDateAsString = (
   date: Date,
   type: DateString = DateString.full
 ) => {
-  return format(date, type, { locale: fr });
+  return format(date, type, { locale: enUs });
 };
 
 export const getCustomDate = (date: Date) => {

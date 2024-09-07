@@ -169,6 +169,7 @@ const ScrollableChat: React.FC<{
           key={message.id}
           message={message}
           previousMessage={messages[index + 1]}
+          nextMessage={messages[index - 1]}
           currentMember={currentMember}
           time={getCustomDate(new Date(message.createdAt))}
           channel={channel}
@@ -176,7 +177,7 @@ const ScrollableChat: React.FC<{
           onReferencedMessageClicked={onReferencedMessageClicked}
         />
       ))}
-      {/* <div ref={topRef} className="p-1" /> */}
+      <div ref={topRef} className="p-1" />
     </div>
   );
 };
