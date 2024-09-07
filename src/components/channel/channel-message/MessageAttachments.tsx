@@ -9,6 +9,7 @@ type TMessageAttachmentsProps = {
   Wrapper: React.ReactElement;
   preview?: boolean;
   onDeleteAttachment?: (attachment: ServerMessageAttachment) => void;
+  isOwner?: boolean;
 };
 
 const MessageAttachments: React.FC<TMessageAttachmentsProps> = ({
@@ -16,6 +17,7 @@ const MessageAttachments: React.FC<TMessageAttachmentsProps> = ({
   Wrapper,
   preview,
   onDeleteAttachment,
+  isOwner,
 }) => {
   return (
     (message?.attachments?.length || 0) > 0 && (
@@ -34,7 +36,7 @@ const MessageAttachments: React.FC<TMessageAttachmentsProps> = ({
                 className="rounded-md cursor-pointer w-full h-auto"
               />
             )}
-            {!preview && (
+            {!preview && isOwner && (
               <ActionTooltip label="Delete">
                 <button
                   style={{

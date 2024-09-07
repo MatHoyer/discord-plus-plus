@@ -90,7 +90,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
   const member = message.sender;
   const isUpdated = !isEqual(message.createdAt, message.updatedAt);
 
-  const { canDeleteMessage, canEditMessage } = checkMessage(
+  const { canDeleteMessage, canEditMessage, isOwner } = checkMessage(
     member,
     currentMember,
     message
@@ -351,6 +351,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
                       channel={channel}
                     />
                   }
+                  isOwner={isOwner}
                 />
               </div>
             </div>
