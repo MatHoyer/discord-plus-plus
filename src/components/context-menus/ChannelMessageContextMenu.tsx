@@ -159,6 +159,7 @@ const ChannelMessageContextMenu: React.FC<
                 serverMessage: message,
                 currentMember,
                 channel,
+                user: currentMember.user,
               });
             }
           },

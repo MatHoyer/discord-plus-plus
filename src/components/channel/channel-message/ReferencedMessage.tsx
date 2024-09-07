@@ -16,23 +16,24 @@ const ReferencedMessage: React.FC<TReferencedMessageProps> = ({
   preview,
   onReferencedMessageClicked,
 }) => {
+  const { referencedMessage } = message;
+
   const parsedReferencedMessage = useMemo(
-    () =>
-      message.referencedMessage
-        ? mentionToSpan(message.referencedMessage, preview)
-        : [],
-    [message.referencedMessage, preview]
+    () => (referencedMessage ? mentionToSpan(referencedMessage, preview) : []),
+    [referencedMessage, preview]
   );
 
   return (
-    message.referencedMessage && (
+    referencedMessage && (
       <div className="before:content-[''] before:absolute before:border-zinc-500 before:left-[28px] before:top-[10px] before:w-[22px] md:before:left-[35px] md:before:top-[9px] md:before:w-[25px] before:h-[11px] before:rounded-tl-md before:border-0 before:border-t-2 before:border-l-2 ml-[53px] md:ml-16 mb-[1.5px] text-xs text-zinc-400 flex gap-1 items-center">
         <ProfileContextMenu
-          member={message.referencedMessage.sender}
+          user={referencedMessage.sender.user}
+          member={referencedMessage.sender}
           disabled={preview}
         >
           <ProfilePopover
-            member={message.referencedMessage.sender}
+            user={referencedMessage.sender.user}
+            member={referencedMessage.sender}
             asChild={false}
             disabled={preview}
             triggerProps={{
@@ -40,7 +41,7 @@ const ReferencedMessage: React.FC<TReferencedMessageProps> = ({
             }}
           >
             <UserAvatar
-              src={message.referencedMessage.sender.user.image}
+              src={referencedMessage.sender.user.image}
               size="xxs"
               className="mt-[6px] md:mt-[1.5px]"
             />
@@ -50,14 +51,14 @@ const ReferencedMessage: React.FC<TReferencedMessageProps> = ({
                 !preview && 'hover:underline cursor-pointer'
               )}
             >
-              {message.referencedMessage.sender.username}
+              {referencedMessage.sender.username}
             </p>
           </ProfilePopover>
         </ProfileContextMenu>
         <div
           className="hover:text-zinc-200 transition-colors cursor-pointer"
           onClick={() => {
-            onReferencedMessageClicked?.(message.referencedMessage);
+            onReferencedMessageClicked?.(referencedMessage);
           }}
         >
           {parsedReferencedMessage}

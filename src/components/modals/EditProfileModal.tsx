@@ -12,20 +12,22 @@ const EditProfileModal: React.FC = () => {
 
   return (
     <FullScreenModal open={open} onOpenChange={closeModal}>
-      {data.currentMember ? (
+      {data.user ? (
         <div className="flex">
-          <div className="flex flex-1 justify-end">
-            <ScrollArea className="flex flex-auto  h-screen bg-[#2b2d31] justify-end items-start">
-              <nav className="max-w-[200px] min-w-[200px] p-[60px_6px_60px_20px]">
-                <div className="flex flex-col space-y-3">
-                  <h3 className="uppercase text-xs text-zinc-400">
-                    User settings
-                  </h3>
-                  <div className="h-[2000px]">My Account</div>
-                  <div>coucou</div>
-                </div>
-              </nav>
-            </ScrollArea>
+          <div className="flex flex-1">
+            <div className="flex flex-auto h-screen bg-[#2b2d31] justify-end">
+              <ScrollArea>
+                <nav className="max-w-[200px] min-w-[200px] p-[60px_6px_60px_20px]">
+                  <div className="flex flex-col space-y-3">
+                    <h3 className="uppercase text-xs text-zinc-400">
+                      User settings
+                    </h3>
+                    <div className="h-[2000px]">My Account</div>
+                    <div>coucou</div>
+                  </div>
+                </nav>
+              </ScrollArea>
+            </div>
           </div>
           <div className="flex flex-[1_1_800px] ">
             <div className="flex-1 h-screen bg-[#313338]">

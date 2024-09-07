@@ -68,6 +68,7 @@ const ServerPage = async (
             channel={channel as ChannelWithMessages}
             currentMember={currentMember}
             members={members}
+            user={session.user}
           />
           <ChannelChatInput
             channel={channel}

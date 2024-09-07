@@ -48,8 +48,14 @@ export const mentionToSpan = (
             key={index}
             member={mention.member}
             disabled={disabled}
+            user={message.sender.user}
           >
-            <ProfilePopover member={mention.member} asChild disabled={disabled}>
+            <ProfilePopover
+              member={mention.member}
+              asChild
+              disabled={disabled}
+              user={message.sender.user}
+            >
               <span
                 role="button"
                 aria-expanded="false"

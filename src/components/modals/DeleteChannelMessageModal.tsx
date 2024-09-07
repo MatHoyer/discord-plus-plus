@@ -26,7 +26,10 @@ const DeleteChannelMessageModal: React.FC = () => {
   return (
     <Dialog open={open} onOpenChange={closeModal}>
       <DialogContent className="overflow-hidden" aria-describedby={undefined}>
-        {!message || !data.currentMember || !data.channel ? null : (
+        {!message ||
+        !data.currentMember ||
+        !data.channel ||
+        !data.user ? null : (
           <>
             <DialogHeader className="space-y-3">
               <DialogTitle className="text-xl font-bold">
@@ -44,6 +47,7 @@ const DeleteChannelMessageModal: React.FC = () => {
                   message={message}
                   time={getCustomDate(new Date(message.createdAt))}
                   currentMember={data.currentMember!}
+                  user={data.user}
                   preview
                 />
               </div>

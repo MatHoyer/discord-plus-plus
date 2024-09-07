@@ -36,7 +36,7 @@ const ChannelChatInput: React.FC<{
     })
   );
 
-  const { openModal, closeModal } = useModal();
+  const { isOpen, openModal, closeModal } = useModal();
 
   const formRef = useRef<HTMLFormElement>(null);
   const inputRef = useRef<HTMLDivElement>(null);
@@ -115,50 +115,40 @@ const ChannelChatInput: React.FC<{
     };
   }, [channel.id]);
 
-  useEventListener(
-    'dragenter',
-    (e) => {
-      e.preventDefault();
-      e.stopPropagation();
+  useEventListener('dragenter', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  });
 
-      openModal('uploadAttachment', { channel });
-    },
-    []
-  );
+  useEventListener('dragover', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
 
-  useEventListener(
-    'dragover',
-    (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-    },
-    []
-  );
+    if ((e.dataTransfer?.files.length || 0) === 0 || isOpen) return;
 
-  useEventListener(
-    'drop',
-    (e) => {
-      e.preventDefault();
-      e.stopPropagation();
+    openModal('uploadAttachment', { channel });
+  });
 
-      const files = e.dataTransfer?.files;
-      if (files && files.length > 0) {
-        for (const file of files) {
-          setAttachments((prev) => [...prev, file]);
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            const imageSrc = e.target?.result as string;
-            if (imageSrc) {
-              setAttachmentPreviews((prev) => [...prev, imageSrc]);
-            }
-          };
-          reader.readAsDataURL(file);
-        }
+  useEventListener('drop', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const files = e.dataTransfer?.files;
+    if (files && files.length > 0) {
+      for (const file of files) {
+        setAttachments((prev) => [...prev, file]);
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const imageSrc = e.target?.result as string;
+          if (imageSrc) {
+            setAttachmentPreviews((prev) => [...prev, imageSrc]);
+          }
+        };
+        reader.readAsDataURL(file);
       }
-      closeModal();
-    },
-    []
-  );
+    }
+    closeModal();
+  });
 
   useEventListener('dragleave', (e) => {
     e.preventDefault();

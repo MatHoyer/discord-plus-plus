@@ -15,7 +15,7 @@ import {
   spanToMention,
 } from '@/lib/utils/message.utils';
 import { socket } from '@/socket';
-import { Channel } from '@prisma/client';
+import { Channel, User } from '@prisma/client';
 import { differenceInMinutes, format, isEqual, isSameDay } from 'date-fns';
 import { Edit, Trash2 } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
@@ -44,6 +44,7 @@ type TChannelMessageProps = {
   message: ServerMessageWithSender;
   previousMessage?: ServerMessageWithSender;
   nextMessage?: ServerMessageWithSender;
+  user: User;
   currentMember: MemberWithUser;
   channel?: Channel;
   preview?: boolean;
@@ -56,6 +57,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
   message,
   previousMessage,
   nextMessage,
+  user,
   currentMember,
   channel,
   preview = false,
@@ -231,8 +233,13 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
                     </span>
                   </div>
                 ) : (
-                  <ProfileContextMenu member={member} disabled={preview}>
+                  <ProfileContextMenu
+                    user={member.user}
+                    member={member}
+                    disabled={preview}
+                  >
                     <ProfilePopover
+                      user={member.user}
                       member={member}
                       asChild={false}
                       disabled={preview}
@@ -255,8 +262,16 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
                   {!isPreviousMessageSameSender && (
                     <>
                       <div className="flex items-center gap-x-2">
-                        <ProfileContextMenu member={member} disabled={preview}>
-                          <ProfilePopover member={member} disabled={preview}>
+                        <ProfileContextMenu
+                          user={user}
+                          member={member}
+                          disabled={preview}
+                        >
+                          <ProfilePopover
+                            user={user}
+                            member={member}
+                            disabled={preview}
+                          >
                             <p
                               className={cn(
                                 'font-semibold text-sm',
@@ -385,6 +400,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
                           serverMessage: message,
                           currentMember,
                           channel,
+                          user: member.user,
                         });
                       }
                     }}
