@@ -1,6 +1,7 @@
 'use client';
 
 import { useActivity } from '@/hooks/useActivityStore';
+import { Member, User } from '@prisma/client';
 import { Headphones, LucideProps, Mic, Settings } from 'lucide-react';
 import { Activity } from '../../../server/User';
 import ChannelMemberProfileWithActivity from '../channel/ChannelMemberProfileWithActivity';
@@ -16,18 +17,26 @@ const IconContainer: React.FC<{ Icon: React.ComponentType<LucideProps> }> = ({
 };
 
 type TSideBarProfileProps = {
-  currentMember: MemberWithUser;
+  user: User;
+  currentMember?: Member;
 };
 
-const SideBarProfile: React.FC<TSideBarProfileProps> = ({ currentMember }) => {
+const SideBarProfile: React.FC<TSideBarProfileProps> = ({
+  user,
+  currentMember,
+}) => {
   const users = useActivity((state) => state.users);
 
   return (
     <div className="w-full p-2 flex items-center bg-[#232428]">
       <div className="max-w-[50%]">
-        <ChannelMemberProfileWithActivity member={currentMember} isSideBar>
+        <ChannelMemberProfileWithActivity
+          user={user}
+          member={currentMember}
+          isSideBar
+        >
           <div className="truncate text-xs text-zinc-400">
-            {Activity[users[currentMember.userId]]}
+            {Activity[users[user.id]]}
           </div>
         </ChannelMemberProfileWithActivity>
       </div>

@@ -124,7 +124,7 @@ const ServerSidebar: React.FC<TServerSidebarProps> = async ({ serverId }) => {
           />
         </ScrollArea>
       </ChannelsContextMenu>
-      <SideBarProfile currentMember={currentMember!} />
+      <SideBarProfile user={session.user} currentMember={currentMember!} />
     </div>
   );
 };

@@ -2,19 +2,21 @@
 import { useGlobalStore } from '@/hooks/useGlobalStore';
 import { useModal } from '@/hooks/useModalStore';
 import { useToast } from '@/hooks/useToast';
+import { Member, User } from '@prisma/client';
 import { AtSign, CircleUserRound, Fingerprint } from 'lucide-react';
 import React, { ComponentProps, PropsWithChildren } from 'react';
 import GenericContextMenu from './GenericContextMenu';
 
 type TProfileContextMenuProps = {
-  member: MemberWithUser;
+  user: User;
+  member?: Member;
 };
 
 const ProfileContextMenu: React.FC<
   TProfileContextMenuProps &
     PropsWithChildren &
     Omit<ComponentProps<typeof GenericContextMenu>, 'items'>
-> = ({ member, children, ...props }) => {
+> = ({ user, member, children, ...props }) => {
   const { openModal } = useModal();
   const { toast } = useToast();
 
@@ -30,14 +32,15 @@ const ProfileContextMenu: React.FC<
           label: 'Profile',
           icon: CircleUserRound,
           onClick: () => {
-            openModal('memberProfile', { member });
+            openModal('memberProfile', { user, member });
           },
         },
         {
           label: 'Mention',
           icon: AtSign,
+          when: !!member,
           onClick: () => {
-            addCurrentMemberMention(member);
+            addCurrentMemberMention(member!);
           },
         },
         {
@@ -47,7 +50,7 @@ const ProfileContextMenu: React.FC<
           label: 'Copy User ID',
           icon: Fingerprint,
           onClick: async () => {
-            await navigator.clipboard.writeText(member.id.toString());
+            await navigator.clipboard.writeText(user.id.toString());
             toast({
               title: 'User ID copied successfully',
               duration: 2000,

@@ -1,4 +1,6 @@
 import { useModal } from '@/hooks/useModalStore';
+import { useToast } from '@/hooks/useToast';
+import { Member, User } from '@prisma/client';
 import { Fingerprint, LogOut, Pencil } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import React, { PropsWithChildren } from 'react';
@@ -31,25 +33,28 @@ const ProfileSectionSeparator: React.FC = () => {
 };
 
 type TProfileCardProps = {
-  member: MemberWithUser;
+  user: User;
+  member?: Member;
   isSideBar?: boolean;
 };
 
 const ProfileCard: React.FC<TProfileCardProps> = ({
+  user,
   member,
   isSideBar = false,
 }) => {
   const { openModal } = useModal();
+  const { toast } = useToast();
 
   return (
     <div className="flex flex-col">
-      <ProfileHeader member={member} />
+      <ProfileHeader user={user} member={member} />
       {isSideBar && (
         <div className="flex flex-col mb-4 gap-4">
           <ProfileContentSection>
             <ProfileSectionButton
               onClick={() => {
-                openModal('editProfile', { currentMember: member });
+                openModal('editProfile', { user });
               }}
             >
               <Pencil className="h-5 w-5 fill-zinc-400 text-[#232528] group-hover:text-[#37393f] transition-colors" />
@@ -57,7 +62,7 @@ const ProfileCard: React.FC<TProfileCardProps> = ({
             </ProfileSectionButton>
             <ProfileSectionSeparator />
             <ProfileSectionButton>
-              <SelectActivity member={member} />
+              <SelectActivity user={user} />
             </ProfileSectionButton>
           </ProfileContentSection>
           <ProfileContentSection>
@@ -66,7 +71,15 @@ const ProfileCard: React.FC<TProfileCardProps> = ({
               <p className="text-sm text-[#b0b4bb]">Log out</p>
             </ProfileSectionButton>
             <ProfileSectionSeparator />
-            <ProfileSectionButton>
+            <ProfileSectionButton
+              onClick={async () => {
+                await navigator.clipboard.writeText(user.id.toString());
+                toast({
+                  title: 'User ID copied successfully',
+                  duration: 2000,
+                });
+              }}
+            >
               <Fingerprint className="h-4 w-4 text-zinc-400" />
               <p className="text-sm text-[#b0b4bb]">Copy user id</p>
             </ProfileSectionButton>

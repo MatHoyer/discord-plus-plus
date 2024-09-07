@@ -1,5 +1,6 @@
 import { useActivity } from '@/hooks/useActivityStore';
 import { socket } from '@/socket';
+import { User } from '@prisma/client';
 import { ChevronRight } from 'lucide-react';
 import { Activity, TActivity } from '../../../server/User';
 import { ServerSocketEvents } from '../../../server/socket/server';
@@ -25,17 +26,17 @@ const ActivityState: React.FC<{ activity: TActivity }> = ({ activity }) => {
 };
 
 type TSelectActivityProps = {
-  member: MemberWithUser;
+  user: User;
 };
 
-const SelectActivity: React.FC<TSelectActivityProps> = ({ member }) => {
+const SelectActivity: React.FC<TSelectActivityProps> = ({ user }) => {
   const users = useActivity((state) => state.users);
 
   return (
     <div className="w-full">
       <DropdownMenu>
         <DropdownMenuTrigger className="w-full flex justify-start items-center">
-          <ActivityState activity={users[member.user.id] || Activity.Online} />
+          <ActivityState activity={users[user.id] || Activity.Online} />
           <ChevronRight className="text-[#b0b4bb] h-4 w-4" />
         </DropdownMenuTrigger>
         <DropdownMenuContent>

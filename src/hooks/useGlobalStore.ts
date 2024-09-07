@@ -1,3 +1,4 @@
+import { Member } from '@prisma/client';
 import { create } from 'zustand';
 
 type TGlobalStore = {
@@ -14,8 +15,8 @@ type TGlobalStore = {
   setEditingMessageId: (id: number | undefined) => void;
   replyingToMessage: ServerMessageWithSender | undefined;
   setReplyingToMessage: (message: ServerMessageWithSender | undefined) => void;
-  currentMentionnedMember: MemberWithUser | undefined;
-  addCurrentMemberMention: (member: MemberWithUser | undefined) => void;
+  currentMentionnedMember: Member | undefined;
+  addCurrentMemberMention: (member: Member | undefined) => void;
   removeCurrentMemberMention: () => void;
   flashReferencedMessageId: number | undefined;
   setFlashReferencedMessageId: (id: number | undefined) => void;

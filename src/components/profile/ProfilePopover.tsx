@@ -1,10 +1,12 @@
 import { cn } from '@/lib/utils';
+import { Member, User } from '@prisma/client';
 import React, { ComponentProps, PropsWithChildren } from 'react';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import ProfileCard from './ProfileCard';
 
 type TProfilePopoverProps = {
-  member: MemberWithUser;
+  user: User;
+  member?: Member;
   asChild?: boolean;
   popoverContentProps?: ComponentProps<typeof PopoverContent>;
   disabled?: boolean;
@@ -15,6 +17,7 @@ type TProfilePopoverProps = {
 const ProfilePopover: React.FC<
   TProfilePopoverProps & PropsWithChildren & ComponentProps<typeof Popover>
 > = ({
+  user,
   member,
   children,
   asChild = true,
@@ -39,7 +42,7 @@ const ProfilePopover: React.FC<
           'p-0 rounded-md'
         )}
       >
-        <ProfileCard member={member} isSideBar={isSideBar} />
+        <ProfileCard user={user} member={member} isSideBar={isSideBar} />
       </PopoverContent>
     </Popover>
   );

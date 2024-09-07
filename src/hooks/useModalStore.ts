@@ -1,4 +1,4 @@
-import { Channel, Server } from '@prisma/client';
+import { Channel, Member, Server, User } from '@prisma/client';
 import { create } from 'zustand';
 
 export type TModalType =
@@ -19,7 +19,8 @@ type TModalData = {
   serverMessage?: ServerMessageWithSender;
   currentMember?: MemberWithUser;
   currentChannelId?: number;
-  member?: MemberWithUser;
+  member?: Member;
+  user?: User;
 };
 
 type TModalStore = {
