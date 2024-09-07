@@ -15,6 +15,10 @@ model User {
     emailVerified DateTime?
     image         String?
 
+    friendId      Int?
+    friend        User?       @relation("friends", fields: [friendId], references: [id], onDelete: SetNull)
+    friends       User[]      @relation("friends")
+
     sessions                Session[]
     accounts                Account?
     servers                 Server[]

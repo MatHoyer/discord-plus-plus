@@ -1,4 +1,4 @@
-'user client';
+'use client';
 import { useActivity } from '@/hooks/useActivityStore';
 import { Member, User } from '@prisma/client';
 import { PropsWithChildren } from 'react';
