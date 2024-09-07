@@ -9,7 +9,7 @@ import { getCustomDate } from '@/lib/utils';
 import { socket } from '@/socket';
 import { useEffect, useRef, useState } from 'react';
 import { getChannelSocketEvents } from '../../../server/socket/channel';
-import ChannelMessage from './ChannelMessage';
+import ChannelMessage from './channel-message';
 
 const ScrollableChat: React.FC<{
   channel: ChannelWithMessages;

@@ -19,18 +19,25 @@ import { Channel } from '@prisma/client';
 import { differenceInMinutes, format, isEqual, isSameDay } from 'date-fns';
 import { Edit, Trash2 } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
-import Image from 'next/image';
 import { useMemo, useRef } from 'react';
-import { ServerSocketEvents } from '../../../server/socket/server';
-import ActionTooltip from '../ActionTooltip';
-import ChannelMessageContextMenu from '../context-menus/ChannelMessageContextMenu';
-import ProfileContextMenu from '../context-menus/ProfileContextMenu';
-import ChatInput from '../form/ChatInput';
-import ProfilePopover from '../profile/ProfilePopover';
-import MessageReactions from '../reaction/MessageReactions';
-import { roleIconMap } from '../server/ServerSidebar';
-import { Form, FormControl, FormField, FormItem, useZodForm } from '../ui/form';
-import UserAvatar from '../UserAvatar';
+import { ServerSocketEvents } from '../../../../server/socket/server';
+import ActionTooltip from '../../ActionTooltip';
+import ChannelMessageContextMenu from '../../context-menus/ChannelMessageContextMenu';
+import ProfileContextMenu from '../../context-menus/ProfileContextMenu';
+import ChatInput from '../../form/ChatInput';
+import ProfilePopover from '../../profile/ProfilePopover';
+import MessageReactions from '../../reaction/MessageReactions';
+import { roleIconMap } from '../../server/ServerSidebar';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  useZodForm,
+} from '../../ui/form';
+import UserAvatar from '../../UserAvatar';
+import MessageAttachments from './MessageAttachments';
+import ReferencedMessage from './ReferencedMessage';
 
 type TChannelMessageProps = {
   time: string;
@@ -119,14 +126,6 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
     [message, preview]
   );
 
-  const parsedReferencedMessage = useMemo(
-    () =>
-      message.referencedMessage
-        ? mentionToSpan(message.referencedMessage, preview)
-        : [],
-    [message.referencedMessage, preview]
-  );
-
   const isFlashing = flashReferencedMessageId === message.id;
 
   const isCurrentReplyingToMessage = replyingToMessage?.id === message.id;
@@ -194,45 +193,12 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
             isFlashing && 'bg-[#393c48] hover:bg-[#35384a]'
           )}
         >
-          {message.referencedMessage && (
-            <div className="before:content-[''] before:absolute before:border-zinc-500 before:left-[28px] before:top-[16px] before:w-[22px] md:before:left-[35px] md:before:top-[15px] md:before:w-[25px] before:h-[11px] before:rounded-tl-md before:border-0 before:border-t-2 before:border-l-2 ml-[53px] md:ml-16 mb-[1.5px] text-xs text-zinc-400 flex gap-1 items-center">
-              <ProfileContextMenu
-                member={message.referencedMessage.sender}
-                disabled={preview}
-              >
-                <ProfilePopover
-                  member={message.referencedMessage.sender}
-                  asChild={false}
-                  disabled={preview}
-                  triggerProps={{
-                    className: 'flex gap-1',
-                  }}
-                >
-                  <UserAvatar
-                    src={message.referencedMessage.sender.user.image}
-                    size="xxs"
-                    className="mt-[6px] md:mt-[1.5px]"
-                  />
-                  <p
-                    className={cn(
-                      'font-bold text-sm',
-                      !preview && 'hover:underline cursor-pointer'
-                    )}
-                  >
-                    {message.referencedMessage.sender.username}
-                  </p>
-                </ProfilePopover>
-              </ProfileContextMenu>
-              <div
-                className="hover:text-zinc-200 transition-colors cursor-pointer"
-                onClick={() => {
-                  onReferencedMessageClicked?.(message.referencedMessage);
-                }}
-              >
-                {parsedReferencedMessage}
-              </div>
-            </div>
-          )}
+          <ReferencedMessage
+            message={message}
+            preview={preview}
+            onReferencedMessageClicked={onReferencedMessageClicked}
+          />
+
           <div
             className={cn(
               'group flex items-center px-4 transition-colors w-full'
@@ -361,54 +327,27 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
                   currentMember={currentMember}
                   channel={channel}
                 />
-                {(message?.attachments?.length || 0) > 0 && (
-                  <div className="flex flex-row items-center gap-4">
-                    {message.attachments?.map((attachment) => (
-                      <div
-                        key={attachment.id}
-                        className="relative group/attachment"
-                      >
-                        <ChannelMessageContextMenu
-                          member={member}
-                          currentMember={currentMember}
-                          message={message}
-                          disabled={preview}
-                          channel={channel}
-                          attachment={attachment}
-                        >
-                          <Image
-                            src={attachment.url}
-                            width={0}
-                            height={0}
-                            alt="attachment"
-                            sizes="100vw"
-                            className="rounded-md cursor-pointer w-full h-auto"
-                          />
-                        </ChannelMessageContextMenu>
-                        {!preview && (
-                          <ActionTooltip label="Delete">
-                            <button
-                              style={{
-                                boxShadow: '0 0 5px #242628',
-                              }}
-                              className="group/attachment-inside group-hover/attachment:flex hidden absolute right-0 top-2 cursor-pointer bg-[#313338] hover:bg-red-500 hover:border-red-500 p-1 rounded-md transition-colors border-[#303136] border-[1px]"
-                              onClick={() => {
-                                executeDeleteAttachment({
-                                  atachmentId: attachment.id,
-                                  channelId: message.channelId,
-                                  messageId: message.id,
-                                  serverId: message.sender.serverId,
-                                });
-                              }}
-                            >
-                              <Trash2 className="w-5 h-5 text-zinc-400 group-hover/attachment-inside:text-zinc-200 transition-colors" />
-                            </button>
-                          </ActionTooltip>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
+                <MessageAttachments
+                  message={message}
+                  preview={preview}
+                  onDeleteAttachment={(attachment) => {
+                    executeDeleteAttachment({
+                      atachmentId: attachment.id,
+                      channelId: message.channelId,
+                      messageId: message.id,
+                      serverId: message.sender.serverId,
+                    });
+                  }}
+                  Wrapper={
+                    <ChannelMessageContextMenu
+                      member={member}
+                      currentMember={currentMember}
+                      message={message}
+                      disabled={preview}
+                      channel={channel}
+                    />
+                  }
+                />
               </div>
             </div>
             {!preview && canDeleteMessage && !isEditing && (

@@ -174,7 +174,6 @@ const ChannelMessageContextMenu: React.FC<
           icon: ClipboardCopy,
           onClick: async () => {
             const blob = await getAttachmentAsBlob(attachment!.url);
-            console.log(blob);
             await navigator.clipboard.write([
               new ClipboardItem({
                 [blob.type]: blob,

@@ -3,7 +3,7 @@
 import { useDeleteMessage } from '@/features/server/channel/message/delete-message/delete-message.hook';
 import { useModal } from '@/hooks/useModalStore';
 import { getCustomDate } from '@/lib/utils';
-import ChannelMessage from '../channel/ChannelMessage';
+import ChannelMessage from '../channel/channel-message';
 import { Button } from '../ui/button';
 import {
   Dialog,
