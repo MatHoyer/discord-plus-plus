@@ -77,7 +77,12 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
 
   const { execute: deleteMessage } = useDeleteMessage();
   const { execute: executeDeleteAttachment } = useAction(deleteAttachment, {
-    onSuccess: ({ data }) => {},
+    onSuccess: ({ input }) => {
+      socket.emit(ServerSocketEvents.deleteAttachment, {
+        attachmentId: input.attachmentId,
+        channelId: channel?.id,
+      });
+    },
   });
 
   const isEditing = editingMessageId === message.id;

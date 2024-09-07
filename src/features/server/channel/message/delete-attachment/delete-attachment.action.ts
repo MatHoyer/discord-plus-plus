@@ -46,6 +46,4 @@ export const deleteAttachment = authClient
     });
 
     fs.unlinkSync(path.join('public', attachment.url));
-
-    return message;
   });

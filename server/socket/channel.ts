@@ -4,6 +4,8 @@ export const ChannelSocketEvents = {
   deleteMessage: (channelId: number) => `channel:${channelId}:delete-message`,
   reactedToMessage: (channelId: number) =>
     `channel:${channelId}:reacted-to-message`,
+  deleteAttachment: (channelId: number) =>
+    `channel:${channelId}:delete-attachment`,
   deleteReaction: (channelId: number) => `channel:${channelId}:delete-reaction`,
   mention: (channelId: number) => `channel:${channelId}:mention`,
   isTyping: (channelId: number) => `channel:${channelId}:is-typing`,

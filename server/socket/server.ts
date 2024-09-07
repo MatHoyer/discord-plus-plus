@@ -7,6 +7,7 @@ export const ServerSocketEvents = {
   reactedToMessage: 'reacted-to-message',
   deleteReaction: 'delete-reaction',
   deleteMessage: 'delete-message',
+  deleteAttachment: 'delete-attachment',
   changeActivity: 'change-activity',
   newChannel: 'new-channel',
   editChannel: 'edit-channel',

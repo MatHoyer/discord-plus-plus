@@ -6,7 +6,6 @@ import { UserManager } from './UserManager';
 import { ChannelSocketEvents } from './socket/channel';
 import { ClientSocketEvents } from './socket/client';
 
-
 const dev = process.env.NODE_ENV !== 'production';
 
 const hostname = 'localhost';
@@ -78,6 +77,9 @@ app.prepare().then(() => {
       },
       'delete-reaction': ({ channelId, reactionId }) => {
         io.emit(ChannelSocketEvents.deleteReaction(channelId), reactionId);
+      },
+      'delete-attachment': ({ channelId, attachmentId }) => {
+        io.emit(ChannelSocketEvents.deleteAttachment(channelId), attachmentId);
       },
       'delete-message': ({ channelId, messageId }) => {
         io.emit(ChannelSocketEvents.deleteMessage(channelId), messageId);

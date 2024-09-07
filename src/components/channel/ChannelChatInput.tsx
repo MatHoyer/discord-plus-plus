@@ -29,14 +29,14 @@ const ChannelChatInput: React.FC<{
   const [attachments, setAttachments] = useState<File[]>([]);
   const [attachmentPreviews, setAttachmentPreviews] = useState<string[]>([]);
 
-  const { replyingToMessage, setReplyingToMessage, editingMessageId } =
-    useGlobalStore((state) => ({
+  const { replyingToMessage, setReplyingToMessage } = useGlobalStore(
+    (state) => ({
       replyingToMessage: state.replyingToMessage,
       setReplyingToMessage: state.setReplyingToMessage,
-      editingMessageId: state.editingMessageId,
-    }));
+    })
+  );
 
-  const { isOpen, openModal, closeModal } = useModal();
+  const { openModal, closeModal } = useModal();
 
   const formRef = useRef<HTMLFormElement>(null);
   const inputRef = useRef<HTMLDivElement>(null);

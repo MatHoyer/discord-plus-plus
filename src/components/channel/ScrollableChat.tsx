@@ -94,6 +94,20 @@ const ScrollableChat: React.FC<{
       });
     });
 
+    socket.on(channelSocketEvents.deleteAttachment, (attachmentId: number) => {
+      setMessages((prev) => {
+        const newMessages = [...prev];
+        for (const message of newMessages) {
+          if (message.attachments) {
+            message.attachments = message.attachments.filter(
+              (attachment) => attachment.id !== attachmentId
+            );
+          }
+        }
+        return newMessages;
+      });
+    });
+
     socket.on(channelSocketEvents.deleteMessage, (messageId: number) => {
       setMessages((prev) => prev.filter((m) => m.id !== messageId));
     });
@@ -102,6 +116,7 @@ const ScrollableChat: React.FC<{
       socket.off(channelSocketEvents.newMessage);
       socket.off(channelSocketEvents.editMessage);
       socket.off(channelSocketEvents.reactedToMessage);
+      socket.off(channelSocketEvents.deleteAttachment);
       socket.off(channelSocketEvents.deleteReaction);
       socket.off(channelSocketEvents.deleteMessage);
     };
