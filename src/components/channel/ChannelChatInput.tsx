@@ -124,9 +124,14 @@ const ChannelChatInput: React.FC<{
     e.preventDefault();
     e.stopPropagation();
 
-    if ((e.dataTransfer?.files.length || 0) === 0 || isOpen) return;
+    if (isOpen) return;
 
-    openModal('uploadAttachment', { channel });
+    const items = e.dataTransfer?.items;
+    if (items) {
+      if ([...items].some((item) => item.kind === 'file')) {
+        openModal('uploadAttachment', { channel });
+      }
+    }
   });
 
   useEventListener('drop', (e) => {
