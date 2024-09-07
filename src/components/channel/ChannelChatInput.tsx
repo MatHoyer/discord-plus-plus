@@ -153,27 +153,29 @@ const ChannelChatInput: React.FC<{
                     className="rounded-md"
                     alt="Attachment preview"
                   />
-                  <button
+                  <div
                     style={{
                       boxShadow: '0 0 5px #242628',
                     }}
                     className="absolute z-20 top-0 -right-4 bg-[#313338] border-[#303136] border-[1px] flex p-[1px] text-zinc-400 items-center gap-1 justify-center rounded-md"
-                    onClick={() => {
-                      setAttachmentPreviews((prev) =>
-                        prev.filter((_, index) => index !== i)
-                      );
-                      setAttachments((prev) =>
-                        prev.filter((_, index) => index !== i)
-                      );
-                    }}
                   >
-                    <div className="group p-1 rounded-md hover:bg-zinc-700 transition-colors">
+                    <button className="group p-1 rounded-md hover:bg-zinc-700 transition-colors">
                       <Pencil className="w-4 h-4 fill-zinc-400 group-hover:fill-zinc-200 group-hover:text-zinc-200 transition-colors" />
-                    </div>
-                    <div className="group p-1 rounded-md hover:bg-zinc-700 transition-colors">
+                    </button>
+                    <button
+                      className="group p-1 rounded-md hover:bg-zinc-700 transition-colors"
+                      onClick={() => {
+                        setAttachmentPreviews((prev) =>
+                          prev.filter((_, index) => index !== i)
+                        );
+                        setAttachments((prev) =>
+                          prev.filter((_, index) => index !== i)
+                        );
+                      }}
+                    >
                       <Trash2 className="w-4 h-4 text-[#da373c]/70 hover:text-[#da373c]/90 transition-colors" />
-                    </div>
-                  </button>
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
