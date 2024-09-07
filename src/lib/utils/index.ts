@@ -45,9 +45,9 @@ export const capitalize = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
-export const getShortServerName = (serverName: string) => {
-  const formattedServerName = serverName.replace(/[' ]/g, '#');
-  const parts = formattedServerName.split('#');
+export const getShortGuildName = (guildName: string) => {
+  const formattedGuildName = guildName.replace(/[' ]/g, '#');
+  const parts = formattedGuildName.split('#');
   return parts
     .filter((part) => !!part)
     .map((part) => part[0].toUpperCase())

@@ -3,7 +3,7 @@
 import {
   loadMoreMessages,
   loadMoreMessagesAround,
-} from '@/features/server/channel/message/load-more-messages';
+} from '@/features/guild/channel/message/load-more-messages';
 import { useGlobalStore } from '@/hooks/useGlobalStore';
 import { getCustomDate } from '@/lib/utils';
 import { socket } from '@/socket';
@@ -19,7 +19,7 @@ const ScrollableChat: React.FC<{
   members: MemberWithUser[];
   user: User;
 }> = ({ channel, currentMember, members, user }) => {
-  const [messages, setMessages] = useState<ServerMessageWithSender[]>(
+  const [messages, setMessages] = useState<MessageWithSender[]>(
     channel.messages
   );
   const setFlashReferencedMessageId = useGlobalStore(
@@ -33,31 +33,25 @@ const ScrollableChat: React.FC<{
   useEffect(() => {
     const channelSocketEvents = getChannelSocketEvents(channel.id);
 
-    socket.on(
-      channelSocketEvents.newMessage,
-      (message: ServerMessageWithSender) => {
-        setMessages((prev) => [message, ...prev]);
-      }
-    );
+    socket.on(channelSocketEvents.newMessage, (message: MessageWithSender) => {
+      setMessages((prev) => [message, ...prev]);
+    });
 
-    socket.on(
-      channelSocketEvents.editMessage,
-      (message: ServerMessageWithSender) => {
-        setMessages((prev) => {
-          const index = prev.findIndex((m) => m.id === message.id);
-          if (index === -1) {
-            return prev;
-          }
-          const newMessages = [...prev];
-          newMessages[index] = message;
-          return newMessages;
-        });
-      }
-    );
+    socket.on(channelSocketEvents.editMessage, (message: MessageWithSender) => {
+      setMessages((prev) => {
+        const index = prev.findIndex((m) => m.id === message.id);
+        if (index === -1) {
+          return prev;
+        }
+        const newMessages = [...prev];
+        newMessages[index] = message;
+        return newMessages;
+      });
+    });
 
     socket.on(
       channelSocketEvents.reactedToMessage,
-      (reaction: ServerMessageReactionWithMembers) => {
+      (reaction: MessageReactionWithMembers) => {
         setMessages((prev) => {
           const index = prev.findIndex((m) => m.id === reaction.messageId);
           if (index === -1) {
@@ -160,7 +154,7 @@ const ScrollableChat: React.FC<{
   };
 
   const onReferencedMessageClicked = async (
-    referencedMessage: ServerMessageWithSender
+    referencedMessage: MessageWithSender
   ) => {
     if (!scrollToMessage(referencedMessage.id)) {
       const aroundMessages = await loadMoreMessagesAround(

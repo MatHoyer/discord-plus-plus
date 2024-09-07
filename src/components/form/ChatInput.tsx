@@ -55,7 +55,7 @@ const ChatInput: React.FC<TChatInputProps> = ({
 
   const addMemberMention = (member: MemberWithUser, range: Range) => {
     const mentionSpan = document.createElement('span');
-    mentionSpan.textContent = `@${member.username}`;
+    mentionSpan.textContent = `@${member.nickname}`;
     mentionSpan.className = mentionClassName;
     mentionSpan.dataset.userId = member.id.toString();
     mentionSpan.contentEditable = 'false';
@@ -155,7 +155,7 @@ const ChatInput: React.FC<TChatInputProps> = ({
   const filterMembers = (query: string) => {
     setFilteredMembers(
       members.filter((member) =>
-        member.username.toLowerCase().startsWith(query.toLowerCase())
+        member.nickname.toLowerCase().startsWith(query.toLowerCase())
       )
     );
   };

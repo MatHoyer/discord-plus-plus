@@ -1,7 +1,7 @@
 'use client';
 
 import { useActivity } from '@/hooks/useActivityStore';
-import { Member, User } from '@prisma/client';
+import { User, UserGuildProfile } from '@prisma/client';
 import { Headphones, LucideProps, Mic, Settings } from 'lucide-react';
 import { Activity } from '../../../server/User';
 import ChannelMemberProfileWithActivity from '../channel/ChannelMemberProfileWithActivity';
@@ -18,7 +18,7 @@ const IconContainer: React.FC<{ Icon: React.ComponentType<LucideProps> }> = ({
 
 type TSideBarProfileProps = {
   user: User;
-  currentMember?: Member;
+  currentMember?: UserGuildProfile;
 };
 
 const SideBarProfile: React.FC<TSideBarProfileProps> = ({

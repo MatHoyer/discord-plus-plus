@@ -1,6 +1,6 @@
 'use client';
 import { useActivity } from '@/hooks/useActivityStore';
-import { Member, User } from '@prisma/client';
+import { User, UserGuildProfile } from '@prisma/client';
 import { PropsWithChildren } from 'react';
 import ProfileContextMenu from '../context-menus/ProfileContextMenu';
 import ProfilePopover from '../profile/ProfilePopover';
@@ -8,7 +8,7 @@ import UserAvatarWithActivity from '../UserAvatarWithActivity';
 
 type TChannelMemberProfileWithActivityProps = {
   user: User;
-  member?: Member;
+  member?: UserGuildProfile;
   isSideBar?: boolean;
 } & PropsWithChildren;
 
@@ -24,11 +24,11 @@ const ChannelMemberProfileWithActivity: React.FC<
           <UserAvatarWithActivity
             src={user.image}
             activity={usersActivity[user.id]}
-            size={'sm'}
+            size="sm"
           />
           <div className="flex flex-col justify-center ml-2 max-w-[66%]">
             <p className="truncate text-sm font-semibold">
-              {member?.username || user.username || user.name}
+              {member?.nickname || user.username || user.name}
             </p>
             {children}
           </div>

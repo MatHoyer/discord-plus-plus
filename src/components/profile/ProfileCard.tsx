@@ -1,6 +1,6 @@
 import { useModal } from '@/hooks/useModalStore';
 import { useToast } from '@/hooks/useToast';
-import { Member, User } from '@prisma/client';
+import { User, UserGuildProfile } from '@prisma/client';
 import { Fingerprint, LogOut, Pencil } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import React, { PropsWithChildren } from 'react';
@@ -34,7 +34,7 @@ const ProfileSectionSeparator: React.FC = () => {
 
 type TProfileCardProps = {
   user: User;
-  member?: Member;
+  member?: UserGuildProfile;
   isSideBar?: boolean;
 };
 

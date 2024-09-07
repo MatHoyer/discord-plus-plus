@@ -1,6 +1,6 @@
 'use client';
 
-import EditChannelForm from '@/features/server/channel/edit-channel/EditChannelForm';
+import EditChannelForm from '@/features/guild/channel/edit-channel/EditChannelForm';
 import { useModal } from '@/hooks/useModalStore';
 import { SubmitButton } from '../form/SubmitButton';
 import { Button } from '../ui/button';

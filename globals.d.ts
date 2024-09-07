@@ -1,40 +1,39 @@
 import { useZodForm } from '@/components/ui/form';
 import {
+  Attachment,
   Channel,
-  Member,
-  Server,
-  ServerMention,
-  ServerMessage,
-  ServerMessageAttachment,
-  ServerMessageReaction,
-  ServerMessageReactionMember,
+  Mention,
+  Message,
+  MessageReaction,
+  MessageReactionMember,
   User,
+  UserGuildProfile,
 } from '@prisma/client';
 import { ZodType } from 'zod';
 
 declare global {
-  interface MemberWithUser extends Member {
+  interface MemberWithUser extends UserGuildProfile {
     user: User;
   }
 
-  interface ServerMentionWithUser extends ServerMention {
+  interface MentionWithUser extends Mention {
     member: MemberWithUser;
   }
 
-  interface ServerMessageReactionWithMembers extends ServerMessageReaction {
-    members: (ServerMessageReactionMember & { member: MemberWithUser })[];
+  interface MessageReactionWithMembers extends MessageReaction {
+    members: (MessageReactionMember & { member: MemberWithUser })[];
   }
 
-  interface ServerMessageWithSender extends ServerMessage {
-    sender: MemberWithUser;
-    mentions: ServerMentionWithUser[];
-    reactions: ServerMessageReactionWithMembers[];
-    referencedMessage: ServerMessageWithSender;
-    attachments?: ServerMessageAttachment[];
+  interface MessageWithSender extends Message {
+    author: MemberWithUser;
+    mentions: MentionWithUser[];
+    reactions: MessageReactionWithMembers[];
+    referencedMessage: MessageWithSender;
+    attachments?: Attachment[];
   }
 
   interface ChannelWithMessages extends Channel {
-    messages: ServerMessageWithSender[];
+    messages: MessageWithSender[];
   }
 
   interface IModal {
@@ -84,7 +83,7 @@ declare global {
     searchParams: { [key: string]: string | string[] | undefined };
   };
 
-  type TServerWithMembersAndProfiles = Server & {
+  type TGuildWithMembersAndProfiles = Server & {
     members: (Member & { user: User })[];
   };
 

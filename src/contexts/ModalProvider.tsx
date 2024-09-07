@@ -1,5 +1,5 @@
 import CreateChannelModal from '@/components/modals/CreateChannelModal';
-import CreateServerModal from '@/components/modals/CreateServerModal';
+import CreateGuildModal from '@/components/modals/CreateGuildModal';
 import DeleteChannelMessageModal from '@/components/modals/DeleteChannelMessageModal';
 import DeleteChannelModal from '@/components/modals/DeleteChannelModal';
 import EditChannelModal from '@/components/modals/EditChannelModal';
@@ -11,7 +11,7 @@ import UploadAttachmentModal from '@/components/modals/UploadAttachmentModal';
 const ModalProvider: React.FC = () => {
   return (
     <>
-      <CreateServerModal />
+      <CreateGuildModal />
       <InvitePeopleModal />
       <CreateChannelModal />
       <DeleteChannelMessageModal />

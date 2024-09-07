@@ -1,13 +1,13 @@
 'use client';
 import { useActivity } from '@/hooks/useActivityStore';
 import { getCustomDate } from '@/lib/utils';
-import { Member, User } from '@prisma/client';
+import { User, UserGuildProfile } from '@prisma/client';
 import Image from 'next/image';
 import UserAvatarWithActivity from '../UserAvatarWithActivity';
 
 type TProfileHeaderProps = {
   user: User;
-  member?: Member;
+  member?: UserGuildProfile;
 };
 
 const ProfileHeader: React.FC<TProfileHeaderProps> = ({ user, member }) => {
@@ -38,7 +38,7 @@ const ProfileHeader: React.FC<TProfileHeaderProps> = ({ user, member }) => {
       </div>
       <div className="min-h-[100px] pt-12 px-4">
         <div className="flex flex-col">
-          <div className="font-bold">{member?.username || user.username}</div>
+          <div className="font-bold">{member?.nickname || user.username}</div>
           <span className="text-xs">{user.name}</span>
         </div>
         <div className="py-2 px-2 mt-4 border border-[#353c47] rounded-md bg-[#232528]">

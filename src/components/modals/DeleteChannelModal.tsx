@@ -1,6 +1,6 @@
 'use client';
 
-import { deleteChannel } from '@/features/server/channel/delete-channel/delete-channel.action';
+import { deleteChannel } from '@/features/guild/channel/delete-channel/delete-channel.action';
 import { useModal } from '@/hooks/useModalStore';
 import { socket } from '@/socket';
 import { useAction } from 'next-safe-action/hooks';
@@ -28,7 +28,7 @@ const DeleteChannelModal: React.FC = () => {
     onSuccess: ({ data }) => {
       if (modalDataRef.current?.currentChannelId === data?.channel?.id) {
         router.push(
-          `/servers/${modalDataRef.current.channel?.serverId}/channels/${data?.generalChannel?.id}`
+          `/guilds/${modalDataRef.current.channel?.guildId}/channels/${data?.generalChannel?.id}`
         );
       }
       closeModal();
@@ -66,7 +66,7 @@ const DeleteChannelModal: React.FC = () => {
                 onClick={() => {
                   execute({
                     channelId: modalData.channel!.id,
-                    serverId: modalData.channel!.serverId,
+                    guildId: modalData.channel!.guildId!,
                   });
                 }}
               >

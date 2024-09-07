@@ -1,4 +1,4 @@
-import { Channel, Member, Server, User } from '@prisma/client';
+import { Channel, Guild, User, UserGuildProfile } from '@prisma/client';
 import { create } from 'zustand';
 
 export type TModalType =
@@ -14,12 +14,12 @@ export type TModalType =
   | 'editProfile';
 
 type TModalData = {
-  server?: Server;
+  guild?: Guild;
   channel?: Channel;
-  serverMessage?: ServerMessageWithSender;
+  message?: MessageWithSender;
   currentMember?: MemberWithUser;
   currentChannelId?: number;
-  member?: Member;
+  member?: UserGuildProfile;
   user?: User;
 };
 

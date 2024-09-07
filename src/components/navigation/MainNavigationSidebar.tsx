@@ -1,16 +1,16 @@
-import CreateServerItem from '@/features/server/create-server/CreateServerItem';
+import CreateGuildItem from '@/features/guild/create-guild/CreateGuildItem';
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { LoginButton } from '../AuthButtons';
 import { ScrollArea } from '../ui/scroll-area';
 import { Separator } from '../ui/separator';
+import GuildNavigationItem from './GuildNavigationItem';
 import PrivateMessageNavigationItem from './PrivateMessageNavigationItem';
-import ServerNavigationItem from './ServerNavigationItem';
 
 const MainNavigationSidebar = async () => {
   const session = await auth();
 
-  const servers = await prisma.server.findMany({
+  const guilds = await prisma.guild.findMany({
     where: {
       members: {
         some: {
@@ -25,15 +25,15 @@ const MainNavigationSidebar = async () => {
       <PrivateMessageNavigationItem />
       <Separator className="h-[2px] bg-zinc-300 dark:bg-zinc-700 rounded-md w-10 mx-auto" />
       <ScrollArea className="flex-1 w-full">
-        {servers.map((server) => (
-          <div key={server.id} className="mb-4">
-            <ServerNavigationItem server={server} />
+        {guilds.map((guild) => (
+          <div key={guild.id} className="mb-4">
+            <GuildNavigationItem guild={guild} />
           </div>
         ))}
       </ScrollArea>
       <div className="pb-3 mt-auto flex items-center flex-col gap-y-4">
         {session?.user ? null : <LoginButton />}
-        <CreateServerItem />
+        <CreateGuildItem />
       </div>
     </div>
   );

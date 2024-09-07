@@ -2,14 +2,14 @@
 import { useGlobalStore } from '@/hooks/useGlobalStore';
 import { useModal } from '@/hooks/useModalStore';
 import { useToast } from '@/hooks/useToast';
-import { Member, User } from '@prisma/client';
+import { User, UserGuildProfile } from '@prisma/client';
 import { AtSign, CircleUserRound, Fingerprint } from 'lucide-react';
 import React, { ComponentProps, PropsWithChildren } from 'react';
 import GenericContextMenu from './GenericContextMenu';
 
 type TProfileContextMenuProps = {
   user: User;
-  member?: Member;
+  member?: UserGuildProfile;
 };
 
 const ProfileContextMenu: React.FC<

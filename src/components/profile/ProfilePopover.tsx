@@ -1,12 +1,12 @@
 import { cn } from '@/lib/utils';
-import { Member, User } from '@prisma/client';
+import { User, UserGuildProfile } from '@prisma/client';
 import React, { ComponentProps, PropsWithChildren } from 'react';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import ProfileCard from './ProfileCard';
 
 type TProfilePopoverProps = {
   user: User;
-  member?: Member;
+  member?: UserGuildProfile;
   asChild?: boolean;
   popoverContentProps?: ComponentProps<typeof PopoverContent>;
   disabled?: boolean;

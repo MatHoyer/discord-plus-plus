@@ -1,6 +1,6 @@
 'use client';
 
-import { generateNewInviteCode } from '@/features/server/generate-new-invite-code/generate-new-invite-code.action';
+import { generateNewInviteCode } from '@/features/guild/generate-new-invite-code/generate-new-invite-code.action';
 import { useModal } from '@/hooks/useModalStore';
 import { useOrigin } from '@/hooks/useOrigin';
 import { cn } from '@/lib/utils';
@@ -17,14 +17,14 @@ const InvitePeopleModal: React.FC = () => {
   const [isCopied, setIsCopied] = useState(false);
   const origin = useOrigin();
   const { isOpen, type, closeModal, data, openModal } = useModal();
-  const { server } = data;
+  const { guild } = data;
   const open = isOpen && type === 'invite';
 
-  const url = `${origin}/invite/${server?.inviteCode}`;
+  const url = `${origin}/invite/${guild?.inviteCode}`;
 
   const { execute, isExecuting } = useAction(generateNewInviteCode, {
     onSuccess: ({ data }) => {
-      openModal('invite', { server: data });
+      openModal('invite', { guild: data });
     },
   });
 
@@ -42,7 +42,7 @@ const InvitePeopleModal: React.FC = () => {
       <DialogContent className="overflow-hidden">
         <DialogHeader>
           <DialogTitle>
-            Invite friends on <span className="font-bold">{server?.name}</span>
+            Invite friends on <span className="font-bold">{guild?.name}</span>
           </DialogTitle>
         </DialogHeader>
         <div className="px-4 py-2">
@@ -67,7 +67,7 @@ const InvitePeopleModal: React.FC = () => {
           <Button
             disabled={isExecuting}
             onClick={() => {
-              execute(server!.id);
+              execute(guild!.id);
             }}
             variant="link"
             size="sm"

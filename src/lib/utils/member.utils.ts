@@ -1,8 +1,8 @@
-import { MemberRole } from '@prisma/client';
+import { ProfileRole } from '@prisma/client';
 
-export const checkRole = (role: MemberRole) => {
-  const isAdmin = role === MemberRole.ADMIN;
-  const isModerator = isAdmin || role === MemberRole.MODERATOR;
+export const checkRole = (role: ProfileRole) => {
+  const isAdmin = role === ProfileRole.ADMIN;
+  const isModerator = isAdmin || role === ProfileRole.MODERATOR;
 
   return { isAdmin, isModerator };
 };

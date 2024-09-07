@@ -7,8 +7,6 @@ export const { auth, handlers } = NextAuth({
   adapter: PrismaAdapter(prisma),
   providers: [GitHub],
   callbacks: {
-    session: ({ user, session }) => {
-      return { ...session, user };
-    },
+    session: ({ user, session }) => ({ ...session, user }),
   },
 });

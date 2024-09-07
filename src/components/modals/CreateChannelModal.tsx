@@ -1,6 +1,6 @@
 'use client';
 
-import CreateChannelForm from '@/features/server/channel/create-channel/CreateChannelForm';
+import CreateChannelForm from '@/features/guild/channel/create-channel/CreateChannelForm';
 import { useModal } from '@/hooks/useModalStore';
 import { SubmitButton } from '../form/SubmitButton';
 import { Button } from '../ui/button';
@@ -20,7 +20,7 @@ const CreateChannelModal: React.FC = () => {
   return (
     <Dialog open={open} onOpenChange={closeModal}>
       <DialogContent className="overflow-hidden">
-        {!data.server ? null : (
+        {data.guild && (
           <>
             <DialogHeader>
               <DialogTitle className="text-xl font-bold">
@@ -28,7 +28,7 @@ const CreateChannelModal: React.FC = () => {
               </DialogTitle>
             </DialogHeader>
             <CreateChannelForm
-              serverId={data.server?.id}
+              guildId={data.guild.id}
               close={closeModal}
               className="px-4"
             >
