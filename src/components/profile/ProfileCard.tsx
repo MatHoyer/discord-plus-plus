@@ -1,3 +1,4 @@
+import { useModal } from '@/hooks/useModalStore';
 import { Fingerprint, LogOut, Pencil } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import React, { PropsWithChildren } from 'react';
@@ -38,14 +39,20 @@ const ProfileCard: React.FC<TProfileCardProps> = ({
   member,
   isSideBar = false,
 }) => {
+  const { openModal } = useModal();
+
   return (
     <div className="flex flex-col">
       <ProfileHeader member={member} />
       {isSideBar && (
         <div className="flex flex-col mb-4 gap-4">
           <ProfileContentSection>
-            <ProfileSectionButton onClick={() => {}}>
-              <Pencil className="h-4 w-4 fill-zinc-400 text-[#232528] group-hover:text-[#37393f] transition-colors" />
+            <ProfileSectionButton
+              onClick={() => {
+                openModal('editProfile', { currentMember: member });
+              }}
+            >
+              <Pencil className="h-5 w-5 fill-zinc-400 text-[#232528] group-hover:text-[#37393f] transition-colors" />
               <p className="text-sm text-[#b0b4bb]">Edit profile</p>
             </ProfileSectionButton>
             <ProfileSectionSeparator />

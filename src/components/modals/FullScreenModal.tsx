@@ -1,20 +1,21 @@
-import React from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
+import React, { ComponentProps, PropsWithChildren } from 'react';
+import { Dialog, DialogContent } from '../ui/dialog';
 
-interface FullScreenModalProps {}
+type TFullScreenModalProps = {} & PropsWithChildren &
+  ComponentProps<typeof Dialog>;
 
-const FullScreenModal: React.FC<FullScreenModalProps> = () => {
+const FullScreenModal: React.FC<TFullScreenModalProps> = ({
+  children,
+  ...props
+}) => {
   return (
-    <Dialog>
+    <Dialog {...props}>
       <DialogContent
-        className="overflow-hidden h-screen max-w-screen"
+        className="h-screen max-w-screen sm:rounded-none inset-0"
         aria-describedby={undefined}
+        showClose={false}
       >
-        <DialogHeader>
-          <DialogTitle className="text-xl font-bold">
-            Edit the channel
-          </DialogTitle>
-        </DialogHeader>
+        {children}
       </DialogContent>
     </Dialog>
   );
