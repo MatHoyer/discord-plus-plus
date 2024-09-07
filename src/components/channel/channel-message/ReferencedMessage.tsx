@@ -26,7 +26,7 @@ const ReferencedMessage: React.FC<TReferencedMessageProps> = ({
 
   return (
     message.referencedMessage && (
-      <div className="before:content-[''] before:absolute before:border-zinc-500 before:left-[28px] before:top-[16px] before:w-[22px] md:before:left-[35px] md:before:top-[15px] md:before:w-[25px] before:h-[11px] before:rounded-tl-md before:border-0 before:border-t-2 before:border-l-2 ml-[53px] md:ml-16 mb-[1.5px] text-xs text-zinc-400 flex gap-1 items-center">
+      <div className="before:content-[''] before:absolute before:border-zinc-500 before:left-[28px] before:top-[10px] before:w-[22px] md:before:left-[35px] md:before:top-[9px] md:before:w-[25px] before:h-[11px] before:rounded-tl-md before:border-0 before:border-t-2 before:border-l-2 ml-[53px] md:ml-16 mb-[1.5px] text-xs text-zinc-400 flex gap-1 items-center">
         <ProfileContextMenu
           member={message.referencedMessage.sender}
           disabled={preview}

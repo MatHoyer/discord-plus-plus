@@ -165,12 +165,10 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
     nextMessage &&
     nextMessage.senderId === message.senderId &&
     differenceInMinutes(
-      new Date(message.createdAt),
-      new Date(nextMessage.createdAt)
+      new Date(nextMessage.createdAt),
+      new Date(message.createdAt)
     ) <= 10 &&
     !nextMessage.referencedMessage;
-
-  const isSameSender = isPreviousMessageSameSender || isNextMessageSameSender;
 
   return (
     <>
@@ -188,7 +186,8 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
             isMentionned
               ? 'bg-[#444037]/70 hover:bg-[#444037]/50 '
               : 'hover:bg-black/5',
-            isSameSender ? 'mb-0 py-[1px]' : 'mb-2 py-2',
+            isPreviousMessageSameSender ? 'mb-0' : 'mb-2 py-2',
+            isNextMessageSameSender ? 'mb-0 py-0' : 'mb-2',
             isCurrentReplyingToMessage && 'bg-[#393c48] hover:bg-[#35384a]',
             isFlashing && 'bg-[#393c48] hover:bg-[#35384a]'
           )}
