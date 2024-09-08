@@ -12,6 +12,10 @@ import {
 import { ZodType } from 'zod';
 
 declare global {
+  interface ChannelWithParticipants extends Channel {
+    participants: User[];
+  }
+
   interface MemberWithUser extends UserGuildProfile {
     user: User;
   }

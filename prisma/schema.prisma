@@ -23,6 +23,7 @@ model User {
     profiles         UserGuildProfile[]
     friendsInitiated Friendship[]       @relation("userOne")
     friendsReceived  Friendship[]       @relation("userTwo")
+    privateChannels  Channel[]
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -142,6 +143,7 @@ model Channel {
     guildId  Int?
     guild    Guild?    @relation(fields: [guildId], references: [id], onDelete: Cascade)
     messages Message[]
+    participants User[]
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt

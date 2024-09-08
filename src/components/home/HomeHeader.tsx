@@ -1,3 +1,5 @@
+'use client';
+
 const HomeHeader = () => {
   return (
     <div className="w-full">

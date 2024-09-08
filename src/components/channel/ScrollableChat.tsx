@@ -10,7 +10,7 @@ import { socket } from '@/socket';
 import { User } from '@prisma/client';
 import { useEffect, useRef, useState } from 'react';
 import { getChannelSocketEvents } from '../../../server/socket/channel';
-import ChannelMessage from './channel-message';
+import ChannelMessage from './channel-message/ChannelMessage';
 
 const ScrollableChat: React.FC<{
   channel: ChannelWithMessages;
