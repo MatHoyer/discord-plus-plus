@@ -24,8 +24,9 @@ const MePageHeader = () => {
 
 const Tamerlapute = () => {
   return (
-    <ScrollArea className="flex-1 border border-green-500">
-      <p>caca</p> <p>caa</p>
+    <ScrollArea className="flex-1">
+      <div className="h-[1000px]">coucou</div>
+      <div>je suis caché hihi 🩲🩲🩲🩲🩲🩲🩲🩲🩲🩲🩲🩲🩲🩲🩲🩲🩲🩲🩲</div>
     </ScrollArea>
   );
 };
@@ -35,7 +36,7 @@ const MePage = (props: PageParams) => {
     <>
       <MePageHeader />
       <Tamerlapute />
-      <div>caca</div>
+      <div>coucou</div>
     </>
   );
 };
