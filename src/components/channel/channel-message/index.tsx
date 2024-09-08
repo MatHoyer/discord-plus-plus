@@ -15,7 +15,7 @@ import {
   spanToMention,
 } from '@/lib/utils/message.utils';
 import { socket } from '@/socket';
-import { Channel, User } from '@prisma/client';
+import { Channel } from '@prisma/client';
 import { differenceInMinutes, format, isEqual, isSameDay } from 'date-fns';
 import { Edit, Trash2 } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
@@ -44,7 +44,6 @@ type TChannelMessageProps = {
   message: MessageWithSender;
   previousMessage?: MessageWithSender;
   nextMessage?: MessageWithSender;
-  user: User;
   currentMember: MemberWithUser;
   channel?: Channel;
   preview?: boolean;
@@ -57,7 +56,6 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
   message,
   previousMessage,
   nextMessage,
-  user,
   currentMember,
   channel,
   preview = false,
@@ -263,12 +261,12 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
                     <>
                       <div className="flex items-center gap-x-2">
                         <ProfileContextMenu
-                          user={user}
+                          user={member.user}
                           member={member}
                           disabled={preview}
                         >
                           <ProfilePopover
-                            user={user}
+                            user={member.user}
                             member={member}
                             disabled={preview}
                           >

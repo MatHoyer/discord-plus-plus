@@ -173,7 +173,7 @@ const ScrollableChat: React.FC<{
   };
 
   return (
-    <div className="flex h-full flex-col-reverse overflow-y-auto">
+    <div className="flex-1 overflow-y-scroll overflow-x-hidden flex flex-col-reverse">
       <div ref={bottomRef} className="p-1" />
       {messages.map((message, index) => (
         <ChannelMessage
@@ -186,7 +186,6 @@ const ScrollableChat: React.FC<{
           channel={channel}
           members={members}
           onReferencedMessageClicked={onReferencedMessageClicked}
-          user={user}
         />
       ))}
       <div ref={topRef} className="p-1" />
