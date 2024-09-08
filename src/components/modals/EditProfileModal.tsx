@@ -2,6 +2,7 @@
 import { useModal } from '@/hooks/useModalStore';
 import { CircleX } from 'lucide-react';
 import React from 'react';
+import { Input } from '../ui/input';
 import { ScrollArea } from '../ui/scroll-area';
 import FullScreenModal from './FullScreenModal';
 
@@ -17,8 +18,9 @@ const EditProfileModal: React.FC = () => {
           <div className="flex flex-1">
             <div className="flex flex-auto h-screen bg-[#2b2d31] justify-end">
               <ScrollArea>
-                <nav className="max-w-[200px] min-w-[200px] p-[60px_6px_60px_20px]">
+                <nav className="max-w-[200px] min-w-[200px] p-[60px_6px_60px_20px] mr-2">
                   <div className="flex flex-col space-y-3">
+                    <Input placeholder="Search" />
                     <h3 className="uppercase text-xs text-zinc-400">
                       User settings
                     </h3>
@@ -34,7 +36,7 @@ const EditProfileModal: React.FC = () => {
               <ScrollArea className="h-screen">
                 <div className="flex">
                   <div className="min-w-[460px] max-w-[740px] min-h-screen p-[60px_10px_80px_40px] flex-auto">
-                    <h2 className="text-2xl font-bold">Profiles</h2>
+                    <h2 className="text-xl font-semibold">Profiles</h2>
                     <div className="h-[2000px]">some content...</div>
                     <div>coucou je suis caché 😍</div>
                   </div>

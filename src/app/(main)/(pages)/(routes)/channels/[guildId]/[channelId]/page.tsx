@@ -67,7 +67,7 @@ const GuildPage = async (
       {channel.type === 'TEXT' && (
         <>
           <ScrollableChat
-            channel={channel}
+            channel={channel as ChannelWithMessages}
             currentMember={currentMember}
             members={members}
             user={session.user}

@@ -24,7 +24,10 @@ export const loadMoreMessages = async (channelId: number, skip: number) => {
     },
   });
 
-  return { messages, messagesCount };
+  return { messages, messagesCount } as {
+    messages: MessageWithSender[];
+    messagesCount: number;
+  };
 };
 
 export const loadMoreMessagesAround = async (
@@ -82,5 +85,5 @@ export const loadMoreMessagesAround = async (
     ...messagesAfter,
   ];
 
-  return messages;
+  return messages as MessageWithSender[];
 };
