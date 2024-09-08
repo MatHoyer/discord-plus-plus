@@ -44,6 +44,7 @@ const InvitePage = async (props: PageParams<{ inviteCode: string }>) => {
         create: [
           {
             nickname: session.user.name!,
+            image: session.user.image!,
             userId: session.user.id,
           },
         ],
