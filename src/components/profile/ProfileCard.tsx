@@ -4,7 +4,7 @@ import { User, UserGuildProfile } from '@prisma/client';
 import { Fingerprint, LogOut, Pencil } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import React, { PropsWithChildren } from 'react';
-import ProfileHeader from './ProfileHeader';
+import { ProfileHeaderWithContent } from './ProfileHeader';
 import SelectActivity from './SelectActivity';
 
 type TProfileContentProps = {} & PropsWithChildren;
@@ -48,7 +48,8 @@ const ProfileCard: React.FC<TProfileCardProps> = ({
 
   return (
     <div className="flex flex-col">
-      <ProfileHeader user={user} member={member} />
+      <ProfileHeaderWithContent user={user} member={member} />
+
       {isSideBar && (
         <div className="flex flex-col mb-4 gap-4">
           <ProfileContentSection>

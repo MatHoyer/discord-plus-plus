@@ -1,7 +1,7 @@
 'use client';
 
 import { useModal } from '@/hooks/useModalStore';
-import ProfileHeader from '../profile/ProfileHeader';
+import { ProfileHeaderWithContent } from '../profile/ProfileHeader';
 import { Dialog, DialogContent, DialogTitle } from '../ui/dialog';
 
 const MemberProfileModal: React.FC = () => {
@@ -17,7 +17,7 @@ const MemberProfileModal: React.FC = () => {
       >
         <DialogTitle className="sr-only" />
         {data.member && data.user && (
-          <ProfileHeader user={data.user} member={data.member} />
+          <ProfileHeaderWithContent user={data.user} member={data.member} />
         )}
       </DialogContent>
     </Dialog>

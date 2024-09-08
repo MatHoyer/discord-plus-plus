@@ -3,7 +3,7 @@ import { Handshake } from 'lucide-react';
 
 const MeButton = () => {
   return (
-    <div className="flex items-center bg-inherit hover:bg-[#404249] text-zinc-400 hover:text-zinc-300 transition-colors font-semibold rounded-md p-2 cursor-pointer group">
+    <div className="flex items-center bg-inherit h-12 hover:bg-[#404249] text-zinc-400 hover:text-zinc-300 transition-colors font-semibold rounded-md p-2 cursor-pointer group">
       <div className="flex-1 flex gap-2">
         <Handshake />
         <p>Friends</p>
