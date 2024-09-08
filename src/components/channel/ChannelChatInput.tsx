@@ -1,17 +1,17 @@
 'use client';
-import { sendMessage } from '@/features/server/channel/message/send-message/send-message.action';
+import { sendMessage } from '@/features/guild/channel/message/send-message/send-message.action';
 import {
   MAX_MESSAGE_LENGTH,
   sendMessageSchema,
   TSendMessage,
-} from '@/features/server/channel/message/send-message/send-message.schema';
+} from '@/features/guild/channel/message/send-message/send-message.schema';
 import { useEventListener } from '@/hooks/useEventListener';
 import { useGlobalStore } from '@/hooks/useGlobalStore';
 import { useModal } from '@/hooks/useModalStore';
 import { cn } from '@/lib/utils';
 import { spanToMention } from '@/lib/utils/message.utils';
 import { socket } from '@/socket';
-import { Channel, Member } from '@prisma/client';
+import { Channel, UserGuildProfile } from '@prisma/client';
 import { CircleX, Pencil, Plus, Smile, Trash2 } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
 import Image from 'next/image';
@@ -23,7 +23,7 @@ import { Form, FormControl, FormField, FormItem, useZodForm } from '../ui/form';
 
 const ChannelChatInput: React.FC<{
   channel: Channel;
-  currentMember: Member;
+  currentMember: UserGuildProfile;
   members: MemberWithUser[];
 }> = ({ channel, currentMember, members }) => {
   const [attachments, setAttachments] = useState<File[]>([]);
@@ -74,7 +74,7 @@ const ChannelChatInput: React.FC<{
     const parsedContent = spanToMention(v.content);
     socket.emit(ServerSocketEvents.stopTyping, {
       channelId: channel.id,
-      username: currentMember.username,
+      username: currentMember.nickname,
     });
 
     const formData = new FormData();
@@ -98,7 +98,7 @@ const ChannelChatInput: React.FC<{
     const channelSocketEvents = getChannelSocketEvents(channel.id);
 
     socket.on(channelSocketEvents.isTyping, (username) => {
-      if (username === currentMember.username) return;
+      if (username === currentMember.nickname) return;
       setIsTyping((prev) => {
         if (prev.includes(username)) return prev;
         return [...prev, username];
@@ -185,7 +185,7 @@ const ChannelChatInput: React.FC<{
               <span className="text-sm text-zinc-400">
                 Replying to{' '}
                 <span className="text-zinc-300 font-semibold">
-                  {replyingToMessage?.sender.username}
+                  {replyingToMessage?.author.nickname}
                 </span>
               </span>
               <CircleX
@@ -266,12 +266,12 @@ const ChannelChatInput: React.FC<{
                       if (content.length === 1) {
                         socket.emit(ServerSocketEvents.isTyping, {
                           channelId: channel.id,
-                          username: currentMember.username,
+                          username: currentMember.nickname,
                         });
                       } else if (content.length === 0) {
                         socket.emit(ServerSocketEvents.stopTyping, {
                           channelId: channel.id,
-                          username: currentMember.username,
+                          username: currentMember.nickname,
                         });
                       }
                       form.setValue('content', content, {
@@ -280,7 +280,7 @@ const ChannelChatInput: React.FC<{
                     }}
                     onBlur={() => {
                       setIsTyping((prev) =>
-                        prev.filter((p) => p !== currentMember.username)
+                        prev.filter((p) => p !== currentMember.nickname)
                       );
                     }}
                     onSubmit={() => {

@@ -1,19 +1,19 @@
 'use client';
 import { useModal } from '@/hooks/useModalStore';
-import { Server } from '@prisma/client';
+import { Guild } from '@prisma/client';
 import { PlusCircle, UserPlus } from 'lucide-react';
 import React, { ComponentProps, PropsWithChildren } from 'react';
 import GenericContextMenu from './GenericContextMenu';
 
 type TChannelsContextMenuProps = {
-  server: Server;
+  guild: Guild;
 };
 
 const ChannelsContextMenu: React.FC<
   TChannelsContextMenuProps &
     PropsWithChildren &
     Omit<ComponentProps<typeof GenericContextMenu>, 'items'>
-> = ({ server, children, ...props }) => {
+> = ({ guild, children, ...props }) => {
   const { openModal } = useModal();
 
   return (
@@ -24,7 +24,7 @@ const ChannelsContextMenu: React.FC<
           label: 'Create Channel',
           icon: PlusCircle,
           onClick: () => {
-            openModal('createChannel', { server });
+            openModal('createChannel', { guild });
           },
         },
         {
@@ -32,7 +32,7 @@ const ChannelsContextMenu: React.FC<
           icon: UserPlus,
           variant: 'blue',
           onClick: () => {
-            openModal('invite', { server });
+            openModal('invite', { guild });
           },
         },
       ]}

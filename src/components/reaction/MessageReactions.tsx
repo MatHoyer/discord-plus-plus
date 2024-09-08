@@ -3,7 +3,7 @@ import React from 'react';
 import MessageReaction from './MessageReaction';
 
 type TMessageReactionsProps = {
-  reactions: ServerMessageReactionWithMembers[];
+  reactions: MessageReactionWithMembers[];
   currentMember: MemberWithUser;
   channel?: Channel;
 };

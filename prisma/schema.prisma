@@ -8,26 +8,26 @@ datasource db {
 }
 
 model User {
-    id            Int       @id @default(autoincrement())
+    id Int @id @default(autoincrement())
+
     name          String?
-    username      String?   @unique
+    username      String?
+    discriminator String?
     email         String?   @unique
     emailVerified DateTime?
     image         String?
 
-    friendId      Int?
-    friend        User?       @relation("friends", fields: [friendId], references: [id], onDelete: SetNull)
-    friends       User[]      @relation("friends")
-
-    sessions                Session[]
-    accounts                Account?
-    servers                 Server[]
-    members                 Member[]
-    privateMessagesSent     PrivateMessage[] @relation("sender")
-    privateMessagesReceived PrivateMessage[] @relation("receiver")
+    sessions         Session[]
+    accounts         Account?
+    guilds           Guild[]
+    profiles         UserGuildProfile[]
+    friendsInitiated Friendship[]       @relation("userOne")
+    friendsReceived  Friendship[]       @relation("userTwo")
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+
+    @@unique([username, discriminator])
 }
 
 model Account {
@@ -75,68 +75,109 @@ model VerificationToken {
     @@unique([identifier, token])
 }
 
-model Server {
-    id         Int     @id @default(autoincrement())
+model Guild {
+    id Int @id @default(autoincrement())
+
     name       String
     imageUrl   String? @db.Text
     inviteCode String  @db.Text
 
-    userId Int
-    user   User @relation(fields: [userId], references: [id])
+    ownerId Int
+    owner   User @relation(fields: [ownerId], references: [id])
 
-    members  Member[]
+    members  UserGuildProfile[]
     channels Channel[]
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
     @@unique([inviteCode])
-    @@index([userId])
+    @@index([ownerId])
 }
 
-model PrivateMessage {
-    id       Int    @id @default(autoincrement())
-    content  String
-    senderId Int
-    sender   User   @relation("sender", fields: [senderId], references: [id])
+enum ProfileRole {
+    ADMIN
+    MODERATOR
+    GUEST
+}
 
-    receiverId Int
-    receiver   User @relation("receiver", fields: [receiverId], references: [id])
+model UserGuildProfile {
+    id Int @id @default(autoincrement())
+
+    image    String?
+    nickname String
+    role     ProfileRole @default(GUEST)
+
+    guildId Int
+    guild   Guild @relation(fields: [guildId], references: [id])
+
+    userId Int
+    user   User @relation(fields: [userId], references: [id])
+
+    mentions  Mention[]
+    reactions MessageReactionMember[]
+    messages  Message[]
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    @@index([senderId])
-    @@index([receiverId])
+    @@unique([guildId, userId])
+    @@index([guildId])
+    @@index([userId])
 }
 
-model ServerMessage {
-    id       Int     @id @default(autoincrement())
-    content  String
-    senderId Int?
-    sender   Member? @relation(fields: [senderId], references: [id], onDelete: SetNull)
+enum Channeltype {
+    TEXT
+    AUDIO
+    DM
+    GROUP_DM
+}
+
+model Channel {
+    id Int @id @default(autoincrement())
+
+    name String
+    type Channeltype @default(TEXT)
+
+    guildId  Int?
+    guild    Guild?    @relation(fields: [guildId], references: [id], onDelete: Cascade)
+    messages Message[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([guildId])
+}
+
+model Message {
+    id Int @id @default(autoincrement())
+
+    content String
+    deleted Boolean @default(false)
+
+    authorId Int
+    author   UserGuildProfile @relation(fields: [authorId], references: [id])
 
     channelId Int
     channel   Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
 
-    deleted   Boolean                 @default(false)
-    mentions  ServerMention[]
-    reactions ServerMessageReaction[]
+    mentions    Mention[]
+    reactions   MessageReaction[]
+    attachments Attachment[]
 
     referencedMessageId Int?
-    referencedMessage   ServerMessage?            @relation("referencedMessage", fields: [referencedMessageId], references: [id], onDelete: SetNull)
-    serverMessage       ServerMessage[]           @relation("referencedMessage")
-    attachments         ServerMessageAttachment[]
+    referencedMessage   Message?  @relation("referencedMessage", fields: [referencedMessageId], references: [id], onDelete: SetNull)
+    serverMessage       Message[] @relation("referencedMessage")
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    @@index([senderId])
+    @@index([authorId])
     @@index([channelId])
     @@index([referencedMessageId])
 }
 
-model ServerMessageAttachment {
+model Attachment {
     id Int @id @default(autoincrement())
 
     filename    String
@@ -147,7 +188,7 @@ model ServerMessageAttachment {
     url         String
 
     messageId Int
-    message   ServerMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+    message   Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -155,15 +196,15 @@ model ServerMessageAttachment {
     @@index([messageId])
 }
 
-model ServerMessageReaction {
+model MessageReaction {
     id      Int    @id @default(autoincrement())
     number  Int
     content String
 
     messageId Int
-    message   ServerMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+    message   Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
 
-    members ServerMessageReactionMember[]
+    members MessageReactionMember[]
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -171,15 +212,15 @@ model ServerMessageReaction {
     @@index([messageId])
 }
 
-model ServerMessageReactionMember {
+model MessageReactionMember {
     id        Int @id @default(autoincrement())
     messageId Int
 
     reactionId Int
-    reaction   ServerMessageReaction @relation(fields: [reactionId], references: [id], onDelete: Cascade)
+    reaction   MessageReaction @relation(fields: [reactionId], references: [id], onDelete: Cascade)
 
     memberId Int
-    member   Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
+    member   UserGuildProfile @relation(fields: [memberId], references: [id], onDelete: Cascade)
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -188,13 +229,13 @@ model ServerMessageReactionMember {
     @@index([memberId])
 }
 
-model ServerMention {
-    id        Int           @id @default(autoincrement())
+model Mention {
+    id        Int     @id @default(autoincrement())
     messageId Int
-    message   ServerMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+    message   Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
 
     memberId Int
-    member   Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
+    member   UserGuildProfile @relation(fields: [memberId], references: [id], onDelete: Cascade)
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -203,51 +244,27 @@ model ServerMention {
     @@index([memberId])
 }
 
-enum Channeltype {
-    TEXT
-    AUDIO
+enum FriendshipStatus {
+    PENDING
+    ACCEPTED
+    BLOCKED
 }
 
-model Channel {
-    id   Int         @id @default(autoincrement())
-    name String
-    type Channeltype @default(TEXT)
+model Friendship {
+    id Int @id @default(autoincrement())
 
-    serverId Int
-    server   Server          @relation(fields: [serverId], references: [id], onDelete: Cascade)
-    messages ServerMessage[]
+    userOneId Int
+    userOne   User @relation("userOne", fields: [userOneId], references: [id])
+
+    userTwoId Int
+    userTwo   User @relation("userTwo", fields: [userTwoId], references: [id])
+
+    status FriendshipStatus
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    @@index([serverId])
-}
-
-enum MemberRole {
-    ADMIN
-    MODERATOR
-    GUEST
-}
-
-model Member {
-    id   Int        @id @default(autoincrement())
-    role MemberRole @default(GUEST)
-
-    username String
-
-    userId Int
-    user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-    serverId Int
-    server   Server @relation(fields: [serverId], references: [id], onDelete: Cascade)
-
-    messages        ServerMessage[]
-    mentions        ServerMention[]
-    reactionMembers ServerMessageReactionMember[]
-
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
-    @@index([userId])
-    @@index([serverId])
+    @@unique([userOneId, userTwoId])
+    @@index([userOneId])
+    @@index([userTwoId])
 }

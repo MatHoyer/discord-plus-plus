@@ -20,7 +20,7 @@ const InvitePage = async (props: PageParams<{ inviteCode: string }>) => {
     return redirect('/');
   }
 
-  const existingServer = await prisma.server.findUnique({
+  const existingServer = await prisma.guild.findUnique({
     where: {
       inviteCode: result.data,
       members: {
@@ -32,10 +32,10 @@ const InvitePage = async (props: PageParams<{ inviteCode: string }>) => {
   });
 
   if (existingServer) {
-    return redirect(`/servers/${existingServer.id}`);
+    return redirect(`/channels/${existingServer.id}`);
   }
 
-  const server = await prisma.server.update({
+  const server = await prisma.guild.update({
     where: {
       inviteCode: result.data,
     },
@@ -43,7 +43,7 @@ const InvitePage = async (props: PageParams<{ inviteCode: string }>) => {
       members: {
         create: [
           {
-            username: session.user.name!,
+            nickname: session.user.name!,
             userId: session.user.id,
           },
         ],
@@ -52,7 +52,7 @@ const InvitePage = async (props: PageParams<{ inviteCode: string }>) => {
   });
 
   if (server) {
-    return redirect(`/servers/${server.id}`);
+    return redirect(`/channels/${server.id}`);
   }
 };
 

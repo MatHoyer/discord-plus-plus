@@ -1,15 +1,15 @@
 import ProfileContextMenu from '@/components/context-menus/ProfileContextMenu';
 import ProfilePopover from '@/components/profile/ProfilePopover';
-import { Member, ServerMessage } from '@prisma/client';
+import { Message, UserGuildProfile } from '@prisma/client';
 import { cn } from '.';
 import { checkRole } from './member.utils';
 
 export const MESSAGE_TOP_LIMIT = 50;
 
 export const checkMessage = (
-  member: Member,
-  currentMember: Member,
-  message: ServerMessage
+  member: UserGuildProfile,
+  currentMember: UserGuildProfile,
+  message: Message
 ) => {
   const { isAdmin, isModerator } = checkRole(currentMember.role);
   const isOwner = currentMember.id === member.id;
@@ -33,7 +33,7 @@ export const mentionClassName =
   'text-white px-2 py-1 bg-[#3c4270] bg-opacity-50 font-semibold rounded-sm inline-block';
 
 export const mentionToSpan = (
-  message: ServerMessageWithSender,
+  message: MessageWithSender,
   disabled: boolean = false
 ) => {
   const parts = message.content.split(/(<@\w+>)/g);
@@ -48,13 +48,13 @@ export const mentionToSpan = (
             key={index}
             member={mention.member}
             disabled={disabled}
-            user={message.sender.user}
+            user={message.author.user}
           >
             <ProfilePopover
               member={mention.member}
               asChild
               disabled={disabled}
-              user={message.sender.user}
+              user={message.author.user}
             >
               <span
                 role="button"
@@ -65,7 +65,7 @@ export const mentionToSpan = (
                     'hover:bg-[#5864f3] hover:bg-opacity-100 transition-colors hover:underline cursor-pointer'
                 )}
               >
-                @{mention.member.username}
+                @{mention.member.nickname}
               </span>
             </ProfilePopover>
           </ProfileContextMenu>
@@ -78,7 +78,7 @@ export const mentionToSpan = (
 
 export const MESSAGE_INCLUDES = {
   include: {
-    sender: {
+    author: {
       include: {
         user: true,
       },
@@ -107,7 +107,7 @@ export const MESSAGE_INCLUDES = {
     },
     referencedMessage: {
       include: {
-        sender: {
+        author: {
           include: {
             user: true,
           },

@@ -1,5 +1,7 @@
+import { redirect } from 'next/navigation';
+
 const MainPage = () => {
-  return <div>tg nico le dog dog</div>;
+  redirect('/channels/me');
 };
 
 export default MainPage;

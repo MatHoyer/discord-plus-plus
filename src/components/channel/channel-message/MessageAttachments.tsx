@@ -1,14 +1,14 @@
 import ActionTooltip from '@/components/ActionTooltip';
-import { ServerMessageAttachment } from '@prisma/client';
+import { Attachment } from '@prisma/client';
 import { Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import React from 'react';
 
 type TMessageAttachmentsProps = {
-  message: ServerMessageWithSender;
+  message: MessageWithSender;
   Wrapper: React.ReactElement;
   preview?: boolean;
-  onDeleteAttachment?: (attachment: ServerMessageAttachment) => void;
+  onDeleteAttachment?: (attachment: Attachment) => void;
   isOwner?: boolean;
 };
 

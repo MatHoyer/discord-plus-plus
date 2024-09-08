@@ -17,7 +17,7 @@ const PrivateMessageNavigationItem: React.FC<
       isSelected={pathname === '/'}
       label="Private messages"
       onClick={() => {
-        router.push('/conversations');
+        router.push('/channels/me');
       }}
       side="right"
       align="center"

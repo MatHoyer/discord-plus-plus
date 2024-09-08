@@ -1,12 +1,12 @@
 'use client';
-import { useDeleteMessage } from '@/features/server/channel/message/delete-message/delete-message.hook';
-import { reactToMessage } from '@/features/server/channel/message/react-to-message/react-to-message.action';
+import { useDeleteMessage } from '@/features/guild/channel/message/delete-message/delete-message.hook';
+import { reactToMessage } from '@/features/guild/channel/message/react-to-message/react-to-message.action';
 import { useGlobalStore } from '@/hooks/useGlobalStore';
 import { useModal } from '@/hooks/useModalStore';
 import { getAttachmentAsBlob } from '@/lib/utils/attachment.utils';
 import { checkMessage } from '@/lib/utils/message.utils';
 import { socket } from '@/socket';
-import { Channel, ServerMessageAttachment } from '@prisma/client';
+import { Attachment, Channel, Message } from '@prisma/client';
 import {
   ClipboardCopy,
   Edit,
@@ -24,9 +24,9 @@ import GenericContextMenu, { isSeparator } from './GenericContextMenu';
 type TChannelMessageContextMenuProps = {
   member: MemberWithUser;
   currentMember: MemberWithUser;
-  message: ServerMessageWithSender;
+  message: Message;
   channel?: Channel;
-  attachment?: ServerMessageAttachment;
+  attachment?: Attachment;
 };
 
 const EMOJIS = [
@@ -152,11 +152,11 @@ const ChannelMessageContextMenu: React.FC<
               deleteMessage({
                 channelId: message.channelId,
                 messageId: message.id,
-                serverId: channel!.serverId,
+                guildId: channel!.guildId!,
               });
             } else {
               openModal('deleteChannelMessage', {
-                serverMessage: message,
+                message,
                 currentMember,
                 channel,
                 user: currentMember.user,

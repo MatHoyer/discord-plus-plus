@@ -1,10 +1,10 @@
-import { deleteAttachment } from '@/features/server/channel/message/delete-attachment/delete-attachment.action';
-import { useDeleteMessage } from '@/features/server/channel/message/delete-message/delete-message.hook';
-import { editMessage } from '@/features/server/channel/message/edit-message/edit-message.action';
+import { deleteAttachment } from '@/features/guild/channel/message/delete-attachment/delete-attachment.action';
+import { useDeleteMessage } from '@/features/guild/channel/message/delete-message/delete-message.hook';
+import { editMessage } from '@/features/guild/channel/message/edit-message/edit-message.action';
 import {
   editMessageSchema,
   TEditMessage,
-} from '@/features/server/channel/message/edit-message/edit-message.schema';
+} from '@/features/guild/channel/message/edit-message/edit-message.schema';
 import { useEventListener } from '@/hooks/useEventListener';
 import { useGlobalStore } from '@/hooks/useGlobalStore';
 import { useModal } from '@/hooks/useModalStore';
@@ -25,9 +25,9 @@ import ActionTooltip from '../../ActionTooltip';
 import ChannelMessageContextMenu from '../../context-menus/ChannelMessageContextMenu';
 import ProfileContextMenu from '../../context-menus/ProfileContextMenu';
 import ChatInput from '../../form/ChatInput';
+import { roleIconMap } from '../../guild/GuildSidebar';
 import ProfilePopover from '../../profile/ProfilePopover';
 import MessageReactions from '../../reaction/MessageReactions';
-import { roleIconMap } from '../../server/ServerSidebar';
 import {
   Form,
   FormControl,
@@ -41,15 +41,15 @@ import ReferencedMessage from './ReferencedMessage';
 
 type TChannelMessageProps = {
   time: string;
-  message: ServerMessageWithSender;
-  previousMessage?: ServerMessageWithSender;
-  nextMessage?: ServerMessageWithSender;
+  message: MessageWithSender;
+  previousMessage?: MessageWithSender;
+  nextMessage?: MessageWithSender;
   user: User;
   currentMember: MemberWithUser;
   channel?: Channel;
   preview?: boolean;
   members?: MemberWithUser[];
-  onReferencedMessageClicked?: (message: ServerMessageWithSender) => void;
+  onReferencedMessageClicked?: (message: MessageWithSender) => void;
 };
 
 const ChannelMessage: React.FC<TChannelMessageProps> = ({
@@ -89,7 +89,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
 
   const isEditing = editingMessageId === message.id;
 
-  const member = message.sender;
+  const member = message.author;
   const isUpdated = !isEqual(message.createdAt, message.updatedAt);
 
   const { canDeleteMessage, canEditMessage, isOwner } = checkMessage(
@@ -113,7 +113,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
       content: message.content,
       messageId: message.id,
       channelId: message.channelId,
-      serverId: message.sender.serverId,
+      guildId: message.author.guildId,
     },
   });
 
@@ -141,8 +141,8 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
     (message.mentions?.some(
       (mention) => mention.member.id === currentMember.id
     ) ||
-      (message.referencedMessage?.senderId === currentMember.id &&
-        message.senderId !== currentMember.id)) &&
+      (message.referencedMessage?.authorId === currentMember.id &&
+        message.authorId !== currentMember.id)) &&
     !isCurrentReplyingToMessage &&
     !isFlashing;
 
@@ -154,7 +154,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
 
   const isPreviousMessageSameSender =
     previousMessage &&
-    previousMessage.senderId === message.senderId &&
+    previousMessage.authorId === message.authorId &&
     differenceInMinutes(
       new Date(message.createdAt),
       new Date(previousMessage.createdAt)
@@ -170,7 +170,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
 
   const isNextMessageSameSender =
     nextMessage &&
-    nextMessage.senderId === message.senderId &&
+    nextMessage.authorId === message.authorId &&
     differenceInMinutes(
       new Date(nextMessage.createdAt),
       new Date(message.createdAt)
@@ -245,7 +245,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
                       disabled={preview}
                     >
                       <UserAvatar
-                        src={member.user.image}
+                        src={member.image}
                         className={preview ? 'cursor-auto' : undefined}
                       />
                     </ProfilePopover>
@@ -278,7 +278,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
                                 !preview && 'hover:underline cursor-pointer'
                               )}
                             >
-                              {member.username}
+                              {member.nickname}
                             </p>
                           </ProfilePopover>
                         </ProfileContextMenu>
@@ -354,7 +354,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
                       attachmentId: attachment.id,
                       channelId: message.channelId,
                       messageId: message.id,
-                      serverId: message.sender.serverId,
+                      guildId: message.author.guildId,
                     });
                   }}
                   Wrapper={
@@ -393,11 +393,11 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
                         deleteMessage({
                           channelId: message.channelId,
                           messageId: message.id,
-                          serverId: channel!.serverId,
+                          guildId: channel!.guildId!,
                         });
                       } else {
                         openModal('deleteChannelMessage', {
-                          serverMessage: message,
+                          message,
                           currentMember,
                           channel,
                           user: member.user,

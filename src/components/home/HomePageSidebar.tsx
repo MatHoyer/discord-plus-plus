@@ -17,9 +17,9 @@ const HomePageSidebar = async () => {
 
   const friends = await prisma.user.findMany({
     where: {
-      friends: {
+      friendsInitiated: {
         some: {
-          id: user.id,
+          userOneId: user.id,
         },
       },
     },

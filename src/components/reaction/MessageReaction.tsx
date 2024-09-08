@@ -1,4 +1,4 @@
-import { reactToMessage } from '@/features/server/channel/message/react-to-message/react-to-message.action';
+import { reactToMessage } from '@/features/guild/channel/message/react-to-message/react-to-message.action';
 import { cn } from '@/lib/utils';
 import { socket } from '@/socket';
 import { Channel } from '@prisma/client';
@@ -13,7 +13,7 @@ import {
 } from '../ui/tooltip';
 
 type TMessageReactionProps = {
-  reaction: ServerMessageReactionWithMembers;
+  reaction: MessageReactionWithMembers;
   currentMember: MemberWithUser;
   channel?: Channel;
 };
@@ -87,7 +87,7 @@ const MessageReaction: React.FC<TMessageReactionProps> = ({
             <span className="text-3xl">{reaction.content}</span>
             <span className="text-xs text-zinc-200">
               reacted by{' '}
-              {reaction.members.map((m) => m.member.username).join(', ')}
+              {reaction.members.map((m) => m.member.nickname).join(', ')}
             </span>
           </div>
         </TooltipContent>

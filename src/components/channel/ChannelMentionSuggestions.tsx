@@ -88,7 +88,7 @@ const ChannelMentionSuggestions: React.FC<TChannelMentionSuggestionsProps> = ({
               }}
               activity={usersActivity[member.user.id]}
             />
-            <span className="text-white text-sm">{member.username}</span>
+            <span className="text-white text-sm">{member.nickname}</span>
           </div>
         ))}
       </div>

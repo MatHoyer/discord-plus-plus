@@ -1,6 +1,6 @@
 'use client';
 
-import { useDeleteMessage } from '@/features/server/channel/message/delete-message/delete-message.hook';
+import { useDeleteMessage } from '@/features/guild/channel/message/delete-message/delete-message.hook';
 import { useModal } from '@/hooks/useModalStore';
 import { getCustomDate } from '@/lib/utils';
 import ChannelMessage from '../channel/channel-message';
@@ -21,15 +21,12 @@ const DeleteChannelMessageModal: React.FC = () => {
 
   const open = isOpen && type === 'deleteChannelMessage';
 
-  const message = data.serverMessage!;
+  const message = data.message!;
 
   return (
     <Dialog open={open} onOpenChange={closeModal}>
       <DialogContent className="overflow-hidden" aria-describedby={undefined}>
-        {!message ||
-        !data.currentMember ||
-        !data.channel ||
-        !data.user ? null : (
+        {message && data.currentMember && data.channel && data.user && (
           <>
             <DialogHeader className="space-y-3">
               <DialogTitle className="text-xl font-bold">
@@ -76,7 +73,7 @@ const DeleteChannelMessageModal: React.FC = () => {
                   execute({
                     channelId: message.channelId,
                     messageId: message.id,
-                    serverId: data.channel!.serverId,
+                    guildId: data.channel!.guildId!,
                   });
                 }}
               >

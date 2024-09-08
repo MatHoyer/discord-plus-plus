@@ -1,22 +1,19 @@
-import { Member } from '@prisma/client';
+import { UserGuildProfile } from '@prisma/client';
 import { create } from 'zustand';
 
 type TGlobalStore = {
   unreadChannels: Set<number>;
   setUnreadChannels: (channelId: number) => void;
   setAsRead: (channelId: number) => void;
-  channelMentions: Record<number, ServerMentionWithUser[]>;
-  addChannelMention: (
-    channelId: number,
-    mention: ServerMentionWithUser
-  ) => void;
+  channelMentions: Record<number, MentionWithUser[]>;
+  addChannelMention: (channelId: number, mention: MentionWithUser) => void;
   deleteChannelMention: (channelId: number, mentionId: number) => void;
   editingMessageId: number | undefined;
   setEditingMessageId: (id: number | undefined) => void;
-  replyingToMessage: ServerMessageWithSender | undefined;
-  setReplyingToMessage: (message: ServerMessageWithSender | undefined) => void;
-  currentMentionnedMember: Member | undefined;
-  addCurrentMemberMention: (member: Member | undefined) => void;
+  replyingToMessage: MessageWithSender | undefined;
+  setReplyingToMessage: (message: MessageWithSender | undefined) => void;
+  currentMentionnedMember: UserGuildProfile | undefined;
+  addCurrentMemberMention: (member: UserGuildProfile | undefined) => void;
   removeCurrentMemberMention: () => void;
   flashReferencedMessageId: number | undefined;
   setFlashReferencedMessageId: (id: number | undefined) => void;
