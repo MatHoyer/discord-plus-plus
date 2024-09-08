@@ -10,7 +10,6 @@ import { socket } from '@/socket';
 import { User } from '@prisma/client';
 import { useEffect, useRef, useState } from 'react';
 import { getChannelSocketEvents } from '../../../server/socket/channel';
-import { ScrollArea } from '../ui/scroll-area';
 import ChannelMessage from './channel-message';
 
 const ScrollableChat: React.FC<{
@@ -173,31 +172,25 @@ const ScrollableChat: React.FC<{
     }
   };
 
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView();
-  }, [messages.length]);
-
   return (
-    <ScrollArea className="flex-1 mr-1">
-      <div className="flex flex-col-reverse">
-        <div ref={bottomRef} className="p-1" />
-        {messages.map((message, index) => (
-          <ChannelMessage
-            key={message.id}
-            message={message}
-            previousMessage={messages[index + 1]}
-            nextMessage={messages[index - 1]}
-            currentMember={currentMember}
-            time={getCustomDate(new Date(message.createdAt))}
-            channel={channel}
-            members={members}
-            onReferencedMessageClicked={onReferencedMessageClicked}
-            user={user}
-          />
-        ))}
-        <div ref={topRef} className="p-1" />
-      </div>
-    </ScrollArea>
+    <div className="flex h-full flex-col-reverse overflow-y-auto">
+      <div ref={bottomRef} className="p-1" />
+      {messages.map((message, index) => (
+        <ChannelMessage
+          key={message.id}
+          message={message}
+          previousMessage={messages[index + 1]}
+          nextMessage={messages[index - 1]}
+          currentMember={currentMember}
+          time={getCustomDate(new Date(message.createdAt))}
+          channel={channel}
+          members={members}
+          onReferencedMessageClicked={onReferencedMessageClicked}
+          user={user}
+        />
+      ))}
+      <div ref={topRef} className="p-1" />
+    </div>
   );
 };
 
