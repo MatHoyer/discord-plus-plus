@@ -49,7 +49,7 @@ export const errorHandler = (
 };
 
 export const baseClient = createSafeActionClient({
-  handleReturnedServerError: (err, utils) =>
+  handleServerError: (err, utils) =>
     errorHandler(err, utils.clientInput as Record<string | number, unknown>),
 });
 

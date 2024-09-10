@@ -4,6 +4,7 @@ import { useGlobalStore } from '@/hooks/useGlobalStore';
 import { useModal } from '@/hooks/useModalStore';
 import { cn } from '@/lib/utils';
 import { mentionClassName } from '@/lib/utils/message.utils';
+import { UserGuildProfile } from '@prisma/client';
 import React, { useEffect, useState } from 'react';
 import ChannelMentionSuggestions from '../channel/ChannelMentionSuggestions';
 
@@ -53,7 +54,7 @@ const ChatInput: React.FC<TChatInputProps> = ({
   const [atSymbolPosition, setAtSymbolPosition] = useState<number | null>(null);
   const [isMentionPopoverOpen, setIsMentionPopoverOpen] = useState(false);
 
-  const addMemberMention = (member: MemberWithUser, range: Range) => {
+  const addMemberMention = (member: UserGuildProfile, range: Range) => {
     const mentionSpan = document.createElement('span');
     mentionSpan.textContent = `@${member.nickname}`;
     mentionSpan.className = mentionClassName;
@@ -69,7 +70,7 @@ const ChatInput: React.FC<TChatInputProps> = ({
     return range;
   };
 
-  const handleMentionSelect = (member: MemberWithUser) => {
+  const handleMentionSelect = (member: UserGuildProfile) => {
     if (!editableDivRef.current) return;
     if (document.activeElement !== editableDivRef.current) {
       focusInputWithTimeout(10);

@@ -1,3 +1,4 @@
+'use client';
 import { Channeltype } from '@prisma/client';
 import { clsx, type ClassValue } from 'clsx';
 import { format } from 'date-fns';

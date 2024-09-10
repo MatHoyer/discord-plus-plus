@@ -1,3 +1,4 @@
+'use client';
 import { cn } from '@/lib/utils';
 import { User, UserGuildProfile } from '@prisma/client';
 import React, { ComponentProps, PropsWithChildren } from 'react';

@@ -44,7 +44,6 @@ const DeleteChannelMessageModal: React.FC = () => {
                   message={message}
                   time={getCustomDate(new Date(message.createdAt))}
                   currentMember={data.currentMember!}
-                  user={data.user}
                   preview
                 />
               </div>

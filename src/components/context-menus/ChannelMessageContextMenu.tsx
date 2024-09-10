@@ -133,7 +133,7 @@ const ChannelMessageContextMenu: React.FC<
           icon: Reply,
           when: !editingMessageId,
           onClick: () => {
-            setReplyingToMessage(message);
+            setReplyingToMessage(message as MessageWithSender);
           },
         },
         {
@@ -156,7 +156,7 @@ const ChannelMessageContextMenu: React.FC<
               });
             } else {
               openModal('deleteChannelMessage', {
-                message,
+                message: message as MessageWithSender,
                 currentMember,
                 channel,
                 user: currentMember.user,
