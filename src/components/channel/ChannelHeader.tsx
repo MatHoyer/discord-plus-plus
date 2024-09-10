@@ -1,6 +1,5 @@
 import { Channeltype } from '@prisma/client';
-import { Hash } from 'crypto';
-import { Volume2 } from 'lucide-react';
+import { Hash, Volume2 } from 'lucide-react';
 import React from 'react';
 
 type TChannelHeaderProps = {
