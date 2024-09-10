@@ -1,10 +1,15 @@
-import { iconMap } from '@/lib/utils';
 import { Channeltype } from '@prisma/client';
+import { Hash } from 'crypto';
+import { Volume2 } from 'lucide-react';
 import React from 'react';
 
 type TChannelHeaderProps = {
   name: string;
   channelType: Channeltype;
+};
+export const iconMap = {
+  [Channeltype.TEXT]: Hash,
+  [Channeltype.AUDIO]: Volume2,
 };
 
 const ChannelHeader: React.FC<TChannelHeaderProps> = ({

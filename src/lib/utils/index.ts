@@ -1,9 +1,6 @@
-'use client';
-import { Channeltype } from '@prisma/client';
 import { clsx, type ClassValue } from 'clsx';
 import { format } from 'date-fns';
 import { enUS } from 'date-fns/locale';
-import { Hash, Volume2 } from 'lucide-react';
 import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
@@ -58,11 +55,6 @@ export const getShortGuildName = (guildName: string) => {
 
 export const wait = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms));
-
-export const iconMap = {
-  [Channeltype.TEXT]: Hash,
-  [Channeltype.AUDIO]: Volume2,
-};
 
 export const isFunction = (value: any): value is Function => {
   return typeof value === 'function';

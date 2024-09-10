@@ -1,8 +1,8 @@
 'use client';
 import { useModal } from '@/hooks/useModalStore';
-import { cn, iconMap } from '@/lib/utils';
-import { Channel, ProfileRole } from '@prisma/client';
-import { Edit, Trash2 } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Channel, Channeltype, ProfileRole } from '@prisma/client';
+import { Edit, Hash, Trash2, Volume2 } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import React from 'react';
 import ActionTooltip from '../ActionTooltip';
@@ -14,6 +14,11 @@ type TServerChannelProps = {
   onClick?: (channelId: number) => void;
   setAsRead?: (channelId: number) => void;
   mentions?: number;
+};
+
+export const iconMap = {
+  [Channeltype.TEXT]: Hash,
+  [Channeltype.AUDIO]: Volume2,
 };
 
 const GuildChannel: React.FC<TServerChannelProps> = ({
