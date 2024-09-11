@@ -339,11 +339,6 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
                     </span>
                   </Form>
                 )}
-                <MessageReactions
-                  reactions={message.reactions}
-                  currentMember={currentMember}
-                  channel={channel}
-                />
                 <MessageAttachments
                   message={message}
                   preview={preview}
@@ -365,6 +360,11 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
                     />
                   }
                   isOwner={isOwner}
+                />
+                <MessageReactions
+                  reactions={message.reactions}
+                  currentMember={currentMember}
+                  channel={channel}
                 />
               </div>
             </div>
