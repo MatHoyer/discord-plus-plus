@@ -16,15 +16,14 @@ import { Label } from '../ui/label';
 const InvitePeopleModal: React.FC = () => {
   const [isCopied, setIsCopied] = useState(false);
   const origin = useOrigin();
-  const { isOpen, type, closeModal, data, openModal } = useModal();
+  const { closeModal, data, openModal } = useModal();
   const { guild } = data;
-  const open = isOpen && type === 'invite';
 
   const url = `${origin}/invite/${guild?.inviteCode}`;
 
   const { execute, isExecuting } = useAction(generateNewInviteCode, {
     onSuccess: ({ data }) => {
-      openModal('invite', { guild: data });
+      openModal('invite', { guild: data! });
     },
   });
 
@@ -38,7 +37,7 @@ const InvitePeopleModal: React.FC = () => {
   };
 
   return (
-    <Dialog open={open} onOpenChange={closeModal}>
+    <Dialog open onOpenChange={closeModal}>
       <DialogContent className="overflow-hidden">
         <DialogHeader>
           <DialogTitle>

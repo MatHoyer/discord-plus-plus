@@ -19,7 +19,7 @@ import {
 
 const DeleteChannelModal: React.FC = () => {
   const router = useRouter();
-  const { isOpen, type, data: modalData, closeModal } = useModal();
+  const { data: modalData, closeModal } = useModal();
 
   const modalDataRef = useRef(modalData);
   modalDataRef.current = modalData;
@@ -36,45 +36,39 @@ const DeleteChannelModal: React.FC = () => {
     },
   });
 
-  const open = isOpen && type === 'deleteChannel';
-
   return (
-    <Dialog open={open} onOpenChange={closeModal}>
+    <Dialog open onOpenChange={closeModal}>
       <DialogContent className="overflow-hidden ">
-        {modalData.channel && (
-          <>
-            <DialogHeader>
-              <DialogTitle className="text-xl font-bold">
-                Delete a channel
-              </DialogTitle>
-              <DialogDescription>
-                Are you sure you want to delete{' '}
-                <span className="font-bold">#{modalData.channel.name}</span>?
-              </DialogDescription>
-            </DialogHeader>
-            <DialogFooter>
-              <Button
-                variant="link"
-                onClick={() => {
-                  closeModal();
-                }}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="destructive"
-                onClick={() => {
-                  execute({
-                    channelId: modalData.channel!.id,
-                    guildId: modalData.channel!.guildId!,
-                  });
-                }}
-              >
-                Delete
-              </Button>
-            </DialogFooter>
-          </>
-        )}
+        <DialogHeader>
+          <DialogTitle className="text-xl font-bold">
+            Delete a channel
+          </DialogTitle>
+          <DialogDescription>
+            Are you sure you want to delete{' '}
+            <span className="font-bold">#{modalData.channel!.name}</span>?
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <Button
+            variant="link"
+            onClick={() => {
+              closeModal();
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="destructive"
+            onClick={() => {
+              execute({
+                channelId: modalData.channel!.id,
+                guildId: modalData.channel!.guildId!,
+              });
+            }}
+          >
+            Delete
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

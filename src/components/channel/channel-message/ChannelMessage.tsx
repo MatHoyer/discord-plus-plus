@@ -7,7 +7,7 @@ import {
 } from '@/features/guild/channel/message/edit-message/edit-message.schema';
 import { useEventListener } from '@/hooks/useEventListener';
 import { useGlobalStore } from '@/hooks/useGlobalStore';
-import { useModal } from '@/hooks/useModalStore';
+import { openModal } from '@/hooks/useModalStore';
 import { cn, DateString, getDateAsString } from '@/lib/utils';
 import {
   checkMessage,
@@ -62,7 +62,6 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
   members,
   onReferencedMessageClicked,
 }) => {
-  const { openModal } = useModal();
   const {
     editingMessageId,
     setEditingMessageId,
@@ -397,7 +396,7 @@ const ChannelMessage: React.FC<TChannelMessageProps> = ({
                         openModal('deleteChannelMessage', {
                           message,
                           currentMember,
-                          channel,
+                          channel: channel!,
                           user: member.user,
                         });
                       }

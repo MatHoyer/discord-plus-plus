@@ -2,7 +2,6 @@
 import { useDeleteMessage } from '@/features/guild/channel/message/delete-message/delete-message.hook';
 import { reactToMessage } from '@/features/guild/channel/message/react-to-message/react-to-message.action';
 import { useGlobalStore } from '@/hooks/useGlobalStore';
-import { useModal } from '@/hooks/useModalStore';
 import { getAttachmentAsBlob } from '@/lib/utils/attachment.utils';
 import { checkMessage } from '@/lib/utils/message.utils';
 import { socket } from '@/socket';
@@ -59,7 +58,6 @@ const ChannelMessageContextMenu: React.FC<
     message
   );
 
-  const { openModal } = useModal();
   const { execute: deleteMessage } = useDeleteMessage();
   const { editingMessageId, setEditingMessageId, setReplyingToMessage } =
     useGlobalStore((state) => ({
@@ -158,7 +156,7 @@ const ChannelMessageContextMenu: React.FC<
               openModal('deleteChannelMessage', {
                 message: message as MessageWithSender,
                 currentMember,
-                channel,
+                channel: channel!,
                 user: currentMember.user,
               });
             }

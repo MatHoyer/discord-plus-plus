@@ -1,5 +1,5 @@
 'use client';
-import { useModal } from '@/hooks/useModalStore';
+import { openModal } from '@/hooks/useModalStore';
 import { cn } from '@/lib/utils';
 import { Channel, Channeltype, ProfileRole } from '@prisma/client';
 import { Edit, Hash, Trash2, Volume2 } from 'lucide-react';
@@ -28,7 +28,6 @@ const GuildChannel: React.FC<TServerChannelProps> = ({
   onClick,
   mentions,
 }) => {
-  const { openModal } = useModal();
   const params = useParams();
   const router = useRouter();
   const { channelId, guildId } = params;

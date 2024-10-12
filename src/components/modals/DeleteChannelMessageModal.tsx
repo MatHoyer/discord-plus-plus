@@ -15,16 +15,14 @@ import {
 } from '../ui/dialog';
 
 const DeleteChannelMessageModal: React.FC = () => {
-  const { isOpen, type, closeModal, data } = useModal();
+  const { closeModal, data } = useModal();
 
   const { execute } = useDeleteMessage(closeModal);
-
-  const open = isOpen && type === 'deleteChannelMessage';
 
   const message = data.message!;
 
   return (
-    <Dialog open={open} onOpenChange={closeModal}>
+    <Dialog open onOpenChange={closeModal}>
       <DialogContent className="overflow-hidden" aria-describedby={undefined}>
         {message && data.currentMember && data.channel && data.user && (
           <>

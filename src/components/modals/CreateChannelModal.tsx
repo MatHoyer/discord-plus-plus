@@ -13,12 +13,10 @@ import {
 } from '../ui/dialog';
 
 const CreateChannelModal: React.FC = () => {
-  const { isOpen, type, data, closeModal } = useModal();
-
-  const open = isOpen && type === 'createChannel';
+  const { data, closeModal } = useModal();
 
   return (
-    <Dialog open={open} onOpenChange={closeModal}>
+    <Dialog open onOpenChange={closeModal}>
       <DialogContent className="overflow-hidden">
         {data.guild && (
           <>

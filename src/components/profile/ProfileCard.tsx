@@ -1,4 +1,4 @@
-import { useModal } from '@/hooks/useModalStore';
+import { openModal } from '@/hooks/useModalStore';
 import { useToast } from '@/hooks/useToast';
 import { User, UserGuildProfile } from '@prisma/client';
 import { Fingerprint, LogOut, Pencil } from 'lucide-react';
@@ -43,7 +43,6 @@ const ProfileCard: React.FC<TProfileCardProps> = ({
   member,
   isSideBar = false,
 }) => {
-  const { openModal } = useModal();
   const { toast } = useToast();
 
   return (

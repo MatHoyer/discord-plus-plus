@@ -13,47 +13,41 @@ import {
 } from '../ui/dialog';
 
 const EditChannelModal: React.FC = () => {
-  const { isOpen, type, data, closeModal } = useModal();
-
-  const open = isOpen && type === 'editChannel';
+  const { data, closeModal } = useModal();
 
   return (
-    <Dialog open={open} onOpenChange={closeModal}>
+    <Dialog open onOpenChange={closeModal}>
       <DialogContent className="overflow-hidden" aria-describedby={undefined}>
-        {data.channel && (
-          <>
-            <DialogHeader>
-              <DialogTitle className="text-xl font-bold">
-                Edit the channel
-              </DialogTitle>
-            </DialogHeader>
-            <EditChannelForm
-              channel={data.channel}
-              close={closeModal}
-              className="px-4"
-            >
-              {({ pending, form }) => (
-                <DialogFooter>
-                  <Button
-                    variant="link"
-                    onClick={() => {
-                      closeModal();
-                    }}
-                  >
-                    Cancel
-                  </Button>
-                  <SubmitButton
-                    variant="blue"
-                    disabled={pending || !form.formState.isValid}
-                    loading={pending}
-                  >
-                    Edit
-                  </SubmitButton>
-                </DialogFooter>
-              )}
-            </EditChannelForm>
-          </>
-        )}
+        <DialogHeader>
+          <DialogTitle className="text-xl font-bold">
+            Edit the channel
+          </DialogTitle>
+        </DialogHeader>
+        <EditChannelForm
+          channel={data.channel!}
+          close={closeModal}
+          className="px-4"
+        >
+          {({ pending, form }) => (
+            <DialogFooter>
+              <Button
+                variant="link"
+                onClick={() => {
+                  closeModal();
+                }}
+              >
+                Cancel
+              </Button>
+              <SubmitButton
+                variant="blue"
+                disabled={pending || !form.formState.isValid}
+                loading={pending}
+              >
+                Edit
+              </SubmitButton>
+            </DialogFooter>
+          )}
+        </EditChannelForm>
       </DialogContent>
     </Dialog>
   );

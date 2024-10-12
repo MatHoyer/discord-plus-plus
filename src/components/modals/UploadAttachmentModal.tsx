@@ -5,12 +5,10 @@ import Image from 'next/image';
 import { Dialog, DialogContent, DialogTitle } from '../ui/dialog';
 
 const UploadAttachmentModal: React.FC = () => {
-  const { isOpen, type, data, closeModal } = useModal();
-
-  const open = isOpen && type === 'uploadAttachment';
+  const { data, closeModal } = useModal();
 
   return (
-    <Dialog open={open} onOpenChange={closeModal}>
+    <Dialog open onOpenChange={closeModal}>
       <DialogContent
         className="bg-[#5865f2] p-5 text-white text-center pointer-events-none select-none border-dashed border-2 border-white/50 relative max-w-[310px]"
         showClose={false}

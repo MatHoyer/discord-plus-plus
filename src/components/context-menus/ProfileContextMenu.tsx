@@ -1,6 +1,6 @@
 'use client';
 import { useGlobalStore } from '@/hooks/useGlobalStore';
-import { useModal } from '@/hooks/useModalStore';
+import { openModal } from '@/hooks/useModalStore';
 import { useToast } from '@/hooks/useToast';
 import { User, UserGuildProfile } from '@prisma/client';
 import { AtSign, CircleUserRound, Fingerprint } from 'lucide-react';
@@ -17,7 +17,6 @@ const ProfileContextMenu: React.FC<
     PropsWithChildren &
     Omit<ComponentProps<typeof GenericContextMenu>, 'items'>
 > = ({ user, member, children, ...props }) => {
-  const { openModal } = useModal();
   const { toast } = useToast();
 
   const { addCurrentMemberMention } = useGlobalStore((state) => ({

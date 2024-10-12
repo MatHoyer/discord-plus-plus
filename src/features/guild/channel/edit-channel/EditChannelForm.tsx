@@ -65,7 +65,7 @@ const EditChannelForm: React.FC<TCreateChannelFormProps> = ({
     <Form {...form} state={state}>
       <FormError state={state} />
       <form onSubmit={form.handleSubmit(execute)}>
-        <div className={cn('space-y-3', className)}>
+        <div className={cn('space-y-3 grow', className)}>
           <FormField
             control={form.control}
             name="name"

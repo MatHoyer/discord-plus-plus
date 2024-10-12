@@ -5,11 +5,10 @@ import { ProfileHeaderWithContent } from '../profile/ProfileHeader';
 import { Dialog, DialogContent, DialogTitle } from '../ui/dialog';
 
 const MemberProfileModal: React.FC = () => {
-  const { isOpen, type, closeModal, data } = useModal();
-  const open = isOpen && type === 'memberProfile';
+  const { closeModal, data } = useModal();
 
   return (
-    <Dialog open={open} onOpenChange={closeModal}>
+    <Dialog open onOpenChange={closeModal}>
       <DialogContent
         className="p-0 overflow-hidden pb-4 bg-[#111214]"
         showClose={false}

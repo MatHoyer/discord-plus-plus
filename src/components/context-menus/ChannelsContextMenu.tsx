@@ -1,5 +1,5 @@
 'use client';
-import { useModal } from '@/hooks/useModalStore';
+import { openModal } from '@/hooks/useModalStore';
 import { Guild } from '@prisma/client';
 import { PlusCircle, UserPlus } from 'lucide-react';
 import React, { ComponentProps, PropsWithChildren } from 'react';
@@ -14,8 +14,6 @@ const ChannelsContextMenu: React.FC<
     PropsWithChildren &
     Omit<ComponentProps<typeof GenericContextMenu>, 'items'>
 > = ({ guild, children, ...props }) => {
-  const { openModal } = useModal();
-
   return (
     <GenericContextMenu
       {...props}

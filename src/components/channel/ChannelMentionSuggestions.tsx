@@ -73,6 +73,7 @@ const ChannelMentionSuggestions: React.FC<TChannelMentionSuggestionsProps> = ({
             onMouseLeave={() => setSelectedSuggestion(null)}
             onClick={(e) => {
               e.preventDefault();
+              e.stopPropagation();
               onSelect(member);
             }}
             className={cn(

@@ -14,12 +14,10 @@ import {
 } from '../ui/dialog';
 
 const CreateGuildModal: React.FC = () => {
-  const { isOpen, type, closeModal } = useModal();
-
-  const open = isOpen && type === 'createServer';
+  const { closeModal } = useModal();
 
   return (
-    <Dialog open={open} onOpenChange={closeModal}>
+    <Dialog open onOpenChange={closeModal}>
       <DialogContent className="overflow-hidden">
         <DialogHeader>
           <DialogTitle className="text-xl text-center font-bold">

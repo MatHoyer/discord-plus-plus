@@ -1,5 +1,5 @@
 'use client';
-import { useModal } from '@/hooks/useModalStore';
+import { openModal } from '@/hooks/useModalStore';
 import { ProfileRole } from '@prisma/client';
 import { Plus, Settings } from 'lucide-react';
 import React from 'react';
@@ -18,8 +18,6 @@ const GuildSection: React.FC<TServerSectionProps> = ({
   role,
   guild,
 }) => {
-  const { openModal } = useModal();
-
   return (
     <div className="flex items-center justify-between py-2">
       <p className="text-xs uppercase font-semibold text-zinc-500 dark:text-zinc-400">

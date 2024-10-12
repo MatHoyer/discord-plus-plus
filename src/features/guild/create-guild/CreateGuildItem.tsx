@@ -1,13 +1,11 @@
 'use client';
 import ActionTooltip from '@/components/ActionTooltip';
 import RoundedIcon from '@/components/RoundedIcon';
-import { useModal } from '@/hooks/useModalStore';
+import { openModal } from '@/hooks/useModalStore';
 import { Plus } from 'lucide-react';
 import React from 'react';
 
 const CreateGuildItem: React.FC = () => {
-  const { openModal } = useModal();
-
   return (
     <div>
       <ActionTooltip label="Add a server" align="center" side="right">

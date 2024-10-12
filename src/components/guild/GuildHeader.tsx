@@ -1,5 +1,5 @@
 'use client';
-import { useModal } from '@/hooks/useModalStore';
+import { openModal } from '@/hooks/useModalStore';
 import { checkRole } from '@/lib/utils/member.utils';
 import { ProfileRole } from '@prisma/client';
 import {
@@ -29,7 +29,6 @@ const GuildHeader: React.FC<TServerHeaderProps> = ({
   guild,
   role = ProfileRole.GUEST,
 }) => {
-  const { openModal } = useModal();
   const { isAdmin, isModerator } = checkRole(role);
 
   return (

@@ -63,9 +63,7 @@ const EditProfileModal: React.FC = () => {
       EDIT_PROFILE_NAVIGATION['USER SETTINGS'][0]
     );
 
-  const { isOpen, type, closeModal, data } = useModal();
-
-  const open = isOpen && type === 'editProfile';
+  const { closeModal, data } = useModal();
 
   const goTo = (item: TEditProfileNavigationItemLabel) => {
     setSelectedNavigationItem(
@@ -76,7 +74,7 @@ const EditProfileModal: React.FC = () => {
   };
 
   return (
-    <FullScreenModal open={open} onOpenChange={closeModal}>
+    <FullScreenModal open onOpenChange={closeModal}>
       {data.user && (
         <div className="flex">
           <div className="flex flex-1">

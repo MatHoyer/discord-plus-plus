@@ -129,7 +129,7 @@ const ChannelChatInput: React.FC<{
     const items = e.dataTransfer?.items;
     if (items) {
       if ([...items].some((item) => item.kind === 'file')) {
-        openModal('uploadAttachment', { channel });
+        openModal('uploadAttachment', { channel: channel! });
       }
     }
   });
