@@ -92,4 +92,6 @@ declare global {
   };
 
   type TZodFormReturnType<T extends ZodType> = ReturnType<typeof useZodForm<T>>;
+
+  type a = string;
 }
